@@ -42,6 +42,7 @@ import {
   drawTrollHole,
   drawSteemRuins,
   drawIslandChip,
+  SHUTTLE_WINDOWS,
   FERRIS_SPIN
 } from './icons';
 import { drawCritters } from './critters';
@@ -61,8 +62,12 @@ export const PALETTE = {
    * the terrain instead of floating over it. The post line and the landmarks
    * are what the eye should catch.
    */
-  mesh: '#8fd8f2',
-  spoke: '#c0a8ff',
+  // HOT LAVA ROADS (Bryan's grid order): the small streets are molten now,
+  // glowing hot orange with bright flow packets travelling down them, on
+  // the map view and in play. Spokes run a shade deeper so the void trails
+  // read as cooling runoff.
+  mesh: '#ff6a22',
+  spoke: '#f0512a',
   junction: '#7fd0e8',
   newRing: '#5df0ff',
   traffic: '#9fd6e4',
@@ -172,6 +177,7 @@ const BIG_SIZE: Partial<Record<IconKey, number>> = {
   launchpad: 140,
   sockmount: 145,
   rosewindow: 140,
+  shuttle: 125,
   tent: 350
 };
 
@@ -975,24 +981,43 @@ export function drawScene(scene: RenderScene): void {
     // Thicker and brighter again, and the whole network BREATHES: a slow
     // alpha pulse offset per stroke family makes the map read as a living
     // thing rather than a printed one. One alpha per family costs nothing.
-    // Bryan's proportion ruling, pass seventeen: gold thickest by a step,
-    // cyan as-is, streets at half of cyan WITH a 2px+ floor at map zoom so
-    // the capillary web always reads as texture instead of vanishing.
-    const baseW = kind === 'mesh' ? 3.2 : 3.0;
-    const streetW = z < 0.12 ? Math.max(baseW * 0.55, 2.3) : baseW;
+    // LAVA STREETS (Bryan's order): slightly thicker than the pass-17 spec
+    // and hot; they stay visible at map zoom now (the old fade-out is mostly
+    // gone) because a lava vein network IS the map texture he wants.
+    const baseW = kind === 'mesh' ? 3.9 : 3.5;
+    const streetW = z < 0.12 ? Math.max(baseW * 0.55, 2.8) : baseW;
     ctx.lineWidth = streetW / Math.max(z, 0.05);
     const breathe = 0.08 * Math.sin(time * 1.4 + (kind === 'mesh' ? 0 : 1.1));
-    // Streets FADE OUT as the camera pulls out: at map height they carried no
-    // information and were most of the visual noise, pale cracks all over the
-    // land. Full alpha where you ride, whispers on the pulled-out map, where
-    // the two named lines should be the only lines that speak.
-    ctx.globalAlpha = ((kind === 'mesh' ? 0.74 : 0.68) + breathe) * (1 - mapness * 0.8);
+    ctx.globalAlpha = ((kind === 'mesh' ? 0.82 : 0.72) + breathe) * (1 - mapness * 0.25);
     for (const e of edges) {
       if (e.kind !== kind || !edgeVis(e)) continue;
       strokeEdge(e);
     }
   }
   ctx.globalAlpha = 1;
+
+  // THE MOLTEN FLOW: bright yellow-hot packets running down every street,
+  // one animated dash pass over both families. This is what makes the veins
+  // read as MOVING lava rather than painted orange, at both zooms.
+  {
+    const zz = Math.max(z, 0.05);
+    ctx.setLineDash([42 / zz, 250 / zz]);
+    ctx.lineDashOffset = -((time * 150) % 292) / zz;
+    ctx.strokeStyle = '#ffd63a';
+    ctx.lineWidth = 2.1 / zz;
+    ctx.globalAlpha = 0.5 + mapness * 0.25;
+    // At map zoom every street is on screen and a second stroke of all of
+    // them broke the 12ms law; one edge in four still reads as a living
+    // network at that height (measured, not guessed).
+    const flowSkip = z < 0.12;
+    for (const e of edges) {
+      if (!edgeVis(e) || (flowSkip && (e.id & 3) !== 0)) continue;
+      strokeEdge(e);
+    }
+    ctx.setLineDash([]);
+    ctx.lineDashOffset = 0;
+    ctx.globalAlpha = 1;
+  }
 
   // THE POST LINE: the first subway route. A labeled subset of the mesh
   // edges drawn noticeably thicker in one warm saturated colour, with a soft
@@ -1373,16 +1398,20 @@ export function drawScene(scene: RenderScene): void {
     // draws the holes (DAPP_WINDOWS, same list); once each dApp account's
     // avatar loads it is clipped into its window. Until then the icon's own
     // coloured glass shows, so nothing ever looks broken.
-    if (lm.icon === 'launchpad') {
-      const stationR = s * 2.2;
+    if (lm.icon === 'launchpad' || lm.icon === 'shuttle') {
+      const shipR = s * 2.2;
+      const slots = lm.icon === 'launchpad' ? DAPP_WINDOWS : SHUTTLE_WINDOWS;
       const withLogos = DAPP_DIRECTORY.filter((dd) => dd.account);
-      for (let k = 0; k < DAPP_WINDOWS.length && k < withLogos.length; k++) {
-        const win = DAPP_WINDOWS[k];
-        const img = withLogos[k].account ? avatarImage(withLogos[k].account as string) : null;
+      // The station wears the first four logo accounts; the shuttle wears
+      // the rest, so the two ships carry DIFFERENT faces of the ecosystem.
+      const crew = lm.icon === 'launchpad' ? withLogos.slice(0, 4) : withLogos.slice(4);
+      for (let k = 0; k < slots.length && k < crew.length; k++) {
+        const win = slots[k];
+        const img = crew[k].account ? avatarImage(crew[k].account as string) : null;
         if (!img) continue;
-        const wx = n.x + win.dx * stationR;
-        const wy = n.y + win.dy * stationR;
-        const wr = win.r * stationR * 0.92;
+        const wx = n.x + win.dx * shipR;
+        const wy = n.y + win.dy * shipR;
+        const wr = win.r * shipR * 0.92;
         ctx.save();
         ctx.beginPath();
         ctx.arc(wx, wy, wr, 0, 6.283);
@@ -1390,7 +1419,7 @@ export function drawScene(scene: RenderScene): void {
         ctx.drawImage(img, wx - wr, wy - wr, wr * 2, wr * 2);
         ctx.restore();
         ctx.strokeStyle = '#141019';
-        ctx.lineWidth = Math.max(2, stationR * 0.04);
+        ctx.lineWidth = Math.max(2, shipR * 0.04);
         ctx.beginPath();
         ctx.arc(wx, wy, wr, 0, 6.283);
         ctx.stroke();
@@ -1820,15 +1849,18 @@ function drawHazardsOnBug(
     }
   }
 
-  // The sock envelop: a giant Socko drops over the bug (phase 0 to 0.5),
-  // swallows it whole, and yanks away (0.5 to 1). The teleport happens at
-  // the midpoint, hidden inside the sock, which is the whole trick.
+  // The sock envelop, TUBE FIRST (Bryan's fix: "it should come at you with
+  // the tube side... it just makes more sense to get swallowed by the open
+  // side of the sock"). The sock descends opening-down like a grabbing bag:
+  // dark mouth at the bottom rim, red cuff ring, the toe curling up top,
+  // slanty eyes delighted with themselves. Drops over phase 0 to 0.5
+  // (teleport fires at the midpoint, hidden inside), lifts away 0.5 to 1.
   if (hz.sockT !== null) {
     const t = hz.sockT;
     const drop = t < 0.5 ? t / 0.5 : 1;
     const lift = t > 0.5 ? (t - 0.5) / 0.5 : 0;
-    const sy = y - 160 + drop * 160 - lift * 320;
-    const squash = 1 + Math.sin(Math.min(drop, 1) * Math.PI) * 0.15;
+    const sy = y - 170 + drop * 170 - lift * 330;
+    const squash = 1 + Math.sin(Math.min(drop, 1) * Math.PI) * 0.12;
     ctx.save();
     ctx.translate(x, sy);
     ctx.scale(2.6 * squash, 2.6 / squash);
@@ -1836,29 +1868,39 @@ function drawHazardsOnBug(
     ctx.lineCap = 'round';
     ctx.strokeStyle = '#141019';
     ctx.lineWidth = 3.5;
+    // The tube, hanging opening-down; the toe bends away up top.
     ctx.beginPath();
-    ctx.moveTo(-8, -22);
-    ctx.lineTo(8, -22);
-    ctx.lineTo(8, 2);
-    ctx.quadraticCurveTo(9, 12, 20, 13);
-    ctx.quadraticCurveTo(26, 13.5, 25, 19);
-    ctx.quadraticCurveTo(24, 24, 16, 24);
-    ctx.lineTo(-4, 24);
-    ctx.quadraticCurveTo(-9, 24, -8, 14);
+    ctx.moveTo(-11, 18); // opening rim, left
+    ctx.lineTo(-11, -14); // tube left wall
+    ctx.quadraticCurveTo(-11, -24, -2, -26); // shoulder
+    ctx.quadraticCurveTo(10, -28, 16, -22); // toe curling right
+    ctx.quadraticCurveTo(20, -17, 14, -13); // toe underside
+    ctx.quadraticCurveTo(11, -11, 11, -2); // back to tube right wall
+    ctx.lineTo(11, 18); // opening rim, right
     ctx.closePath();
-    ctx.fillStyle = '#f1ead8';
+    ctx.fillStyle = '#f2f5fb';
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = '#e3123a';
-    ctx.fillRect(-8, -22, 16, 6);
-    ctx.strokeRect(-8, -22, 16, 6);
-    // The slanty eyes, delighted with itself.
+    // THE MOUTH: the dark open end coming at you.
+    ctx.beginPath();
+    ctx.ellipse(0, 18, 11, 4.5, 0, 0, 6.283);
+    ctx.fillStyle = '#171019';
+    ctx.fill();
+    ctx.stroke();
+    // Red cuff ring around the opening.
+    ctx.beginPath();
+    ctx.ellipse(0, 15.5, 11.5, 4, 0, 0, 6.283);
+    ctx.strokeStyle = '#e3123a';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // The slanty eyes on the tube, delighted with itself.
+    ctx.strokeStyle = '#141019';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(-6, -10);
-    ctx.lineTo(1, -6.5);
-    ctx.moveTo(8, -12);
-    ctx.lineTo(1.5, -8);
+    ctx.moveTo(-7, -6);
+    ctx.lineTo(0, -2.5);
+    ctx.moveTo(9, -8);
+    ctx.lineTo(1.5, -4);
     ctx.stroke();
     ctx.restore();
   }

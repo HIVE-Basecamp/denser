@@ -8,8 +8,9 @@
  * gets. Twenty-one helmets are hidden around the world; every one collected
  * compiles into the same suit, the bubble around the bug grows a little, and
  * every jump gets more oxygen: fuel is multiplied by `o2Multiplier(count)`.
- * With all 21 the bug breathes three and a half rings' worth, which is what
- * it takes to reach the Mighty J SON's keep at the edge of the world.
+ * TWO helmets buy the crossing to Emperor J SON's keep (Bryan's order: the
+ * fortress should be visitable, not the easiest path but possible); the
+ * full 21 remain the completionist's ladder and buy the deep void.
  *
  * Why 21: one helmet for each consensus witness. The keepers of the chain
  * left their spare air out there for whoever bothers to explore.
@@ -76,8 +77,11 @@ const VOID_HELMETS: readonly (readonly [number, number])[] = [
   [-4700, 3500], // south-west sea
   [5600, -1400], // the launch gap
   [4200, 3300], // off the records shelf
-  [6500, 5000], // breadcrumb one, toward the keep
-  [7400, 5650] // breadcrumb two, nearly there
+  // Breadcrumbs toward the keep's NEW approach (north-east since Bryan's
+  // grid order): one mid-gap between the mainland and the approach rail,
+  // one along the rail itself, pointing the way in.
+  [4560, -4620], // breadcrumb one, in the crossing gap
+  [5400, -5700] // breadcrumb two, along the approach rail
 ];
 
 export function createHelmets(): HelmetState {

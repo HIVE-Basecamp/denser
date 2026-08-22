@@ -217,6 +217,9 @@ export function drawIcon(
     case 'rosewindow':
       drawRoseWindow(ctx, x, y, s * 2.2, time);
       break;
+    case 'shuttle':
+      drawShuttle(ctx, x, y, s * 2.2, col, time);
+      break;
     case 'spaceship': {
       // Small rocket in flight.
       ctx.beginPath();
@@ -1710,12 +1713,11 @@ function drawJsonBoss(
 }
 
 /**
- * MOUNT SOCKO: an ominous mountain that is, on a second look, a giant sock.
- * The ankle rises as the peak, the foot rolls out as a ridge, snow caps the
- * cuff and two slanted lights burn near the summit like the eyes of every
- * little Socko that ever posted somebody here. This is where an enveloped
- * bug gets flash-taken; a landmark visible from the pulled-out map so the
- * displaced can at least see where they ended up.
+ * MOUNT SOCKO, second design, to Bryan's spec: a WHITE sock volcano with
+ * the TOE as the summit crater, zigzag stripes down the tube, and two
+ * mischievous puppet eyes. Ominous but still laundry. It floats on its own
+ * isle in the north-east void (U-7), where enveloped bugs get posted; the
+ * toll is the long ride home.
  */
 function drawSockMount(
   ctx: CanvasRenderingContext2D,
@@ -1729,79 +1731,110 @@ function drawSockMount(
   ctx.translate(x, y);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  // A faint cold mist pooling around the base.
+  // Cold mist pooling around the isle.
   const mist = ctx.createRadialGradient(0, R * 0.7, R * 0.2, 0, R * 0.7, R * 1.9);
-  mist.addColorStop(0, 'rgba(120, 130, 180, 0.18)');
-  mist.addColorStop(1, 'rgba(120, 130, 180, 0)');
+  mist.addColorStop(0, 'rgba(150, 140, 190, 0.2)');
+  mist.addColorStop(1, 'rgba(150, 140, 190, 0)');
   ctx.fillStyle = mist;
   ctx.beginPath();
   ctx.arc(0, R * 0.7, R * 1.9, 0, 6.283);
   ctx.fill();
-  // The mountain-sock: cuff peak, ankle slope, the toe ridge rolling out.
+  // THE SOCK, toe up: a wide cuff planted at the base, the tube rising and
+  // leaning, the heel bulging on the right, and the rounded TOE as the
+  // volcano's summit.
   ctx.beginPath();
-  ctx.moveTo(-R * 0.55, -R * 1.55); // cuff, left
-  ctx.lineTo(R * 0.1, -R * 1.62); // cuff, right
-  ctx.lineTo(R * 0.32, -R * 0.6); // ankle, front
-  ctx.quadraticCurveTo(R * 0.5, R * 0.1, R * 1.15, R * 0.28); // instep out to the toe
-  ctx.quadraticCurveTo(R * 1.62, R * 0.42, R * 1.5, R * 0.85); // toe rounding down
-  ctx.lineTo(-R * 1.35, R * 0.85); // base
+  ctx.moveTo(-R * 0.95, R * 0.95); // cuff, left foot of the mountain
+  ctx.lineTo(-R * 0.55, -R * 0.5); // tube, left slope
+  ctx.quadraticCurveTo(-R * 0.45, -R * 1.15, -R * 0.05, -R * 1.42); // shoulder to toe
+  ctx.quadraticCurveTo(R * 0.4, -R * 1.55, R * 0.52, -R * 1.1); // the TOE, rounded summit
+  ctx.quadraticCurveTo(R * 0.58, -R * 0.7, R * 0.42, -R * 0.35); // down the instep
+  ctx.quadraticCurveTo(R * 0.75, -R * 0.1, R * 0.8, R * 0.3); // the heel bulge
+  ctx.quadraticCurveTo(R * 0.85, R * 0.7, R * 0.95, R * 0.95); // heel to base
   ctx.closePath();
-  ctx.fillStyle = '#2c2137';
+  ctx.fillStyle = '#f2f5fb';
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
   ctx.lineWidth = lw;
   ctx.stroke();
-  // Rock facets, so it reads as stone before it reads as laundry.
-  ctx.strokeStyle = '#4a3a5e';
-  ctx.lineWidth = lw * 0.6;
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.3, -R * 1.1);
-  ctx.lineTo(-R * 0.05, -R * 0.4);
-  ctx.lineTo(-R * 0.5, R * 0.3);
-  ctx.moveTo(R * 0.25, -R * 0.5);
-  ctx.lineTo(R * 0.7, R * 0.2);
-  ctx.moveTo(R * 0.9, R * 0.35);
-  ctx.lineTo(R * 1.2, R * 0.6);
-  ctx.stroke();
-  // The snow cap IS the sock's cuff: white ribbing over the summit.
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.55, -R * 1.55);
-  ctx.lineTo(R * 0.1, -R * 1.62);
-  ctx.lineTo(R * 0.2, -R * 1.15);
-  ctx.quadraticCurveTo(-R * 0.2, -R * 1.0, -R * 0.48, -R * 1.18);
-  ctx.closePath();
-  ctx.fillStyle = '#eef2fa';
-  ctx.fill();
-  ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw * 0.8;
-  ctx.stroke();
-  for (let k = 0; k < 4; k++) {
+  // ZIGZAG STRIPES across the tube, following the lean.
+  ctx.save();
+  ctx.clip();
+  for (let s = 0; s < 3; s++) {
+    const sy = R * (0.55 - s * 0.55);
     ctx.beginPath();
-    ctx.moveTo(-R * (0.42 - k * 0.16), -R * 1.5);
-    ctx.lineTo(-R * (0.38 - k * 0.16), -R * 1.16);
-    ctx.strokeStyle = '#c9d4e8';
-    ctx.lineWidth = lw * 0.4;
+    ctx.moveTo(-R * 1.1, sy);
+    for (let k = 0; k <= 8; k++) {
+      const zx = -R * 1.1 + (k * R * 2.2) / 8;
+      const zy = sy + (k % 2 === 0 ? 0 : -R * 0.14) - s * R * 0.05;
+      ctx.lineTo(zx, zy);
+    }
+    ctx.strokeStyle = s % 2 === 0 ? '#e3123a' : '#5CA8FF';
+    ctx.lineWidth = R * 0.11;
     ctx.stroke();
   }
-  // A darned heel patch on the ridge: unmistakably a sock, unmistakably huge.
+  // The TOE CRATER: a dark mouth at the summit with a lava glow breathing
+  // inside; it is a volcano, after all.
+  const glow = 0.5 + Math.sin(time * 1.7) * 0.5;
   ctx.beginPath();
-  ctx.ellipse(R * 0.62, R * 0.5, R * 0.22, R * 0.16, -0.3, 0, 6.283);
-  ctx.fillStyle = '#3e3050';
+  ctx.ellipse(R * 0.22, -R * 1.32, R * 0.3, R * 0.13, -0.2, 0, 6.283);
+  ctx.fillStyle = '#1a0a10';
   ctx.fill();
-  ctx.strokeStyle = '#4a3a5e';
-  ctx.lineWidth = lw * 0.5;
-  ctx.setLineDash([lw, lw]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  // The slanty summit lights, breathing with mischief.
-  const glow = 0.55 + Math.sin(time * 2.3) * 0.45;
-  ctx.strokeStyle = `rgba(255, 214, 74, ${(0.4 + glow * 0.6).toFixed(3)})`;
-  ctx.lineWidth = lw * 0.9;
   ctx.beginPath();
-  ctx.moveTo(-R * 0.28, -R * 0.86);
-  ctx.lineTo(-R * 0.08, -R * 0.74);
-  ctx.moveTo(R * 0.14, -R * 0.9);
-  ctx.lineTo(-R * 0.04, -R * 0.78);
+  ctx.ellipse(R * 0.22, -R * 1.3, R * 0.2, R * 0.08, -0.2, 0, 6.283);
+  ctx.fillStyle = `rgba(255, 90, 30, ${(0.45 + glow * 0.55).toFixed(3)})`;
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw * 0.8;
+  ctx.beginPath();
+  ctx.ellipse(R * 0.22, -R * 1.32, R * 0.3, R * 0.13, -0.2, 0, 6.283);
+  ctx.stroke();
+  // Wisps of sock-steam curling off the crater.
+  ctx.strokeStyle = 'rgba(220, 225, 240, 0.55)';
+  ctx.lineWidth = lw * 0.6;
+  for (let k = 0; k < 2; k++) {
+    const drift = Math.sin(time * 0.9 + k * 2.2) * R * 0.08;
+    ctx.beginPath();
+    ctx.moveTo(R * (0.12 + k * 0.2), -R * 1.42);
+    ctx.quadraticCurveTo(
+      R * (0.05 + k * 0.25) + drift,
+      -R * 1.75,
+      R * (0.18 + k * 0.22) + drift,
+      -R * (1.95 + k * 0.12)
+    );
+    ctx.stroke();
+  }
+  // MISCHIEVOUS PUPPET EYES on the tube: wide white eyes with slanted lids
+  // and darting pupils. It is a puppet; it is watching; it is delighted.
+  const dart = Math.sin(time * 0.8) * R * 0.03;
+  for (const [ex, ey] of [
+    [-R * 0.18, -R * 0.55],
+    [R * 0.18, -R * 0.6]
+  ] as const) {
+    ctx.beginPath();
+    ctx.arc(ex, ey, R * 0.13, 0, 6.283);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.7;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ex + dart, ey + R * 0.03, R * 0.055, 0, 6.283);
+    ctx.fillStyle = STICKER_OUTLINE;
+    ctx.fill();
+    // The slanted lid: half the eye hooded, pure mischief.
+    ctx.beginPath();
+    ctx.moveTo(ex - R * 0.14, ey - R * 0.11);
+    ctx.lineTo(ex + R * 0.14, ey - R * 0.02);
+    ctx.lineWidth = lw * 0.8;
+    ctx.stroke();
+  }
+  // A crooked stitched grin under the eyes.
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.15, -R * 0.28);
+  ctx.quadraticCurveTo(R * 0.05, -R * 0.18, R * 0.25, -R * 0.32);
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw * 0.7;
   ctx.stroke();
   ctx.restore();
 }
@@ -2034,6 +2067,108 @@ export function drawIslandChip(
     ctx.arc((k - 0.5) * s * 0.5, py, Math.max(1.5, s * 0.07), 0, 6.283);
     ctx.fill();
   }
+  ctx.restore();
+}
+
+/**
+ * Window slots on the hive_dapps SHUTTLE, in ship-radius units, shared with
+ * the renderer exactly like DAPP_WINDOWS: the icon draws the holes, the
+ * renderer fills them with real dApp logos once their avatars load.
+ */
+export const SHUTTLE_WINDOWS: readonly { dx: number; dy: number; r: number }[] = [
+  { dx: -0.45, dy: -0.1, r: 0.24 },
+  { dx: 0.1, dy: -0.1, r: 0.24 },
+  { dx: 0.62, dy: -0.1, r: 0.2 }
+];
+
+/**
+ * THE SHUTTLE: hive_dapps' own little ship, sibling to the round station
+ * but its own silhouette: a horizontal ferry-bus hull with a raked nose,
+ * a tail fin, three round windows (real logos once loaded), and a pulsing
+ * twin-engine wash. Bryan's order: hive_dapps deserves its own craft, not
+ * a hand-me-down rocket doodle.
+ */
+function drawShuttle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  R: number,
+  col: string,
+  time: number
+): void {
+  const lw = Math.max(3.5, R * 0.06);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  // Hull: a chunky bus with a raked nose to the right.
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.95, -R * 0.34);
+  ctx.lineTo(R * 0.55, -R * 0.34);
+  ctx.quadraticCurveTo(R * 1.05, -R * 0.28, R * 1.1, R * 0.05);
+  ctx.quadraticCurveTo(R * 1.05, R * 0.34, R * 0.6, R * 0.34);
+  ctx.lineTo(-R * 0.95, R * 0.34);
+  ctx.quadraticCurveTo(-R * 1.1, 0, -R * 0.95, -R * 0.34);
+  ctx.closePath();
+  ctx.fillStyle = '#e9eef8';
+  ctx.fill();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  // Tail fin.
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.75, -R * 0.3);
+  ctx.lineTo(-R * 0.95, -R * 0.85);
+  ctx.lineTo(-R * 0.55, -R * 0.34);
+  ctx.closePath();
+  ctx.fillStyle = '#e3123a';
+  ctx.fill();
+  ctx.stroke();
+  // Belly band in the landmark's category colour.
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.95, R * 0.12);
+  ctx.lineTo(R * 1.02, R * 0.12);
+  ctx.lineTo(R * 1.0, R * 0.34);
+  ctx.lineTo(-R * 0.95, R * 0.34);
+  ctx.closePath();
+  ctx.fillStyle = col;
+  ctx.globalAlpha = 0.85;
+  ctx.fill();
+  ctx.restore();
+  // The windows: renderer paints real logos into these slots; coloured
+  // glass with a slow chase until then.
+  const PORT = ['#5BE39C', '#FFC24D', '#B79CFF'];
+  for (let k = 0; k < SHUTTLE_WINDOWS.length; k++) {
+    const w = SHUTTLE_WINDOWS[k];
+    const lit = Math.floor(time * 1.2) % SHUTTLE_WINDOWS.length === k;
+    ctx.beginPath();
+    ctx.arc(w.dx * R, w.dy * R, w.r * R, 0, 6.283);
+    ctx.fillStyle = PORT[k];
+    ctx.globalAlpha = lit ? 1 : 0.7;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = lw * 0.7;
+    ctx.stroke();
+  }
+  // Cockpit glass on the nose.
+  ctx.beginPath();
+  ctx.arc(R * 0.92, -R * 0.02, R * 0.14, 0, 6.283);
+  ctx.fillStyle = 'rgba(155, 232, 255, 0.5)';
+  ctx.fill();
+  ctx.stroke();
+  // Twin engine wash off the tail, pulsing.
+  const f = 0.5 + Math.sin(time * 6) * 0.5;
+  ctx.fillStyle = '#FFC24D';
+  for (const ey of [-R * 0.16, R * 0.18]) {
+    ctx.globalAlpha = 0.35 + f * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(-R * 1.02, ey - R * 0.08);
+    ctx.quadraticCurveTo(-R * (1.3 + f * 0.2), ey, -R * 1.02, ey + R * 0.08);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
   ctx.restore();
 }
 

@@ -99,19 +99,33 @@ export const CLUSTERS: readonly Cluster[] = [
   // (4620, 4520), where the measured gap was 1.2-1.36x the max hop and the
   // cluster was therefore stranded despite being labelled hoppable.
   { id: 'records', x: 4130, y: 4030, link: 'hop', satellites: [] },
-  // Launch: pulled in from (7480, -1400), where the gap measured 1.85-1.99x
-  // the max hop and the cluster was a wall. Pass seven removes every
-  // uncrossable gap in the world, so this is now a short hop like the others.
-  { id: 'launch', x: 6220, y: -1400, link: 'hop', satellites: [[300, 450]] },
+  // Launch: pulled in again (6220 to 5850) when the two dApp ships moved to
+  // the southern shipyard and took their gap-bridging spoke nodes with
+  // them, which had silently stranded this cluster at 0.9-1.5x the max hop.
+  { id: 'launch', x: 5850, y: -1400, link: 'hop', satellites: [[300, 450], [140, 440]] },
   // The gateway: a DOOR should feel connected, not stranded, so it is tied on
   // by a rail trail now. It was a hop, and it read as debris.
   { id: 'gateway', x: -7130, y: -600, link: 'trail', satellites: [[60, 430], [300, 430]] },
 
-  /* ---- THE MIGHTY J SON'S KEEP: the villain's home at the world's edge ---- */
-  // Placed so its gap measures well past one bare drift ring: nobody reaches
-  // it without oxygen helmets. Move it by editing this one line; the gap is
-  // measured and reported by the world stats, never assumed.
-  { id: 'json_keep', x: 7600, y: 5600, link: 'hop', satellites: [[150, 470]] },
+  /* ---- EMPEROR J SON'S KEEP: the villain's home at the world's edge ---- */
+  // Moved to the NORTH-EAST (Bryan's grid order: W-4) and made VISITABLE:
+  // one long approach rail hangs off the hub toward the east blade, ending
+  // at a satellite whose gap to the mainland measures ~1.23x a bare hop, so
+  // TWO helmets buy the crossing. Not the easiest path, but a possible one,
+  // exactly as ordered. The gap is measured by the world stats, never
+  // assumed.
+  // The approach rail ends ~1030px from Mount Socko's node: TWO helmets buy
+  // the crossing, and the sock volcano is the launch point to the Emperor
+  // (get socked north, and you are standing at his gateway).
+  { id: 'json_keep', x: 6650, y: -6650, link: 'hop', satellites: [[150, 470], [215, 1400]] },
+  // MOUNT SOCKO'S ISLE: U-7 is open void, so the sock volcano floats on its
+  // own island, tied on by a rail trail. The sock-trip toll is the long
+  // ride home.
+  { id: 'socko_isle', x: 5250, y: -4550, link: 'trail', satellites: [[330, 430]] },
+  // THE SOUTH BAYS: new void moorings for Bryan's box orders. 'rose' holds
+  // the Rose Window at I-23; 'shipyard' holds both dApp ships at Q-23/T-23.
+  { id: 'rose', x: -3150, y: 6350, link: 'trail', satellites: [[200, 450]] },
+  { id: 'shipyard', x: 3500, y: 6650, link: 'trail', satellites: [[270, 430]] },
 
   /* ---- decentralised offshoots: little stars trailing off into space ---- */
   // These hold no landmarks. They exist so the world does not simply stop at
@@ -153,6 +167,7 @@ export type IconKey =
   | 'jsonboss'
   | 'sockmount'
   | 'rosewindow'
+  | 'shuttle'
   | 'pulse'
   | 'gate';
 
@@ -189,11 +204,11 @@ export interface Landmark {
 export const LANDMARKS: readonly Landmark[] = [
   /* ---- THE DIAMOND (west landmass): newcomer country and the daily tools ---- */
   // BIG FIVE. Move the Basecamp tent by editing this one pair of coordinates.
-  { id: 'basecamp', kind: 'internal', path: '/basecamp', labelKey: 'navigation.main_nav_bar.basecamp', category: 'social', icon: 'tent', place: { in: 'body', x: -1700, y: 0 }, big: true },
+  { id: 'basecamp', kind: 'internal', path: '/basecamp', labelKey: 'navigation.main_nav_bar.basecamp', category: 'social', icon: 'tent', place: { in: 'body', x: -3150, y: -2450 }, big: true },
   // BIG FIVE. The Arcade now stands inland among the posts, on the way to
   // things, instead of hanging off the far eastern rim. Move it by editing
   // this one pair of coordinates.
-  { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'body', x: -2650, y: 1150 }, big: true },
+  { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'body', x: 2050, y: -100 }, big: true },
   { id: 'write_post', kind: 'internal', path: '/submit.html', labelKey: 'hive_frontend_universe.landmarks.write_post', category: 'tool', icon: 'quill', place: { in: 'body', x: -1150, y: -900 } },
   { id: 'search', kind: 'internal', path: '/search', labelKey: 'hive_frontend_universe.landmarks.search', category: 'tool', icon: 'magnifier', place: { in: 'body', x: -2900, y: -1300 } },
   { id: 'wallet', kind: 'wallet', path: '/', labelKey: 'hive_frontend_universe.landmarks.wallet', category: 'tool', icon: 'wallet', place: { in: 'body', x: -1500, y: 1500 } },
@@ -204,14 +219,14 @@ export const LANDMARKS: readonly Landmark[] = [
 
   /* ---- THE CENTRE BLADE: governance country ---- */
   // BIG FIVE. Move the ferris wheel by editing this one pair of coordinates.
-  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'body', x: 700, y: -2600 }, big: true },
+  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'body', x: -750, y: -4800 }, big: true },
   // BIG FIVE. Move the witness towers by editing this one pair of coordinates.
-  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'body', x: 650, y: 2750 }, big: true },
+  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'body', x: 2400, y: -4800 }, big: true },
   { id: 'healthchecker', kind: 'internal', path: '/healthchecker', labelKey: 'hive_frontend_universe.landmarks.healthchecker', category: 'tool', icon: 'pulse', place: { in: 'body', x: 1600, y: 1350 } },
 
   /* ---- THE EAST BLADE: the deep end ---- */
   // BIG FIVE. Move the black hole by editing this one pair of coordinates.
-  { id: 'developer_portal', kind: 'external', path: 'https://developers.hive.io', labelKey: 'navigation.sidebar.developer_portal', category: 'info', icon: 'blackhole', place: { in: 'body', x: 4500, y: -1300 }, big: true },
+  { id: 'developer_portal', kind: 'external', path: 'https://developers.hive.io', labelKey: 'navigation.sidebar.developer_portal', category: 'info', icon: 'blackhole', place: { in: 'body', x: -400, y: -2000 }, big: true },
   { id: 'block_explorer', kind: 'explorer', path: '/', labelKey: 'navigation.explore_nav.blockexplorer', category: 'tool', icon: 'blocks', place: { in: 'body', x: 4820, y: 830 } },
   { id: 'faq', kind: 'internal', path: '/faq.html', labelKey: 'navigation.sidebar.faq', category: 'info', icon: 'docq', place: { in: 'body', x: 3100, y: 3800 } },
 
@@ -223,8 +238,8 @@ export const LANDMARKS: readonly Landmark[] = [
   { id: 'privacy', kind: 'internal', path: '/privacy.html', labelKey: 'navigation.sidebar.privacy_policy', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'records', angleDeg: 55, dist: 470 } },
   { id: 'terms', kind: 'internal', path: '/tos.html', labelKey: 'navigation.sidebar.terms_of_service', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'records', angleDeg: 235, dist: 470 } },
   // Launch (walled off for now).
-  { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'launch', angleDeg: 60, dist: 700 }, big: true },
-  { id: 'hive_dapps', kind: 'external', path: 'https://hivedapps.com/', labelKey: 'navigation.explore_nav.hive_dapps', category: 'dapp', icon: 'spaceship', place: { in: 'cluster', cluster: 'launch', angleDeg: 180, dist: 470 } },
+  { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 0, dist: 1050 }, big: true },
+  { id: 'hive_dapps', kind: 'external', path: 'https://hivedapps.com/', labelKey: 'navigation.explore_nav.hive_dapps', category: 'dapp', icon: 'shuttle', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 180, dist: 1050 }, big: true },
   // The gateway (walled off): a lone door in the dark.
   { id: 'sign_up', kind: 'external', path: 'https://signup.hive.io/', labelKey: 'navigation.main_nav_bar.sign_up', category: 'social', icon: 'door', place: { in: 'cluster', cluster: 'gateway', angleDeg: 180, dist: 500 } },
   // THE MIGHTY J SON himself, crouched on his keep at the edge of the world.
@@ -234,13 +249,13 @@ export const LANDMARKS: readonly Landmark[] = [
   // Mount Socko stands on the very NORTH TIP of the logo: a sock-shaped
   // mountain, visible from the pulled-out map, where a Socko-enveloped bug is
   // flash-taken. Pure lore, no page behind it; the trip itself is the toll.
-  { id: 'mount_socko', kind: 'none', path: '', labelKey: 'hive_frontend_universe.landmarks.mount_socko', category: 'info', icon: 'sockmount', place: { in: 'body', x: -1130, y: -4950 }, big: true },
+  { id: 'mount_socko', kind: 'none', path: '', labelKey: 'hive_frontend_universe.landmarks.mount_socko', category: 'info', icon: 'sockmount', place: { in: 'cluster', cluster: 'socko_isle', angleDeg: 90, dist: 300 }, big: true },
   // THE ROSE WINDOW: the link cathedral, standing on the southern bridge of
   // the wider channel (the widest strait cell, dead center of the map). A
   // stained-glass wheel that rounds up the headline hive.blog actions in
   // one place; its panel lists them, its oculus opens the home page. The
   // ferris wheel's twin: one hot wheel for play, one cool wheel for use.
-  { id: 'rose_window', kind: 'internal', path: '/', labelKey: 'hive_frontend_universe.landmarks.rose_window', category: 'social', icon: 'rosewindow', place: { in: 'body', x: -536, y: 2127 }, big: true }
+  { id: 'rose_window', kind: 'internal', path: '/', labelKey: 'hive_frontend_universe.landmarks.rose_window', category: 'social', icon: 'rosewindow', place: { in: 'cluster', cluster: 'rose', angleDeg: 270, dist: 300 }, big: true }
 ];
 
 /**
@@ -256,7 +271,7 @@ export const DAPP_DIRECTORY: readonly { name: string; url: string; account?: str
   { name: '3Speak', url: 'https://3speak.tv', account: 'threespeak' },
   { name: 'Actifit', url: 'https://actifit.io', account: 'actifit' },
   { name: 'TribalDex', url: 'https://tribaldex.com' },
-  { name: 'Hive.io', url: 'https://hive.io' }
+  { name: 'Hive.io', url: 'https://hive.io', account: 'hiveio' }
 ];
 
 /**
@@ -329,8 +344,8 @@ export const TROLL_HOLES: readonly TrollHole[] = [
   { id: 'hole_centre', x: 150, y: -3700 },
   { id: 'hole_south', x: 1040, y: 2130 },
   { id: 'hole_east', x: 4000, y: 2260 },
-  // The keep itself: the final mouth, off the land entirely.
-  { id: 'json_keep', x: 7600, y: 5600 }
+  // The keep itself: the final mouth, off the land entirely (now NE, W-4).
+  { id: 'json_keep', x: 6650, y: -6650 }
 ];
 
 /* --------------------------- the witness ring --------------------------- */
@@ -371,11 +386,38 @@ export function witnessPosts(count: number): WitnessPost[] {
     const deg = WITNESS_RING.startDeg - (i / count) * 360;
     const rad = (deg * Math.PI) / 180;
     const push = i % 2 === 0 ? WITNESS_RING.stagger : -WITNESS_RING.stagger;
-    return {
-      slot: i,
-      x: Math.cos(rad) * (WITNESS_RING.rx + push),
-      y: -Math.sin(rad) * (WITNESS_RING.ry + push)
+    let x = Math.cos(rad) * (WITNESS_RING.rx + push);
+    let y = -Math.sin(rad) * (WITNESS_RING.ry + push);
+    // NO ENCROACHMENT (Bryan's grid order): no citadel may touch the red
+    // logo. The tower rises from its base toward -y, so the whole drawn
+    // column is tested against the land with a margin, and any offender is
+    // walked outward along its own ray until clear. Rank-agnostic: the fix
+    // holds however the live vote order shuffles the towers.
+    const towerH = 1680 - i * 22;
+    const len = Math.hypot(x, y) || 1;
+    const ux = x / len;
+    const uy = y / len;
+    const columnTouchesLand = (): boolean => {
+      for (const t of [0, 0.3, 0.6, 0.9]) {
+        const cxp = x;
+        const cyp = y - towerH * t;
+        if (
+          insideBody(cxp, cyp) ||
+          insideBody(cxp - 180, cyp) ||
+          insideBody(cxp + 180, cyp) ||
+          insideBody(cxp, cyp + 180)
+        ) {
+          return true;
+        }
+      }
+      return false;
     };
+    let guard = 0;
+    while (guard++ < 30 && columnTouchesLand()) {
+      x += ux * 90;
+      y += uy * 90;
+    }
+    return { slot: i, x, y };
   });
 }
 
@@ -389,7 +431,8 @@ export function witnessPosts(count: number): WitnessPost[] {
  */
 /**
  * THE STEEM RUINS: the old chain, drawn as a dead grey district out in the
- * western void, deliberately opposite Emperor J SON's keep in the south-east.
+ * western void, far across the world from Emperor J SON's keep (now in the
+ * north-east at Bryan's order).
  * Environmental storytelling only: no node, no travel, nothing to collect.
  * Hover names it and the click leads to the REAL 2020 fork announcement post
  * (verified alive before this landed), so the one link out of the ruins is
