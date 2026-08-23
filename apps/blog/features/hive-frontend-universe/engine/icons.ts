@@ -2030,15 +2030,15 @@ function drawJsonBoss(
   /* the three necks and heads. */
   interface Head {
     nx0: number; ny0: number; ncx: number; ncy: number; hx: number; hy: number;
-    r0: number; r1: number; s: number; dir: 1 | -1; tone: string; bob: number;
+    r0: number; r1: number; s: number; dir: 1 | -1; tone: string; bob: number; look: number;
   }
   const HEADS: readonly Head[] = [
     // West head, mid height, watching the world.
-    { nx0: R * 0.0, ny0: -R * 0.35, ncx: -R * 0.75, ncy: -R * 0.95, hx: -R * 1.15, hy: -R * 1.6, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: -1, tone: SHADOW, bob: 2.1 },
+    { nx0: R * 0.0, ny0: -R * 0.35, ncx: -R * 0.75, ncy: -R * 0.95, hx: -R * 1.15, hy: -R * 1.6, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: -1, tone: SHADOW, bob: 2.1, look: 2 },
     // East head, lower, eyeing the tribute march below.
-    { nx0: R * 0.6, ny0: -R * 0.3, ncx: R * 1.3, ncy: -R * 0.75, hx: R * 1.5, hy: -R * 1.3, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: 1, tone: HI, bob: 4.4 },
+    { nx0: R * 0.6, ny0: -R * 0.3, ncx: R * 1.3, ncy: -R * 0.75, hx: R * 1.5, hy: -R * 1.3, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: 1, tone: HI, bob: 4.4, look: 1 },
     // Centre head, highest, the fire-breather. Drawn last, in front.
-    { nx0: R * 0.28, ny0: -R * 0.5, ncx: R * 0.15, ncy: -R * 1.5, hx: -R * 0.1, hy: -R * 2.15, r0: R * 0.26, r1: R * 0.15, s: 1, dir: -1, tone: MID, bob: 0 }
+    { nx0: R * 0.28, ny0: -R * 0.5, ncx: R * 0.15, ncy: -R * 1.5, hx: -R * 0.1, hy: -R * 2.15, r0: R * 0.26, r1: R * 0.15, s: 1, dir: -1, tone: MID, bob: 0, look: 0 }
   ];
   for (const h of HEADS) {
     const bob = Math.sin(time * 0.7 + h.bob) * R * 0.05;
@@ -2109,25 +2109,118 @@ function drawJsonBoss(
       ctx.closePath();
       ctx.fill();
     }
-    // Brow ridge and the burning eye with bloom.
+    // THE FACE OF EMPEROR J SUN, surfacing through the dragon's skull
+    // (Bryan's order: "mix the face and the dragon head"). A hand-drawn
+    // caricature face in the scales - straight black fringe, heavy brows,
+    // hard stare - and each head wears a slightly different version of it:
+    // the west head worried, the east head smirking, the fire-breather
+    // furious. Drawn in local head space, so it turns with the head.
     const glare = 0.6 + Math.sin(time * 2.1 + h.bob) * 0.4;
-    const eb = ctx.createRadialGradient(R * 0.08, -R * 0.14, 0, R * 0.08, -R * 0.14, R * 0.16);
-    eb.addColorStop(0, `rgba(255, 138, 42, ${(0.6 * glare).toFixed(3)})`);
-    eb.addColorStop(1, 'rgba(255, 210, 74, 0)');
+    const eb = ctx.createRadialGradient(R * 0.1, -R * 0.08, 0, R * 0.1, -R * 0.08, R * 0.32);
+    eb.addColorStop(0, `rgba(255, 138, 42, ${(0.35 * glare).toFixed(3)})`);
+    eb.addColorStop(1, 'rgba(255, 138, 42, 0)');
     ctx.fillStyle = eb;
     ctx.beginPath();
-    ctx.arc(R * 0.08, -R * 0.14, R * 0.16, 0, 6.283);
+    ctx.arc(R * 0.1, -R * 0.08, R * 0.32, 0, 6.283);
     ctx.fill();
-    ctx.fillStyle = `rgba(255, 138, 42, ${(0.75 + glare * 0.25).toFixed(3)})`;
+    const fcx = R * 0.1;
+    const fcy = -R * 0.07;
+    const frx = R * 0.2;
+    const fry = R * 0.23;
+    // The face itself, flesh through the teal hide.
     ctx.beginPath();
-    ctx.ellipse(R * 0.08, -R * 0.14, R * 0.085, R * 0.038, 0.15, 0, 6.283);
+    ctx.ellipse(fcx, fcy, frx, fry, 0.05, 0, 6.283);
+    ctx.fillStyle = '#f0c99a';
     ctx.fill();
     ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.6;
-    ctx.beginPath();
-    ctx.moveTo(-R * 0.02, -R * 0.22);
-    ctx.lineTo(R * 0.17, -R * 0.18);
+    ctx.lineWidth = lw * 0.55;
     ctx.stroke();
+    // Straight black hair with a hard fringe cut across the forehead.
+    ctx.beginPath();
+    ctx.moveTo(fcx - frx * 0.98, fcy - fry * 0.05);
+    ctx.quadraticCurveTo(fcx - frx * 0.95, fcy - fry * 1.2, fcx + frx * 0.15, fcy - fry * 1.05);
+    ctx.quadraticCurveTo(fcx + frx * 0.98, fcy - fry * 0.92, fcx + frx * 0.96, fcy - fry * 0.12);
+    ctx.quadraticCurveTo(fcx + frx * 0.55, fcy - fry * 0.52, fcx + frx * 0.18, fcy - fry * 0.44);
+    ctx.quadraticCurveTo(fcx - frx * 0.25, fcy - fry * 0.62, fcx - frx * 0.52, fcy - fry * 0.46);
+    ctx.quadraticCurveTo(fcx - frx * 0.85, fcy - fry * 0.56, fcx - frx * 0.98, fcy - fry * 0.05);
+    ctx.closePath();
+    ctx.fillStyle = '#181218';
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.35;
+    ctx.stroke();
+    // Heavy brows, angled by mood.
+    const eyeL = fcx - frx * 0.42;
+    const eyeR = fcx + frx * 0.42;
+    const eyeY = fcy - fry * 0.02;
+    ctx.strokeStyle = '#181218';
+    ctx.lineWidth = lw * 0.5;
+    ctx.beginPath();
+    if (h.look === 0) {
+      // Furious: a hard V.
+      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.38);
+      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.22);
+      ctx.moveTo(eyeR + frx * 0.24, eyeY - fry * 0.38);
+      ctx.lineTo(eyeR - frx * 0.22, eyeY - fry * 0.22);
+    } else if (h.look === 1) {
+      // Smirking: one brow cocked high.
+      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.28);
+      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.3);
+      ctx.moveTo(eyeR - frx * 0.22, eyeY - fry * 0.3);
+      ctx.lineTo(eyeR + frx * 0.24, eyeY - fry * 0.46);
+    } else {
+      // Worried: inner tips lifted.
+      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.24);
+      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.36);
+      ctx.moveTo(eyeR - frx * 0.22, eyeY - fry * 0.36);
+      ctx.lineTo(eyeR + frx * 0.24, eyeY - fry * 0.24);
+    }
+    ctx.stroke();
+    // Hard little eyes, each with an ember glint.
+    for (const ex of [eyeL, eyeR]) {
+      ctx.beginPath();
+      ctx.ellipse(ex, eyeY, frx * 0.14, fry * 0.08, 0, 0, 6.283);
+      ctx.fillStyle = '#181218';
+      ctx.fill();
+      ctx.fillStyle = `rgba(255, 138, 42, ${(0.5 + glare * 0.5).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(ex + frx * 0.04, eyeY - fry * 0.02, frx * 0.045, 0, 6.283);
+      ctx.fill();
+    }
+    // Nose.
+    ctx.strokeStyle = 'rgba(24, 18, 24, 0.55)';
+    ctx.lineWidth = lw * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(fcx + frx * 0.02, eyeY + fry * 0.12);
+    ctx.quadraticCurveTo(fcx - frx * 0.04, eyeY + fry * 0.3, fcx + frx * 0.06, eyeY + fry * 0.36);
+    ctx.stroke();
+    // Mouth, by mood.
+    ctx.strokeStyle = '#181218';
+    ctx.lineWidth = lw * 0.42;
+    ctx.beginPath();
+    if (h.look === 0) {
+      // Furious: teeth gritted.
+      ctx.moveTo(fcx - frx * 0.3, fcy + fry * 0.56);
+      ctx.quadraticCurveTo(fcx, fcy + fry * 0.64, fcx + frx * 0.3, fcy + fry * 0.56);
+      ctx.stroke();
+      ctx.lineWidth = lw * 0.22;
+      ctx.beginPath();
+      for (const tx of [-0.15, 0, 0.15]) {
+        ctx.moveTo(fcx + frx * tx, fcy + fry * 0.54);
+        ctx.lineTo(fcx + frx * tx, fcy + fry * 0.63);
+      }
+      ctx.stroke();
+    } else if (h.look === 1) {
+      // The smirk, one corner up.
+      ctx.moveTo(fcx - frx * 0.28, fcy + fry * 0.6);
+      ctx.quadraticCurveTo(fcx + frx * 0.1, fcy + fry * 0.68, fcx + frx * 0.32, fcy + fry * 0.46);
+      ctx.stroke();
+    } else {
+      // The worried grimace, corners down.
+      ctx.moveTo(fcx - frx * 0.26, fcy + fry * 0.56);
+      ctx.quadraticCurveTo(fcx, fcy + fry * 0.44, fcx + frx * 0.26, fcy + fry * 0.56);
+      ctx.stroke();
+    }
     // Two solid horns swept back off the crown, tapering to points.
     for (const [ox, len] of [
       [-R * 0.1, R * 0.5],
