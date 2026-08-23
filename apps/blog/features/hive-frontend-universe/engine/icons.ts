@@ -2892,9 +2892,19 @@ const COMB_S = 0.26;
  * comb absorbs new links without redesign (Bryan keeps moving icons in).
  */
 function combSlots(R: number): { x: number; y: number; deg: number }[] {
-  return combSpots(R)
+  const ring2 = combSpots(R)
     .filter((sp) => sp.ring === 2)
     .sort((a, b) => ((a.deg + 90) % 360) - ((b.deg + 90) % 360));
+  // THE GROWTH ROW: four cells built onto the comb's bottom edge, left to
+  // right, the way a real comb extends downward. Panes overflow into these
+  // once the twelve ring slots are full (Bryan keeps moving links in).
+  const d = Math.sqrt(3) * COMB_S * R;
+  const growth = [-1.5, -0.5, 0.5, 1.5].map((gx, i) => ({
+    x: gx * d,
+    y: 2.598 * d,
+    deg: 500 + i * 37
+  }));
+  return [...ring2, ...growth];
 }
 
 /** All eighteen non-centre cell spots of the comb, hex-grid honest. */
@@ -3033,7 +3043,10 @@ export function drawRoseWindow(
     const a = (i / 22) * 6.283;
     const rr =
       R * (1.14 + wob(i % 22) * 0.07 + Math.sin(time * 0.5 + i * 1.7) * 0.015) *
-      (1 - 0.05 * Math.sin(a));
+      // The slab bulges DOWNWARD to back the growth row; the newest cells
+      // still poke past its edge, which is exactly how a comb under
+      // construction looks.
+      (1 + 0.17 * Math.max(0, Math.sin(a)) - 0.05 * Math.sin(a));
     const px = Math.cos(a) * rr;
     const py = Math.sin(a) * rr * 0.97;
     if (i === 0) ctx.moveTo(px, py);
@@ -3182,7 +3195,8 @@ export function drawRoseWindow(
     [R * 0.6, 4.4, R * 0.28]
   ] as const) {
     const stretch = 1 + Math.sin(time * 0.6 + ph) * 0.2;
-    const topY = R * 1.05;
+    // Hangs below the growth row now that the comb built downward.
+    const topY = R * 1.45;
     ctx.beginPath();
     ctx.moveTo(dx - R * 0.06, topY);
     ctx.quadraticCurveTo(dx - R * 0.055, topY + len * stretch * 0.6, dx, topY + len * stretch);
@@ -3207,7 +3221,7 @@ export function drawRoseWindow(
     ctx.globalAlpha = 1 - fall * 0.7;
     ctx.fillStyle = '#ffc44d';
     ctx.beginPath();
-    ctx.ellipse(R * 0.16, R * 1.05 + R * 0.55 + fall * R * 0.7, R * 0.035, R * 0.05, 0, 0, 6.283);
+    ctx.ellipse(R * 0.16, R * 1.45 + R * 0.55 + fall * R * 0.7, R * 0.035, R * 0.05, 0, 0, 6.283);
     ctx.fill();
     ctx.globalAlpha = 1;
   }

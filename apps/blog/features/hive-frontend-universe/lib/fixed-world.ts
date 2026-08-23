@@ -214,36 +214,24 @@ export const LANDMARKS: readonly Landmark[] = [
   // things, instead of hanging off the far eastern rim. Move it by editing
   // this one pair of coordinates.
   { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'cluster', cluster: 'arcade_bay', angleDeg: 90, dist: 250 }, big: true },
-  // ('write_post' left the map too, same order: it lives as the comb's
-  // first pane.)
-  { id: 'search', kind: 'internal', path: '/search', labelKey: 'hive_frontend_universe.landmarks.search', category: 'tool', icon: 'magnifier', place: { in: 'body', x: -2900, y: -1300 } },
-  { id: 'wallet', kind: 'wallet', path: '/', labelKey: 'hive_frontend_universe.landmarks.wallet', category: 'tool', icon: 'wallet', place: { in: 'body', x: -1500, y: 1500 } },
-  // ('posts' and 'communities_gate' left the map at Bryan's order: both
-  // live as panes of the Hive Comb Home now, like the paperwork before
-  // them. The comb is the front door for the everyday links.)
-  { id: 'chat', kind: 'chat', path: '/', labelKey: 'navigation.sidebar.openhive_chat', category: 'social', icon: 'bubble', place: { in: 'body', x: -2600, y: 2200 } },
-  { id: 'welcome', kind: 'internal', path: '/welcome', labelKey: 'navigation.sidebar.welcome', category: 'info', icon: 'flag', place: { in: 'body', x: -3000, y: -2300 } },
+  // EVERY small utility marker left the map at Bryan's order ("give all of
+  // those a space in the comb"): write_post, posts, communities_gate,
+  // search, wallet, chat, welcome, sign_up, faq, healthchecker and
+  // block_explorer all live as Hive Comb Home panes now. The map holds the
+  // ATTRACTIONS; the comb is the front door for the everyday links.
 
   /* ---- THE CENTRE BLADE: governance country ---- */
   // BIG FIVE. Move the ferris wheel by editing this one pair of coordinates.
   { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'cluster', cluster: 'ferris_perch', angleDeg: 90, dist: 200 }, big: true },
   // BIG FIVE. Move the witness towers by editing this one pair of coordinates.
   { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'cluster', cluster: 'witty_perch', angleDeg: 90, dist: 200 }, big: true },
-  { id: 'healthchecker', kind: 'internal', path: '/healthchecker', labelKey: 'hive_frontend_universe.landmarks.healthchecker', category: 'tool', icon: 'pulse', place: { in: 'body', x: 1600, y: 1350 } },
 
   /* ---- THE EAST BLADE: the deep end ---- */
   // BIG FIVE. Move the black hole by editing this one pair of coordinates.
   { id: 'developer_portal', kind: 'external', path: 'https://developers.hive.io', labelKey: 'navigation.sidebar.developer_portal', category: 'info', icon: 'blackhole', place: { in: 'body', x: -400, y: -2000 }, big: true },
-  { id: 'block_explorer', kind: 'explorer', path: '/', labelKey: 'navigation.explore_nav.blockexplorer', category: 'tool', icon: 'blocks', place: { in: 'body', x: 4820, y: 830 } },
-  { id: 'faq', kind: 'internal', path: '/faq.html', labelKey: 'navigation.sidebar.faq', category: 'info', icon: 'docq', place: { in: 'body', x: 3100, y: 3800 } },
 
   /* ---- offshore clusters ---- */
-  // The library (hop-only): what Hive is, in its own words.
-  // Records (hop-only): the minor paperwork, clearly minor.
-  // Launch (walled off for now).
   { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 270, dist: 300 }, big: true },
-  // The gateway (walled off): a lone door in the dark.
-  { id: 'sign_up', kind: 'external', path: 'https://signup.hive.io/', labelKey: 'navigation.main_nav_bar.sign_up', category: 'social', icon: 'door', place: { in: 'cluster', cluster: 'gateway', angleDeg: 180, dist: 500 } },
   // THE MIGHTY J SON himself, crouched on his keep at the edge of the world.
   // His link leads to the block explorer: the one place you can stare at the
   // raw JSON he hoards. BIG, so the silhouette is visible from the far coast.
@@ -491,7 +479,14 @@ export const ROSE_WINDOW_PANES: readonly { labelKey: string; kind: LandmarkKind;
   { labelKey: 'navigation.explore_nav.what_is_hive', kind: 'external', path: 'https://hive.io' },
   { labelKey: 'navigation.sidebar.hive_whitepaper', kind: 'external', path: 'https://hive.io/whitepaper.pdf' },
   { labelKey: 'navigation.sidebar.privacy_policy', kind: 'internal', path: '/privacy.html' },
-  { labelKey: 'navigation.sidebar.terms_of_service', kind: 'internal', path: '/tos.html' }
+  { labelKey: 'navigation.sidebar.terms_of_service', kind: 'internal', path: '/tos.html' },
+  // The last four small markers came in off the map together (Bryan: "give
+  // all of those a space in the comb"). They take the comb's new bottom
+  // growth row, freshly built cells the way real combs grow downward.
+  { labelKey: 'navigation.sidebar.openhive_chat', kind: 'chat', path: '/' },
+  { labelKey: 'navigation.sidebar.welcome', kind: 'internal', path: '/welcome' },
+  { labelKey: 'hive_frontend_universe.landmarks.healthchecker', kind: 'internal', path: '/healthchecker' },
+  { labelKey: 'navigation.explore_nav.blockexplorer', kind: 'explorer', path: '/' }
 ];
 
 /**

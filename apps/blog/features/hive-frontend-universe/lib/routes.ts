@@ -54,13 +54,10 @@ export const NEWB_TRAIL_ID = 'newb-trail';
  * Landmark ids, resolved to their mesh nodes at build time; any that are not
  * body landmarks (and so have no mesh node) are skipped rather than faked.
  */
-const DAPPS_LINE_STOPS = [
-  'search',
-  'wallet',
-  'healthchecker',
-  'block_explorer',
-  'developer_portal'
-] as const;
+// Every utility stop moved into the Hive Comb Home, so the cyan line is an
+// EXPRESS now: Basecamp straight across the straits to the Developer
+// Portal, the two body landmarks left standing.
+const DAPPS_LINE_STOPS = ['basecamp', 'developer_portal'] as const;
 
 export function buildRoutes(world: GameWorld): Route[] {
   const ctx = routeContext(world);
