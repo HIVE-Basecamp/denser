@@ -176,7 +176,9 @@ export const BIG_SIZE: Partial<Record<IconKey, number>> = {
   // win the north-east corner, and the old 165 read as one shard among many.
   jsonboss: 185,
   // 180 since the two dApp ships merged into this one bigger craft.
-  launchpad: 180,
+  // 360: Bryan's order, "make the space ship for our dapps double the
+  // size it is now" (was 180 since the two ships merged into one craft).
+  launchpad: 360,
   sockmount: 145,
   // 185 with the pass-28 honeycomb rebuild: Bryan sized the increase "the
   // outer circle of the map button", which is ~48 screen px; this adds
