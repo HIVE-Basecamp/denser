@@ -2109,118 +2109,263 @@ function drawJsonBoss(
       ctx.closePath();
       ctx.fill();
     }
-    // THE FACE OF EMPEROR J SUN, surfacing through the dragon's skull
-    // (Bryan's order: "mix the face and the dragon head"). A hand-drawn
-    // caricature face in the scales - straight black fringe, heavy brows,
-    // hard stare - and each head wears a slightly different version of it:
-    // the west head worried, the east head smirking, the fire-breather
-    // furious. Drawn in local head space, so it turns with the head.
+    // THE FACE OF EMPEROR J SUN, take two (Bryan: "more realistic like his
+    // face... more a caricature of him"). A proper caricature now, not a
+    // generic cartoon: round full-cheeked face with modeled skin, neat
+    // side-parted black hair, tapered heavy brows, narrow lidded eyes,
+    // cheek contours, and below every chin a white collar and red tie
+    // coming through the scales - the businessman emperor. Three moods:
+    // the fire-breather furious, the east head wearing THE trademark wide
+    // grin, the west head worried.
     const glare = 0.6 + Math.sin(time * 2.1 + h.bob) * 0.4;
-    const eb = ctx.createRadialGradient(R * 0.1, -R * 0.08, 0, R * 0.1, -R * 0.08, R * 0.32);
-    eb.addColorStop(0, `rgba(255, 138, 42, ${(0.35 * glare).toFixed(3)})`);
+    const eb = ctx.createRadialGradient(R * 0.1, -R * 0.06, 0, R * 0.1, -R * 0.06, R * 0.34);
+    eb.addColorStop(0, `rgba(255, 138, 42, ${(0.3 * glare).toFixed(3)})`);
     eb.addColorStop(1, 'rgba(255, 138, 42, 0)');
     ctx.fillStyle = eb;
     ctx.beginPath();
-    ctx.arc(R * 0.1, -R * 0.08, R * 0.32, 0, 6.283);
+    ctx.arc(R * 0.1, -R * 0.06, R * 0.34, 0, 6.283);
     ctx.fill();
     const fcx = R * 0.1;
-    const fcy = -R * 0.07;
-    const frx = R * 0.2;
-    const fry = R * 0.23;
-    // The face itself, flesh through the teal hide.
-    ctx.beginPath();
-    ctx.ellipse(fcx, fcy, frx, fry, 0.05, 0, 6.283);
-    ctx.fillStyle = '#f0c99a';
-    ctx.fill();
-    ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.55;
-    ctx.stroke();
-    // Straight black hair with a hard fringe cut across the forehead.
-    ctx.beginPath();
-    ctx.moveTo(fcx - frx * 0.98, fcy - fry * 0.05);
-    ctx.quadraticCurveTo(fcx - frx * 0.95, fcy - fry * 1.2, fcx + frx * 0.15, fcy - fry * 1.05);
-    ctx.quadraticCurveTo(fcx + frx * 0.98, fcy - fry * 0.92, fcx + frx * 0.96, fcy - fry * 0.12);
-    ctx.quadraticCurveTo(fcx + frx * 0.55, fcy - fry * 0.52, fcx + frx * 0.18, fcy - fry * 0.44);
-    ctx.quadraticCurveTo(fcx - frx * 0.25, fcy - fry * 0.62, fcx - frx * 0.52, fcy - fry * 0.46);
-    ctx.quadraticCurveTo(fcx - frx * 0.85, fcy - fry * 0.56, fcx - frx * 0.98, fcy - fry * 0.05);
-    ctx.closePath();
-    ctx.fillStyle = '#181218';
-    ctx.fill();
+    const fcy = -R * 0.06;
+    const frx = R * 0.23;
+    const fry = R * 0.25;
+    // Ears, tucked behind the face.
+    ctx.fillStyle = '#eec091';
     ctx.strokeStyle = STICKER_OUTLINE;
     ctx.lineWidth = lw * 0.35;
+    for (const es of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(fcx + es * frx * 1.0, fcy + fry * 0.12, frx * 0.13, fry * 0.2, 0, 0, 6.283);
+      ctx.fill();
+      ctx.stroke();
+    }
+    // The face: round crown, FULL cheeks, soft chin - his shape, pushed.
+    const facePath = () => {
+      ctx.beginPath();
+      ctx.moveTo(fcx - frx, fcy - fry * 0.2);
+      ctx.quadraticCurveTo(fcx - frx * 0.92, fcy - fry * 1.06, fcx, fcy - fry);
+      ctx.quadraticCurveTo(fcx + frx * 0.92, fcy - fry * 1.06, fcx + frx, fcy - fry * 0.2);
+      ctx.quadraticCurveTo(fcx + frx * 1.04, fcy + fry * 0.5, fcx + frx * 0.52, fcy + fry * 0.9);
+      ctx.quadraticCurveTo(fcx + frx * 0.2, fcy + fry * 1.08, fcx, fcy + fry * 1.05);
+      ctx.quadraticCurveTo(fcx - frx * 0.2, fcy + fry * 1.08, fcx - frx * 0.52, fcy + fry * 0.9);
+      ctx.quadraticCurveTo(fcx - frx * 1.04, fcy + fry * 0.5, fcx - frx, fcy - fry * 0.2);
+      ctx.closePath();
+    };
+    facePath();
+    const skin = ctx.createRadialGradient(fcx, fcy - fry * 0.15, frx * 0.2, fcx, fcy + fry * 0.15, frx * 1.35);
+    skin.addColorStop(0, '#f9ddb2');
+    skin.addColorStop(0.7, '#f0c99a');
+    skin.addColorStop(1, '#dfa877');
+    ctx.fillStyle = skin;
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.5;
     ctx.stroke();
-    // Heavy brows, angled by mood.
+    // Neat black hair with a SIDE PART, swept across the forehead high and
+    // tight, with a shine arc. His press-photo cut, not a manga fringe.
+    ctx.beginPath();
+    ctx.moveTo(fcx - frx * 1.0, fcy - fry * 0.18);
+    ctx.quadraticCurveTo(fcx - frx * 1.0, fcy - fry * 1.14, fcx - frx * 0.05, fcy - fry * 1.08);
+    ctx.quadraticCurveTo(fcx + frx * 0.95, fcy - fry * 1.12, fcx + frx * 1.0, fcy - fry * 0.3);
+    // Right temple down to the sweep's tip above the right brow...
+    ctx.quadraticCurveTo(fcx + frx * 0.95, fcy - fry * 0.42, fcx + frx * 0.72, fcy - fry * 0.5);
+    // ...then the swept fringe line rising back to the part, high left.
+    ctx.quadraticCurveTo(fcx + frx * 0.15, fcy - fry * 0.68, fcx - frx * 0.28, fcy - fry * 0.62);
+    // The part: a small step, then the short left side hugging the temple.
+    ctx.lineTo(fcx - frx * 0.34, fcy - fry * 0.7);
+    ctx.quadraticCurveTo(fcx - frx * 0.72, fcy - fry * 0.6, fcx - frx * 0.88, fcy - fry * 0.44);
+    ctx.quadraticCurveTo(fcx - frx * 1.0, fcy - fry * 0.34, fcx - frx * 1.0, fcy - fry * 0.18);
+    ctx.closePath();
+    ctx.fillStyle = '#151016';
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.3;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(150, 150, 170, 0.4)';
+    ctx.lineWidth = lw * 0.25;
+    ctx.beginPath();
+    ctx.moveTo(fcx - frx * 0.55, fcy - fry * 0.92);
+    ctx.quadraticCurveTo(fcx, fcy - fry * 1.0, fcx + frx * 0.5, fcy - fry * 0.9);
+    ctx.stroke();
+    // Heavy straight brows: filled tapered strokes, angled by mood.
     const eyeL = fcx - frx * 0.42;
     const eyeR = fcx + frx * 0.42;
-    const eyeY = fcy - fry * 0.02;
-    ctx.strokeStyle = '#181218';
-    ctx.lineWidth = lw * 0.5;
-    ctx.beginPath();
+    const eyeY = fcy - fry * 0.08;
+    ctx.fillStyle = '#151016';
+    const brow = (bx: number, by: number, tilt: number) => {
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.rotate(tilt);
+      ctx.beginPath();
+      ctx.moveTo(-frx * 0.26, 0);
+      ctx.quadraticCurveTo(0, -fry * 0.09, frx * 0.26, -fry * 0.02);
+      ctx.quadraticCurveTo(0, fry * 0.045, -frx * 0.26, fry * 0.045);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
     if (h.look === 0) {
-      // Furious: a hard V.
-      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.38);
-      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.22);
-      ctx.moveTo(eyeR + frx * 0.24, eyeY - fry * 0.38);
-      ctx.lineTo(eyeR - frx * 0.22, eyeY - fry * 0.22);
+      brow(eyeL, eyeY - fry * 0.3, 0.38);
+      brow(eyeR, eyeY - fry * 0.3, -0.38);
     } else if (h.look === 1) {
-      // Smirking: one brow cocked high.
-      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.28);
-      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.3);
-      ctx.moveTo(eyeR - frx * 0.22, eyeY - fry * 0.3);
-      ctx.lineTo(eyeR + frx * 0.24, eyeY - fry * 0.46);
+      brow(eyeL, eyeY - fry * 0.28, 0.06);
+      brow(eyeR, eyeY - fry * 0.4, -0.2);
     } else {
-      // Worried: inner tips lifted.
-      ctx.moveTo(eyeL - frx * 0.24, eyeY - fry * 0.24);
-      ctx.lineTo(eyeL + frx * 0.22, eyeY - fry * 0.36);
-      ctx.moveTo(eyeR - frx * 0.22, eyeY - fry * 0.36);
-      ctx.lineTo(eyeR + frx * 0.24, eyeY - fry * 0.24);
+      brow(eyeL, eyeY - fry * 0.3, -0.22);
+      brow(eyeR, eyeY - fry * 0.3, 0.22);
     }
-    ctx.stroke();
-    // Hard little eyes, each with an ember glint.
-    for (const ex of [eyeL, eyeR]) {
+    // Narrow lidded eyes: lash line, small white, dark iris, catchlight.
+    const squint = h.look === 0 ? 0.55 : h.look === 1 ? 0.75 : 1;
+    for (const [ex, closed] of [
+      [eyeL, h.look === 1 ? 0.7 : 1],
+      [eyeR, 1]
+    ] as const) {
+      const eh = fry * 0.085 * squint * closed;
       ctx.beginPath();
-      ctx.ellipse(ex, eyeY, frx * 0.14, fry * 0.08, 0, 0, 6.283);
-      ctx.fillStyle = '#181218';
+      ctx.ellipse(ex, eyeY, frx * 0.17, eh, 0, 0, 6.283);
+      ctx.fillStyle = '#fdf6ec';
       ctx.fill();
-      ctx.fillStyle = `rgba(255, 138, 42, ${(0.5 + glare * 0.5).toFixed(3)})`;
+      ctx.save();
+      ctx.clip();
+      ctx.fillStyle = '#241812';
       ctx.beginPath();
-      ctx.arc(ex + frx * 0.04, eyeY - fry * 0.02, frx * 0.045, 0, 6.283);
+      ctx.arc(ex + frx * 0.03, eyeY, frx * 0.08, 0, 6.283);
       ctx.fill();
+      ctx.fillStyle = `rgba(255, 150, 60, ${(0.35 + glare * 0.35).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(ex + frx * 0.03, eyeY, frx * 0.035, 0, 6.283);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.beginPath();
+      ctx.arc(ex + frx * 0.06, eyeY - eh * 0.35, frx * 0.02, 0, 6.283);
+      ctx.fill();
+      ctx.restore();
+      // The upper lash line, heavier than the eye itself.
+      ctx.strokeStyle = '#151016';
+      ctx.lineWidth = lw * 0.32;
+      ctx.beginPath();
+      ctx.ellipse(ex, eyeY, frx * 0.17, eh, 0, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.stroke();
+      // A faint lower lid.
+      ctx.strokeStyle = 'rgba(180, 120, 80, 0.5)';
+      ctx.lineWidth = lw * 0.2;
+      ctx.beginPath();
+      ctx.ellipse(ex, eyeY + eh * 0.4, frx * 0.15, eh * 0.6, 0, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
     }
-    // Nose.
-    ctx.strokeStyle = 'rgba(24, 18, 24, 0.55)';
-    ctx.lineWidth = lw * 0.3;
+    // Nose: bridge shadow, rounded tip, one nostril hooked.
+    ctx.strokeStyle = 'rgba(160, 100, 60, 0.55)';
+    ctx.lineWidth = lw * 0.26;
     ctx.beginPath();
-    ctx.moveTo(fcx + frx * 0.02, eyeY + fry * 0.12);
-    ctx.quadraticCurveTo(fcx - frx * 0.04, eyeY + fry * 0.3, fcx + frx * 0.06, eyeY + fry * 0.36);
+    ctx.moveTo(fcx + frx * 0.03, eyeY + fry * 0.14);
+    ctx.quadraticCurveTo(fcx - frx * 0.03, eyeY + fry * 0.34, fcx + frx * 0.02, eyeY + fry * 0.44);
+    ctx.quadraticCurveTo(fcx + frx * 0.1, eyeY + fry * 0.5, fcx + frx * 0.12, eyeY + fry * 0.42);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(fcx - frx * 0.07, eyeY + fry * 0.45, frx * 0.025, 0, 6.283);
+    ctx.fillStyle = 'rgba(120, 70, 40, 0.6)';
+    ctx.fill();
+    // Full-cheek contours: the caricature's roundness, drawn not implied.
+    ctx.strokeStyle = 'rgba(205, 140, 90, 0.4)';
+    ctx.lineWidth = lw * 0.24;
+    ctx.beginPath();
+    ctx.moveTo(fcx - frx * 0.62, fcy + fry * 0.28);
+    ctx.quadraticCurveTo(fcx - frx * 0.5, fcy + fry * 0.52, fcx - frx * 0.26, fcy + fry * 0.6);
+    ctx.moveTo(fcx + frx * 0.62, fcy + fry * 0.28);
+    ctx.quadraticCurveTo(fcx + frx * 0.5, fcy + fry * 0.52, fcx + frx * 0.26, fcy + fry * 0.6);
     ctx.stroke();
     // Mouth, by mood.
-    ctx.strokeStyle = '#181218';
-    ctx.lineWidth = lw * 0.42;
-    ctx.beginPath();
-    if (h.look === 0) {
-      // Furious: teeth gritted.
-      ctx.moveTo(fcx - frx * 0.3, fcy + fry * 0.56);
-      ctx.quadraticCurveTo(fcx, fcy + fry * 0.64, fcx + frx * 0.3, fcy + fry * 0.56);
+    const mouthY = fcy + fry * 0.62;
+    if (h.look === 1) {
+      // THE GRIN: the wide press-photo smile, top teeth on display.
+      ctx.beginPath();
+      ctx.moveTo(fcx - frx * 0.42, mouthY - fry * 0.04);
+      ctx.quadraticCurveTo(fcx, mouthY + fry * 0.34, fcx + frx * 0.42, mouthY - fry * 0.08);
+      ctx.quadraticCurveTo(fcx + frx * 0.2, mouthY + fry * 0.02, fcx - frx * 0.2, mouthY + fry * 0.02);
+      ctx.closePath();
+      ctx.fillStyle = '#5e2020';
+      ctx.fill();
+      ctx.strokeStyle = STICKER_OUTLINE;
+      ctx.lineWidth = lw * 0.3;
       ctx.stroke();
+      // The upper teeth band, bright.
+      ctx.beginPath();
+      ctx.moveTo(fcx - frx * 0.36, mouthY - fry * 0.015);
+      ctx.quadraticCurveTo(fcx, mouthY + fry * 0.17, fcx + frx * 0.36, mouthY - fry * 0.045);
+      ctx.quadraticCurveTo(fcx, mouthY + fry * 0.04, fcx - frx * 0.36, mouthY - fry * 0.015);
+      ctx.closePath();
+      ctx.fillStyle = '#fdfaf2';
+      ctx.fill();
+      // Smile creases bracketing the grin.
+      ctx.strokeStyle = 'rgba(160, 100, 60, 0.5)';
       ctx.lineWidth = lw * 0.22;
       ctx.beginPath();
-      for (const tx of [-0.15, 0, 0.15]) {
-        ctx.moveTo(fcx + frx * tx, fcy + fry * 0.54);
-        ctx.lineTo(fcx + frx * tx, fcy + fry * 0.63);
+      ctx.moveTo(fcx - frx * 0.5, mouthY - fry * 0.14);
+      ctx.quadraticCurveTo(fcx - frx * 0.54, mouthY, fcx - frx * 0.44, mouthY + fry * 0.1);
+      ctx.moveTo(fcx + frx * 0.5, mouthY - fry * 0.18);
+      ctx.quadraticCurveTo(fcx + frx * 0.54, mouthY - fry * 0.04, fcx + frx * 0.44, mouthY + fry * 0.06);
+      ctx.stroke();
+    } else if (h.look === 0) {
+      // Furious: wide gritted teeth, corners hard down.
+      ctx.beginPath();
+      ctx.moveTo(fcx - frx * 0.38, mouthY + fry * 0.06);
+      ctx.quadraticCurveTo(fcx, mouthY - fry * 0.06, fcx + frx * 0.38, mouthY + fry * 0.06);
+      ctx.quadraticCurveTo(fcx, mouthY + fry * 0.22, fcx - frx * 0.38, mouthY + fry * 0.06);
+      ctx.closePath();
+      ctx.fillStyle = '#fdfaf2';
+      ctx.fill();
+      ctx.strokeStyle = STICKER_OUTLINE;
+      ctx.lineWidth = lw * 0.3;
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(24, 18, 24, 0.6)';
+      ctx.lineWidth = lw * 0.16;
+      ctx.beginPath();
+      for (const tx of [-0.22, -0.08, 0.08, 0.22]) {
+        ctx.moveTo(fcx + frx * tx, mouthY - fry * 0.01);
+        ctx.lineTo(fcx + frx * tx, mouthY + fry * 0.12);
       }
       ctx.stroke();
-    } else if (h.look === 1) {
-      // The smirk, one corner up.
-      ctx.moveTo(fcx - frx * 0.28, fcy + fry * 0.6);
-      ctx.quadraticCurveTo(fcx + frx * 0.1, fcy + fry * 0.68, fcx + frx * 0.32, fcy + fry * 0.46);
-      ctx.stroke();
     } else {
-      // The worried grimace, corners down.
-      ctx.moveTo(fcx - frx * 0.26, fcy + fry * 0.56);
-      ctx.quadraticCurveTo(fcx, fcy + fry * 0.44, fcx + frx * 0.26, fcy + fry * 0.56);
+      // Worried: a small tight frown, chin crumpled.
+      ctx.strokeStyle = '#151016';
+      ctx.lineWidth = lw * 0.34;
+      ctx.beginPath();
+      ctx.moveTo(fcx - frx * 0.24, mouthY + fry * 0.08);
+      ctx.quadraticCurveTo(fcx, mouthY - fry * 0.08, fcx + frx * 0.24, mouthY + fry * 0.08);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(160, 100, 60, 0.45)';
+      ctx.lineWidth = lw * 0.2;
+      ctx.beginPath();
+      ctx.arc(fcx, mouthY + fry * 0.26, frx * 0.1, Math.PI * 1.15, Math.PI * 1.85);
       ctx.stroke();
     }
+    // THE SUIT: white collar wings and a red tie coming through the scales
+    // under the chin. The businessman emperor, unmistakable.
+    const colY = fcy + fry * 1.08;
+    ctx.fillStyle = '#f4f1ea';
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.3;
+    for (const cs of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(fcx + cs * frx * 0.06, colY);
+      ctx.lineTo(fcx + cs * frx * 0.44, colY + fry * 0.06);
+      ctx.lineTo(fcx + cs * frx * 0.16, colY + fry * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#c8102e';
+    ctx.beginPath();
+    ctx.moveTo(fcx - frx * 0.09, colY + fry * 0.02);
+    ctx.lineTo(fcx + frx * 0.09, colY + fry * 0.02);
+    ctx.lineTo(fcx + frx * 0.12, colY + fry * 0.2);
+    ctx.lineTo(fcx, colY + fry * 0.44);
+    ctx.lineTo(fcx - frx * 0.12, colY + fry * 0.2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.28;
+    ctx.stroke();
     // Two solid horns swept back off the crown, tapering to points.
     for (const [ox, len] of [
       [-R * 0.1, R * 0.5],
