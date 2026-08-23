@@ -1664,27 +1664,20 @@ export function drawTrollHole(
 }
 
 /**
- * EMPEROR J SON'S FORTRESS, third design (pass 23, Bryan: "too simple in
- * design. it should feel more like an illustration"). Built straight from
- * the photo-intake briefs:
+ * EMPEROR J SON, fourth design (pass 24). Bryan, pointing at the Cyclades
+ * three-headed-dragon cover: "it should be distinct. like how the 3 headed
+ * dragon photo where you see it on the rock floating. it should feel more
+ * like that." So this is CREATURE-FIRST now: a three-headed JSON hydra
+ * perched on the floating rock, wings half-spread, claws gripping the rock
+ * edge, tail coiled around it, one head breathing green fire over the ruin
+ * of the old keep, the hoard and the tribute march of stolen tokens at his
+ * feet. The monster IS the landmark; the fortress is what he crushed.
  *
- *   - Cyclades: the villain small on the map, BIG AND ELABORATE up close.
- *   - My Island: the lair stands on a magic FLOATING ROCK, crystals hanging
- *     under it, shards drifting alongside.
- *   - Nunatak: a BEATING HEART of green power visible through a grated
- *     round window in the keep. Power hungry, literally.
- *   - Lands of Galzyr: distant spire silhouettes behind the citadel give a
- *     sense of a whole dark city back there.
- *   - Mech-A-Dream: get close and find more. A hanging prisoner cage, bot
- *     minions patrolling the wall, tokens marching up the stairs into the
- *     maw, torn banners.
- *   - Apiario: streaky space-color backdrop instead of flat void.
- *
- * Illustration technique, not just outlines: layered depth (cool dim back,
- * dark modeled middle, framing foreground), per-surface gradients for
- * volume, brick courses for texture, bloom behind every light, and the
- * Emperor himself LOOMING BEHIND the keep with his brace arms wrapped
- * around it, hoarding the castle the way he hoards the tokens.
+ * Modeling: tapered blob-chain necks (outline pass then body pass then a
+ * thin belly highlight), three-tone violet forms, green membrane glow in
+ * the wings, bloom behind every light. JSON identity: the glowing { } sigil
+ * on the ruined tower, colon-and-quote marks on the chest, bracket-swept
+ * horns.
  */
 function drawJsonBoss(
   ctx: CanvasRenderingContext2D,
@@ -1700,10 +1693,12 @@ function drawJsonBoss(
   ctx.lineCap = 'round';
 
   const TOXIC = '#7CFF4D';
-  const RIM = '#4d2a6e';
-  const RIM_HI = '#7a4fa8';
+  const SHADOW = '#241640';
+  const MID = '#3c1f57';
+  const HI = '#5a3585';
+  const BELLY = '#8a5fc0';
 
-  /* ---------- LAYER 0: aura and streaky storm backdrop ---------- */
+  /* ---------- backdrop: aura, streaks, storm rings, far spires ---------- */
   const aura = ctx.createRadialGradient(0, -R * 0.5, R * 0.4, 0, -R * 0.5, R * 3.1);
   aura.addColorStop(0, 'rgba(24, 6, 34, 0.65)');
   aura.addColorStop(1, 'rgba(10, 4, 18, 0)');
@@ -1711,7 +1706,6 @@ function drawJsonBoss(
   ctx.beginPath();
   ctx.arc(0, -R * 0.5, R * 3.1, 0, 6.283);
   ctx.fill();
-  // Streaks of sick colour combed diagonally through the aura.
   for (let k = 0; k < 5; k++) {
     const sy = -R * (2.3 - k * 0.9);
     ctx.strokeStyle = k % 2 === 0 ? 'rgba(124, 255, 77, 0.05)' : 'rgba(122, 79, 168, 0.08)';
@@ -1721,13 +1715,11 @@ function drawJsonBoss(
     ctx.quadraticCurveTo(0, sy - R * 0.3, R * 2.6, sy + R * 0.2);
     ctx.stroke();
   }
-
-  /* ---------- LAYER 1: the storm rings ---------- */
   for (let k = 0; k < 3; k++) {
     const rr = R * (1.6 + k * 0.36);
     const rot = time * (k % 2 === 0 ? 0.18 : -0.13) + k * 2.1;
     ctx.strokeStyle = TOXIC;
-    ctx.globalAlpha = 0.13 - k * 0.03;
+    ctx.globalAlpha = 0.12 - k * 0.03;
     ctx.lineWidth = R * (0.1 - k * 0.02);
     ctx.setLineDash([rr * 0.9, rr * 0.55]);
     ctx.lineDashOffset = -rot * rr;
@@ -1738,33 +1730,27 @@ function drawJsonBoss(
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
   ctx.globalAlpha = 1;
-
-  /* ---------- LAYER 2: the distant spire city ---------- */
-  // Cool, dim, no outlines: depth by value, the Galzyr trick.
   const FAR_SPIRES: readonly [number, number, number][] = [
-    [-1.9, 1.15, 0.22],
-    [-1.35, 1.55, 0.26],
-    [1.3, 1.7, 0.28],
-    [1.85, 1.2, 0.2],
-    [0.75, 1.45, 0.22]
+    [-1.9, 1.1, 0.2],
+    [-1.4, 1.5, 0.24],
+    [1.55, 1.45, 0.24],
+    [2.0, 1.0, 0.18]
   ];
   for (const [sx, h, w] of FAR_SPIRES) {
     ctx.fillStyle = '#1a1030';
     ctx.beginPath();
     ctx.moveTo(R * (sx - w), R * 0.9);
     ctx.lineTo(R * (sx - w * 0.3), R * (0.9 - h));
-    ctx.lineTo(R * sx, R * (0.9 - h - 0.22));
+    ctx.lineTo(R * sx, R * (0.9 - h - 0.2));
     ctx.lineTo(R * (sx + w * 0.3), R * (0.9 - h));
     ctx.lineTo(R * (sx + w), R * 0.9);
     ctx.closePath();
     ctx.fill();
-    // One faint lit window each, so the far city is inhabited.
-    ctx.fillStyle = 'rgba(124, 255, 77, 0.22)';
-    ctx.fillRect(R * (sx - 0.025), R * (0.9 - h * 0.55), R * 0.05, R * 0.12);
+    ctx.fillStyle = 'rgba(124, 255, 77, 0.2)';
+    ctx.fillRect(R * (sx - 0.025), R * (0.9 - h * 0.55), R * 0.05, R * 0.1);
   }
 
-  /* ---------- LAYER 3: the floating rock the lair stands on ---------- */
-  // Faceted taper with crystals hanging beneath (the My Island feel).
+  /* ---------- the floating rock (kept: Bryan likes the rock) ---------- */
   ctx.beginPath();
   ctx.moveTo(-R * 1.75, R * 1.0);
   ctx.lineTo(-R * 1.1, R * 1.7);
@@ -1778,7 +1764,6 @@ function drawJsonBoss(
   ctx.strokeStyle = '#2b1d45';
   ctx.lineWidth = lw * 0.8;
   ctx.stroke();
-  // Facet planes catching different light.
   ctx.fillStyle = '#221737';
   ctx.beginPath();
   ctx.moveTo(-R * 1.75, R * 1.0);
@@ -1792,16 +1777,16 @@ function drawJsonBoss(
   ctx.lineTo(R * 0.7, R * 1.1);
   ctx.closePath();
   ctx.fill();
-  // Green ichor seeping down the rock from the maw above.
-  ctx.strokeStyle = 'rgba(124, 255, 77, 0.3)';
-  ctx.lineWidth = lw * 0.5;
+  // The rock's top plateau, lit faintly by the hoard.
   ctx.beginPath();
-  ctx.moveTo(-R * 0.1, R * 1.05);
-  ctx.quadraticCurveTo(-R * 0.16, R * 1.4, -R * 0.08, R * 1.8);
-  ctx.moveTo(R * 0.18, R * 1.05);
-  ctx.quadraticCurveTo(R * 0.24, R * 1.35, R * 0.16, R * 1.6);
-  ctx.stroke();
-  // Crystals hanging under the rock, villain-green tipped.
+  ctx.moveTo(-R * 1.75, R * 1.0);
+  ctx.lineTo(-R * 1.2, R * 0.82);
+  ctx.lineTo(R * 1.1, R * 0.82);
+  ctx.lineTo(R * 1.75, R * 1.0);
+  ctx.closePath();
+  ctx.fillStyle = '#2b1d45';
+  ctx.fill();
+  // Crystals hanging beneath, green-tipped.
   for (const [cx, cy, ch] of [
     [-R * 0.85, R * 1.8, R * 0.5],
     [-R * 0.15, R * 2.0, R * 0.62],
@@ -1812,9 +1797,9 @@ function drawJsonBoss(
     ctx.lineTo(cx, cy + ch);
     ctx.lineTo(cx + R * 0.14, cy - R * 0.06);
     ctx.closePath();
-    ctx.fillStyle = '#241640';
+    ctx.fillStyle = SHADOW;
     ctx.fill();
-    ctx.strokeStyle = RIM;
+    ctx.strokeStyle = '#4d2a6e';
     ctx.lineWidth = lw * 0.5;
     ctx.stroke();
     const tipGlow = 0.4 + Math.sin(time * 1.4 + cx) * 0.25;
@@ -1823,7 +1808,7 @@ function drawJsonBoss(
     ctx.arc(cx, cy + ch, R * 0.045, 0, 6.283);
     ctx.fill();
   }
-  // Rock shards drifting alongside, slowly bobbing.
+  // Drifting shards.
   for (const [ox, oy, os, ph] of [
     [-R * 2.15, R * 0.3, 0.16, 0],
     [R * 2.2, R * 0.05, 0.13, 2.1],
@@ -1843,392 +1828,387 @@ function drawJsonBoss(
     ctx.stroke();
   }
 
-  /* ---------- LAYER 4: the EMPEROR looming behind the keep ---------- */
-  // Body and head first; his arms come back AFTER the keep so they wrap in
-  // front of it. He is the castle's second silhouette, not a garnish on it.
-  const breath = 1 + Math.sin(time * 1.3) * 0.025;
+  /* ---------- the ruined keep he crushed ---------- */
+  // A cracked stub of the old tower, leaning, still carrying the glowing
+  // sigil. Environmental storytelling: the fortress fell to its own boss.
   ctx.save();
-  ctx.translate(0, -R * 2.05);
-  ctx.scale(breath, breath);
+  ctx.translate(-R * 1.05, R * 0.82);
+  ctx.rotate(-0.09);
   ctx.beginPath();
-  ctx.ellipse(0, 0, R * 0.72, R * 0.85, 0, 0, 6.283);
-  const bodyG = ctx.createLinearGradient(-R * 0.7, 0, R * 0.7, 0);
-  bodyG.addColorStop(0, '#2a1540');
-  bodyG.addColorStop(0.55, '#3c1f57');
-  bodyG.addColorStop(1, '#1e0f30');
+  ctx.moveTo(-R * 0.24, 0);
+  ctx.lineTo(-R * 0.2, -R * 0.85);
+  ctx.lineTo(-R * 0.06, -R * 0.72);
+  ctx.lineTo(R * 0.05, -R * 1.0);
+  ctx.lineTo(R * 0.14, -R * 0.7);
+  ctx.lineTo(R * 0.22, -R * 0.78);
+  ctx.lineTo(R * 0.24, 0);
+  ctx.closePath();
+  ctx.fillStyle = '#100a1c';
+  ctx.fill();
+  ctx.strokeStyle = '#4d2a6e';
+  ctx.lineWidth = lw * 0.7;
+  ctx.stroke();
+  // Brick courses and a crack of green light.
+  ctx.strokeStyle = 'rgba(107, 77, 150, 0.18)';
+  ctx.lineWidth = lw * 0.3;
+  ctx.beginPath();
+  for (let r = 1; r < 5; r++) {
+    ctx.moveTo(-R * 0.21, -r * R * 0.17);
+    ctx.lineTo(R * 0.22, -r * R * 0.17);
+  }
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(124, 255, 77, 0.5)';
+  ctx.lineWidth = lw * 0.35;
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.06, -R * 0.05);
+  ctx.lineTo(-R * 0.01, -R * 0.3);
+  ctx.lineTo(-R * 0.1, -R * 0.5);
+  ctx.stroke();
+  // The sigil, still burning on the dead wall: { } as JSON prints it.
+  const sig = 0.6 + Math.sin(time * 1.9) * 0.4;
+  ctx.strokeStyle = `rgba(124, 255, 77, ${(0.45 + sig * 0.55).toFixed(3)})`;
+  ctx.lineWidth = lw * 0.8;
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(side * R * 0.035, -R * 0.62);
+    ctx.quadraticCurveTo(side * R * 0.1, -R * 0.61, side * R * 0.09, -R * 0.545);
+    ctx.quadraticCurveTo(side * R * 0.08, -R * 0.5, side * R * 0.125, -R * 0.485);
+    ctx.quadraticCurveTo(side * R * 0.08, -R * 0.47, side * R * 0.09, -R * 0.425);
+    ctx.quadraticCurveTo(side * R * 0.1, -R * 0.36, side * R * 0.035, -R * 0.35);
+    ctx.stroke();
+  }
+  ctx.restore();
+  // Rubble at the ruin's foot.
+  for (const [rx, ry, rs] of [
+    [-R * 1.38, R * 0.9, 0.09],
+    [-R * 0.78, R * 0.94, 0.07],
+    [-R * 1.15, R * 0.98, 0.055]
+  ] as const) {
+    ctx.beginPath();
+    ctx.moveTo(rx - R * rs, ry);
+    ctx.lineTo(rx, ry - R * rs);
+    ctx.lineTo(rx + R * rs, ry);
+    ctx.closePath();
+    ctx.fillStyle = '#1d1332';
+    ctx.fill();
+  }
+
+  /* ---------- THE HYDRA ---------- */
+  // A tapered organic limb: circles shrinking along a quadratic curve,
+  // drawn as outline pass then body pass. The illustration trick that makes
+  // necks read as flesh instead of pipes.
+  const limb = (
+    x0: number, y0: number, cx: number, cy: number, x1: number, y1: number,
+    r0: number, r1: number, fill: string, outline = true
+  ) => {
+    for (const pass of outline ? [0, 1] : [1]) {
+      ctx.fillStyle = pass === 0 ? STICKER_OUTLINE : fill;
+      const grow = pass === 0 ? lw * 0.55 : 0;
+      for (let i = 0; i <= 14; i++) {
+        const t = i / 14;
+        const px = (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1;
+        const py = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * cy + t * t * y1;
+        ctx.beginPath();
+        ctx.arc(px, py, r0 + (r1 - r0) * t + grow, 0, 6.283);
+        ctx.fill();
+      }
+    }
+  };
+
+  /* wings first, spread HIGH behind the body: the silhouette-maker. */
+  const flap = Math.sin(time * 0.9) * 0.06;
+  for (const side of [-1, 1]) {
+    ctx.save();
+    ctx.translate(R * 0.3, -R * 0.7);
+    ctx.rotate(side * (0.32 + flap));
+    const wx = (v: number) => side * R * v;
+    // Membrane: darker than the necks so the layers separate, with a sick
+    // green rim along the scalloped trailing edge.
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(wx(0.85), -R * 1.35, wx(1.9), -R * 1.5);
+    ctx.quadraticCurveTo(wx(1.72), -R * 0.95, wx(1.38), -R * 0.6);
+    ctx.quadraticCurveTo(wx(1.22), -R * 0.3, wx(0.85), -R * 0.1);
+    ctx.quadraticCurveTo(wx(0.5), R * 0.04, 0, R * 0.12);
+    ctx.closePath();
+    const wg = ctx.createLinearGradient(0, -R * 1.4, 0, R * 0.1);
+    wg.addColorStop(0, '#1c1030');
+    wg.addColorStop(1, '#120a20');
+    ctx.fillStyle = wg;
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.9;
+    ctx.stroke();
+    // Wing fingers.
+    ctx.strokeStyle = HI;
+    ctx.lineWidth = lw * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(wx(0.9), -R * 1.1, wx(1.9), -R * 1.5);
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(wx(0.8), -R * 0.65, wx(1.38), -R * 0.6);
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(wx(0.55), -R * 0.26, wx(0.85), -R * 0.1);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(124, 255, 77, 0.35)';
+    ctx.lineWidth = lw * 0.45;
+    ctx.beginPath();
+    ctx.moveTo(wx(1.9), -R * 1.5);
+    ctx.quadraticCurveTo(wx(1.72), -R * 0.95, wx(1.38), -R * 0.6);
+    ctx.quadraticCurveTo(wx(1.22), -R * 0.3, wx(0.85), -R * 0.1);
+    ctx.stroke();
+    ctx.restore();
+  }
+  /* tail: coiling around the rock's east edge, spade tip swinging. */
+  const swish = Math.sin(time * 0.8) * R * 0.08;
+  limb(R * 0.75, R * 0.2, R * 1.7, R * 0.45, R * 1.55 + swish, R * 1.35, R * 0.22, R * 0.07, MID);
+  // Spade tip.
+  ctx.save();
+  ctx.translate(R * 1.55 + swish, R * 1.42);
+  ctx.rotate(0.5 + swish / (R * 0.4));
+  ctx.beginPath();
+  ctx.moveTo(0, -R * 0.16);
+  ctx.lineTo(R * 0.14, R * 0.06);
+  ctx.lineTo(0, R * 0.2);
+  ctx.lineTo(-R * 0.14, R * 0.06);
+  ctx.closePath();
+  ctx.fillStyle = MID;
+  ctx.fill();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw * 0.7;
+  ctx.stroke();
+  ctx.restore();
+
+  /* the body: a massive chest low on the rock, three-tone modeled. */
+  ctx.beginPath();
+  ctx.ellipse(R * 0.3, -R * 0.05, R * 0.95, R * 0.78, -0.08, 0, 6.283);
+  const bodyG = ctx.createLinearGradient(-R * 0.6, -R * 0.6, R * 1.1, R * 0.5);
+  bodyG.addColorStop(0, HI);
+  bodyG.addColorStop(0.5, MID);
+  bodyG.addColorStop(1, SHADOW);
   ctx.fillStyle = bodyG;
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
   ctx.lineWidth = lw;
   ctx.stroke();
-  // Jagged crown-fin ridge along the top of his head.
-  ctx.fillStyle = '#2a1540';
+  // A soft lighter underside catching the hoard light.
   ctx.beginPath();
-  ctx.moveTo(-R * 0.55, -R * 0.5);
-  ctx.lineTo(-R * 0.38, -R * 0.85);
-  ctx.lineTo(-R * 0.22, -R * 0.62);
-  ctx.lineTo(0, -R * 1.0);
-  ctx.lineTo(R * 0.22, -R * 0.62);
-  ctx.lineTo(R * 0.38, -R * 0.85);
-  ctx.lineTo(R * 0.55, -R * 0.5);
-  ctx.closePath();
+  ctx.ellipse(R * 0.22, R * 0.32, R * 0.6, R * 0.34, -0.06, 0, 6.283);
+  ctx.fillStyle = BELLY;
+  ctx.globalAlpha = 0.32;
   ctx.fill();
-  ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw * 0.7;
-  ctx.stroke();
-  // The burning glare, with bloom behind each eye.
-  const glare = 0.6 + Math.sin(time * 2.1) * 0.4;
-  for (const side of [-1, 1]) {
-    const bloom = ctx.createRadialGradient(side * R * 0.26, -R * 0.28, 0, side * R * 0.26, -R * 0.28, R * 0.22);
-    bloom.addColorStop(0, `rgba(255, 210, 74, ${(0.5 * glare).toFixed(3)})`);
-    bloom.addColorStop(1, 'rgba(255, 210, 74, 0)');
-    ctx.fillStyle = bloom;
-    ctx.beginPath();
-    ctx.arc(side * R * 0.26, -R * 0.28, R * 0.22, 0, 6.283);
-    ctx.fill();
-    ctx.fillStyle = `rgba(255, 210, 74, ${(0.7 + glare * 0.3).toFixed(3)})`;
-    ctx.beginPath();
-    ctx.ellipse(side * R * 0.26, -R * 0.28, R * 0.15, R * 0.06, side * 0.3, 0, 6.283);
-    ctx.fill();
-  }
-  // The colon-and-quote face marks of a creature made of JSON.
+  ctx.globalAlpha = 1;
+  // The colon-and-quote marks branded on the chest: still made of JSON.
   ctx.fillStyle = '#ffd24a';
   ctx.beginPath();
-  ctx.arc(0, R * 0.06, R * 0.045, 0, 6.283);
-  ctx.arc(0, R * 0.24, R * 0.045, 0, 6.283);
+  ctx.arc(-R * 0.12, -R * 0.18, R * 0.045, 0, 6.283);
+  ctx.arc(-R * 0.12, -R * 0.02, R * 0.045, 0, 6.283);
   ctx.fill();
-  ctx.restore();
 
-  /* ---------- LAYER 5: the citadel ---------- */
-  const brick = (x0: number, y0: number, w: number, h: number) => {
-    // Brick courses at low alpha: texture without noise.
-    ctx.strokeStyle = 'rgba(107, 77, 150, 0.16)';
-    ctx.lineWidth = lw * 0.3;
-    ctx.beginPath();
-    const rows = Math.max(3, Math.floor(h / (R * 0.17)));
-    for (let r = 1; r < rows; r++) {
-      const yy = y0 + (r / rows) * h;
-      ctx.moveTo(x0, yy);
-      ctx.lineTo(x0 + w, yy);
-      // Staggered vertical ticks.
-      const off = r % 2 === 0 ? 0.25 : 0.6;
-      ctx.moveTo(x0 + w * off, yy);
-      ctx.lineTo(x0 + w * off, yy - h / rows);
-    }
-    ctx.stroke();
-  };
-
-  // Curtain wall with spiked merlons, modeled left-to-right.
-  const wallG = ctx.createLinearGradient(-R * 1.5, 0, R * 1.5, 0);
-  wallG.addColorStop(0, '#170e28');
-  wallG.addColorStop(0.5, '#0b0614');
-  wallG.addColorStop(1, '#1a1030');
-  ctx.beginPath();
-  ctx.moveTo(-R * 1.5, R * 1.02);
-  ctx.lineTo(-R * 1.32, R * 0.1);
-  for (let k = 0; k < 6; k++) {
-    const bx = -R * 1.32 + (k / 5) * R * 2.64;
-    ctx.lineTo(bx - R * 0.09, R * 0.1);
-    ctx.lineTo(bx, -R * 0.14);
-    ctx.lineTo(bx + R * 0.09, R * 0.1);
-  }
-  ctx.lineTo(R * 1.32, R * 0.1);
-  ctx.lineTo(R * 1.5, R * 1.02);
-  ctx.closePath();
-  ctx.fillStyle = wallG;
-  ctx.fill();
-  ctx.strokeStyle = RIM;
-  ctx.lineWidth = lw * 0.9;
-  ctx.stroke();
-  brick(-R * 1.32, R * 0.15, R * 2.64, R * 0.8);
-
-  // Bot minions patrolling the wall walk: tiny, animated, found up close.
-  for (const [ph, dir] of [
-    [0, 1],
-    [3.4, -1]
+  /* forelegs gripping the rock's front edge, talons over the lip. */
+  for (const [fx0, fx1] of [
+    [-R * 0.25, -R * 0.55],
+    [R * 0.55, R * 0.85]
   ] as const) {
-    const mx = Math.sin(time * 0.35 + ph) * R * 0.9 * dir;
-    ctx.fillStyle = '#241640';
-    ctx.fillRect(mx - R * 0.05, -R * 0.02, R * 0.1, R * 0.12);
-    ctx.fillStyle = TOXIC;
-    ctx.globalAlpha = 0.9;
-    ctx.fillRect(mx - R * 0.025, R * 0.005, R * 0.05, R * 0.03);
-    ctx.globalAlpha = 1;
-  }
-
-  // Flank towers: modeled cylinders with machicolation ledges, spiked
-  // crowns, and green slit windows with bloom.
-  for (const side of [-1, 1]) {
-    const tx = side * R * 1.05;
-    const tow = ctx.createLinearGradient(tx - R * 0.3, 0, tx + R * 0.3, 0);
-    tow.addColorStop(0, side < 0 ? '#1f142f' : '#0b0614');
-    tow.addColorStop(0.5, '#100a1c');
-    tow.addColorStop(1, side < 0 ? '#0b0614' : '#1f142f');
-    ctx.beginPath();
-    ctx.moveTo(tx - R * 0.28, R * 0.5);
-    ctx.lineTo(tx - R * 0.22, -R * 1.05);
-    // The machicolation ledge flares out under the crown.
-    ctx.lineTo(tx - R * 0.32, -R * 1.12);
-    ctx.lineTo(tx - R * 0.3, -R * 1.38);
-    ctx.lineTo(tx - R * 0.08, -R * 1.2);
-    ctx.lineTo(tx + R * 0.04, -R * 1.52);
-    ctx.lineTo(tx + R * 0.16, -R * 1.2);
-    ctx.lineTo(tx + R * 0.3, -R * 1.36);
-    ctx.lineTo(tx + R * 0.32, -R * 1.12);
-    ctx.lineTo(tx + R * 0.22, -R * 1.05);
-    ctx.lineTo(tx + R * 0.28, R * 0.5);
-    ctx.closePath();
-    ctx.fillStyle = tow;
-    ctx.fill();
-    ctx.strokeStyle = RIM;
-    ctx.lineWidth = lw * 0.9;
-    ctx.stroke();
-    brick(tx - R * 0.24, -R * 1.0, R * 0.48, R * 1.45);
-    // Rim light on the storm-lit edge.
-    ctx.strokeStyle = RIM_HI;
-    ctx.globalAlpha = 0.5;
-    ctx.lineWidth = lw * 0.4;
-    ctx.beginPath();
-    ctx.moveTo(tx - side * R * 0.22, -R * 1.03);
-    ctx.lineTo(tx - side * R * 0.27, R * 0.45);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    for (let w = 0; w < 3; w++) {
-      const wy = -R * (0.9 - w * 0.42);
-      const flick = 0.55 + Math.sin(time * 2.7 + side * 2 + w * 1.9) * 0.45;
-      const wb = ctx.createRadialGradient(tx, wy + R * 0.11, 0, tx, wy + R * 0.11, R * 0.16);
-      wb.addColorStop(0, `rgba(124, 255, 77, ${(0.3 * flick).toFixed(3)})`);
-      wb.addColorStop(1, 'rgba(124, 255, 77, 0)');
-      ctx.fillStyle = wb;
+    limb(fx0 + R * 0.3, R * 0.25, fx0, R * 0.55, fx1, R * 0.86, R * 0.17, R * 0.12, MID);
+    // Three solid talons hooking over the rock lip.
+    for (let t = -1; t <= 1; t++) {
+      const bx2 = fx1 + t * R * 0.1;
       ctx.beginPath();
-      ctx.arc(tx, wy + R * 0.11, R * 0.16, 0, 6.283);
+      ctx.moveTo(bx2 - R * 0.045, R * 0.84);
+      ctx.quadraticCurveTo(bx2 + R * 0.06, R * 0.92, bx2 + R * 0.015, R * 1.1);
+      ctx.quadraticCurveTo(bx2 - R * 0.015, R * 0.96, bx2 - R * 0.075, R * 0.9);
+      ctx.closePath();
+      ctx.fillStyle = '#c9b8dd';
       ctx.fill();
-      ctx.fillStyle = `rgba(124, 255, 77, ${(0.35 + flick * 0.6).toFixed(3)})`;
-      ctx.fillRect(tx - R * 0.035, wy, R * 0.07, R * 0.22);
-    }
-  }
-
-  // The hanging prisoner cage off the west tower's jib arm: inside it, one
-  // captive token still glowing. Found up close, the Mech-A-Dream rule.
-  {
-    const swing = Math.sin(time * 0.9) * 0.06;
-    ctx.save();
-    ctx.translate(-R * 1.35, -R * 1.05);
-    ctx.strokeStyle = '#6b5a86';
-    ctx.lineWidth = lw * 0.5;
-    ctx.beginPath();
-    ctx.moveTo(R * 0.3, -R * 0.02);
-    ctx.lineTo(0, 0);
-    ctx.stroke();
-    ctx.rotate(swing);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, R * 0.22);
-    ctx.stroke();
-    ctx.translate(0, R * 0.36);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, R * 0.12, R * 0.15, 0, 0, 6.283);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-R * 0.12, 0);
-    ctx.lineTo(R * 0.12, 0);
-    ctx.moveTo(0, -R * 0.15);
-    ctx.lineTo(0, R * 0.15);
-    ctx.stroke();
-    const capGlow = 0.5 + Math.sin(time * 2.4) * 0.3;
-    ctx.fillStyle = `rgba(255, 210, 74, ${capGlow.toFixed(3)})`;
-    ctx.beginPath();
-    ctx.arc(0, R * 0.02, R * 0.05, 0, 6.283);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // THE KEEP: a twisted tapering spire with buttress ribs and a crown.
-  const keepG = ctx.createLinearGradient(-R * 0.46, 0, R * 0.46, 0);
-  keepG.addColorStop(0, '#241640');
-  keepG.addColorStop(0.45, '#100a1c');
-  keepG.addColorStop(1, '#0b0614');
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.5, R * 0.2);
-  ctx.quadraticCurveTo(-R * 0.42, -R * 0.8, -R * 0.34, -R * 1.8);
-  ctx.lineTo(-R * 0.46, -R * 2.02);
-  ctx.lineTo(-R * 0.2, -R * 1.92);
-  ctx.lineTo(-R * 0.06, -R * 2.24);
-  ctx.lineTo(R * 0.1, -R * 1.94);
-  ctx.lineTo(R * 0.3, -R * 2.14);
-  ctx.lineTo(R * 0.32, -R * 1.82);
-  ctx.quadraticCurveTo(R * 0.44, -R * 0.7, R * 0.5, R * 0.2);
-  ctx.closePath();
-  ctx.fillStyle = keepG;
-  ctx.fill();
-  ctx.strokeStyle = RIM;
-  ctx.lineWidth = lw;
-  ctx.stroke();
-  brick(-R * 0.4, -R * 1.7, R * 0.8, R * 1.8);
-  // Buttress ribs sweeping up the face.
-  ctx.strokeStyle = 'rgba(122, 79, 168, 0.4)';
-  ctx.lineWidth = lw * 0.5;
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.3, R * 0.15);
-  ctx.quadraticCurveTo(-R * 0.26, -R * 0.9, -R * 0.2, -R * 1.75);
-  ctx.moveTo(R * 0.32, R * 0.15);
-  ctx.quadraticCurveTo(R * 0.3, -R * 0.8, R * 0.24, -R * 1.72);
-  ctx.stroke();
-
-  // THE HEART (Nunatak): a grated round window mid-keep with the green
-  // power-heart beating inside. The whole fortress runs on appetite.
-  {
-    const hy = -R * 0.62;
-    const beat = 0.55 + Math.pow(Math.max(0, Math.sin(time * 2.4)), 3) * 0.45;
-    const hb = ctx.createRadialGradient(0, hy, 0, 0, hy, R * 0.42);
-    hb.addColorStop(0, `rgba(124, 255, 77, ${(0.55 * beat + 0.25).toFixed(3)})`);
-    hb.addColorStop(0.55, `rgba(70, 180, 40, ${(0.3 * beat).toFixed(3)})`);
-    hb.addColorStop(1, 'rgba(124, 255, 77, 0)');
-    ctx.fillStyle = hb;
-    ctx.beginPath();
-    ctx.arc(0, hy, R * 0.42, 0, 6.283);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, hy, R * 0.2, 0, 6.283);
-    ctx.fillStyle = `rgba(160, 255, 120, ${(0.5 + beat * 0.5).toFixed(3)})`;
-    ctx.fill();
-    ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.8;
-    ctx.stroke();
-    // The grate over the heart.
-    ctx.strokeStyle = '#0b0614';
-    ctx.lineWidth = lw * 0.5;
-    // Vertical furnace bars only: a wheel of spokes read as a citrus
-    // slice, and a caged furnace is the point.
-    ctx.beginPath();
-    for (const gx of [-0.11, 0, 0.11]) {
-      const gh = Math.sqrt(Math.max(0, 0.04 - gx * gx));
-      ctx.moveTo(R * gx, hy - R * gh);
-      ctx.lineTo(R * gx, hy + R * gh);
-    }
-    ctx.stroke();
-  }
-
-  // THE SIGIL above the heart: { } printed the way JSON prints it, tips
-  // outward, a clear gap between. (An X and a }{ both died in review.)
-  const sig = 0.65 + Math.sin(time * 1.9) * 0.35;
-  ctx.strokeStyle = `rgba(124, 255, 77, ${(0.5 + sig * 0.5).toFixed(3)})`;
-  ctx.lineWidth = lw * 1.4;
-  for (const side of [-1, 1]) {
-    ctx.beginPath();
-    ctx.moveTo(side * R * 0.1, -R * 1.66);
-    ctx.quadraticCurveTo(side * R * 0.25, -R * 1.64, side * R * 0.23, -R * 1.5);
-    ctx.quadraticCurveTo(side * R * 0.21, -R * 1.41, side * R * 0.3, -R * 1.38);
-    ctx.quadraticCurveTo(side * R * 0.21, -R * 1.35, side * R * 0.23, -R * 1.26);
-    ctx.quadraticCurveTo(side * R * 0.25, -R * 1.12, side * R * 0.1, -R * 1.1);
-    ctx.stroke();
-  }
-
-  // Torn banners hanging from the wall, branded faintly with the crest.
-  for (const side of [-1, 1]) {
-    const bx = side * R * 0.72;
-    const sway = Math.sin(time * 1.1 + side) * R * 0.02;
-    ctx.beginPath();
-    ctx.moveTo(bx - R * 0.1, R * 0.12);
-    ctx.lineTo(bx + R * 0.1, R * 0.12);
-    ctx.lineTo(bx + R * 0.09 + sway, R * 0.62);
-    ctx.lineTo(bx + R * 0.03 + sway, R * 0.52);
-    ctx.lineTo(bx - R * 0.03 + sway, R * 0.66);
-    ctx.lineTo(bx - R * 0.09 + sway, R * 0.5);
-    ctx.closePath();
-    ctx.fillStyle = '#1a0f2c';
-    ctx.fill();
-    ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.4;
-    ctx.stroke();
-    ctx.fillStyle = 'rgba(124, 255, 77, 0.5)';
-    ctx.fillRect(bx - R * 0.02, R * 0.24, R * 0.04, R * 0.14);
-  }
-
-  // Chains from the keep's shoulders down to the flank towers.
-  ctx.fillStyle = '#6b5a86';
-  for (const side of [-1, 1]) {
-    for (let k = 1; k <= 5; k++) {
-      const t = k / 6;
-      const cx0 = side * R * 0.36;
-      const cy0 = -R * 1.7;
-      const cx1 = side * R * 1.05;
-      const cy1 = -R * 1.18;
-      const mx = (cx0 + cx1) / 2;
-      const my = Math.max(cy0, cy1) + R * 0.24;
-      const px = (1 - t) * (1 - t) * cx0 + 2 * (1 - t) * t * mx + t * t * cx1;
-      const py = (1 - t) * (1 - t) * cy0 + 2 * (1 - t) * t * my + t * t * cy1;
-      ctx.beginPath();
-      ctx.arc(px, py, R * 0.035, 0, 6.283);
-      ctx.fill();
-    }
-  }
-
-  /* ---------- LAYER 6: the Emperor's arms, wrapped around his hoard ---------- */
-  // Drawn AFTER the keep so the braces grip in front: he is hugging the
-  // whole fortress the way a dragon lies on gold.
-  for (const pass of [0, 1]) {
-    ctx.strokeStyle = pass === 0 ? STICKER_OUTLINE : '#c98bff';
-    ctx.lineWidth = pass === 0 ? lw * 2.6 : lw * 1.7;
-    for (const side of [-1, 1]) {
-      ctx.beginPath();
-      ctx.moveTo(side * R * 0.52, -R * 2.2);
-      ctx.quadraticCurveTo(side * R * 0.95, -R * 2.0, side * R * 0.88, -R * 1.55);
-      ctx.quadraticCurveTo(side * R * 0.84, -R * 1.28, side * R * 0.62, -R * 1.18);
-      ctx.quadraticCurveTo(side * R * 0.86, -R * 1.1, side * R * 0.8, -R * 0.8);
-      ctx.quadraticCurveTo(side * R * 0.72, -R * 0.42, side * R * 0.5, -R * 0.3);
+      ctx.strokeStyle = STICKER_OUTLINE;
+      ctx.lineWidth = lw * 0.5;
       ctx.stroke();
     }
   }
 
-  /* ---------- LAYER 7: the maw, the tribute march, the hoard ---------- */
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.34, R * 1.0);
-  ctx.lineTo(-R * 0.34, R * 0.5);
-  ctx.quadraticCurveTo(0, R * 0.18, R * 0.34, R * 0.5);
-  ctx.lineTo(R * 0.34, R * 1.0);
-  ctx.closePath();
-  const maw = ctx.createLinearGradient(0, R * 0.3, 0, R * 1.0);
-  maw.addColorStop(0, 'rgba(124, 255, 77, 0.8)');
-  maw.addColorStop(1, 'rgba(20, 60, 12, 0.9)');
-  ctx.fillStyle = maw;
-  ctx.fill();
-  ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw;
-  ctx.stroke();
-  // Portcullis fangs.
-  ctx.fillStyle = '#0b0614';
-  for (let k = -2; k <= 2; k++) {
-    const fx = k * R * 0.13;
-    ctx.beginPath();
-    ctx.moveTo(fx - R * 0.05, R * 0.44 - Math.abs(k) * R * 0.04);
-    ctx.lineTo(fx, R * (0.58 - Math.abs(k) * 0.05));
-    ctx.lineTo(fx + R * 0.05, R * 0.44 - Math.abs(k) * R * 0.04);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(fx - R * 0.05, R * 1.0);
-    ctx.lineTo(fx + R * 0.02, R * (0.82 + Math.abs(k) * 0.04));
-    ctx.lineTo(fx + R * 0.09, R * 1.0);
-    ctx.closePath();
-    ctx.fill();
+  /* the three necks and heads. */
+  interface Head {
+    nx0: number; ny0: number; ncx: number; ncy: number; hx: number; hy: number;
+    r0: number; r1: number; s: number; dir: 1 | -1; tone: string; bob: number;
   }
-  // Gate light spilling down the stair onto the rock.
-  const spill = ctx.createRadialGradient(0, R * 1.02, 0, 0, R * 1.02, R * 0.75);
-  spill.addColorStop(0, 'rgba(124, 255, 77, 0.28)');
-  spill.addColorStop(1, 'rgba(124, 255, 77, 0)');
-  ctx.fillStyle = spill;
-  ctx.beginPath();
-  ctx.ellipse(0, R * 1.05, R * 0.75, R * 0.3, 0, 0, 6.283);
-  ctx.fill();
+  const HEADS: readonly Head[] = [
+    // West head, mid height, watching the world.
+    { nx0: R * 0.0, ny0: -R * 0.35, ncx: -R * 0.75, ncy: -R * 0.95, hx: -R * 1.15, hy: -R * 1.6, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: -1, tone: SHADOW, bob: 2.1 },
+    // East head, lower, eyeing the tribute march below.
+    { nx0: R * 0.6, ny0: -R * 0.3, ncx: R * 1.3, ncy: -R * 0.75, hx: R * 1.5, hy: -R * 1.3, r0: R * 0.21, r1: R * 0.12, s: 0.8, dir: 1, tone: HI, bob: 4.4 },
+    // Centre head, highest, the fire-breather. Drawn last, in front.
+    { nx0: R * 0.28, ny0: -R * 0.5, ncx: R * 0.15, ncy: -R * 1.5, hx: -R * 0.1, hy: -R * 2.15, r0: R * 0.26, r1: R * 0.15, s: 1, dir: -1, tone: MID, bob: 0 }
+  ];
+  for (const h of HEADS) {
+    const bob = Math.sin(time * 0.7 + h.bob) * R * 0.05;
+    const hx = h.hx;
+    const hy = h.hy + bob;
+    limb(h.nx0, h.ny0, h.ncx, h.ncy, hx, hy, h.r0, h.r1, h.tone);
+    // Dorsal spikes along the neck's outer edge.
+    ctx.fillStyle = SHADOW;
+    for (let i = 2; i <= 12; i += 2) {
+      const t = i / 14;
+      const px = (1 - t) * (1 - t) * h.nx0 + 2 * (1 - t) * t * h.ncx + t * t * hx;
+      const py = (1 - t) * (1 - t) * h.ny0 + 2 * (1 - t) * t * h.ncy + t * t * hy;
+      const rr = h.r0 + (h.r1 - h.r0) * t;
+      ctx.beginPath();
+      ctx.moveTo(px - h.dir * rr * 0.5, py - rr * 0.85);
+      ctx.lineTo(px - h.dir * rr * 0.2, py - rr * 1.75);
+      ctx.lineTo(px + h.dir * rr * 0.35, py - rr * 0.8);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // THE HEAD: horned skull with an open bracket-jawed maw.
+    ctx.save();
+    ctx.translate(hx, hy);
+    ctx.scale(h.s * (h.dir >= 0 ? 1 : -1), h.s);
+    // (drawn facing +x, mirrored by dir)
+    // Skull and upper jaw.
+    ctx.beginPath();
+    ctx.moveTo(-R * 0.3, -R * 0.02);
+    ctx.quadraticCurveTo(-R * 0.18, -R * 0.34, R * 0.12, -R * 0.3); // crown
+    ctx.quadraticCurveTo(R * 0.42, -R * 0.26, R * 0.55, -R * 0.1); // snout top
+    ctx.lineTo(R * 0.5, -R * 0.02); // hooked snout tip
+    ctx.lineTo(R * 0.05, R * 0.02); // mouth line back
+    ctx.quadraticCurveTo(-R * 0.2, R * 0.08, -R * 0.3, -R * 0.02);
+    ctx.closePath();
+    ctx.fillStyle = h.tone;
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.8;
+    ctx.stroke();
+    // Lower jaw, hanging open.
+    const jaw = 0.16 + Math.sin(time * 1.6 + h.bob) * 0.03;
+    ctx.beginPath();
+    ctx.moveTo(R * 0.02, R * 0.04);
+    ctx.quadraticCurveTo(R * 0.3, R * (0.02 + jaw), R * 0.46, R * (0.1 + jaw));
+    ctx.quadraticCurveTo(R * 0.28, R * (0.16 + jaw), R * 0.04, R * 0.16);
+    ctx.quadraticCurveTo(-R * 0.08, R * 0.12, R * 0.02, R * 0.04);
+    ctx.closePath();
+    ctx.fillStyle = h.tone;
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.8;
+    ctx.stroke();
+    // Green mouth glow and teeth.
+    ctx.fillStyle = 'rgba(124, 255, 77, 0.5)';
+    ctx.beginPath();
+    ctx.moveTo(R * 0.06, R * 0.03);
+    ctx.quadraticCurveTo(R * 0.28, R * 0.05, R * 0.46, R * (0.08 + jaw * 0.6));
+    ctx.quadraticCurveTo(R * 0.26, R * (0.06 + jaw * 0.5), R * 0.06, R * 0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#e8e0f4';
+    for (let tt = 0; tt < 3; tt++) {
+      const txx = R * (0.14 + tt * 0.12);
+      ctx.beginPath();
+      ctx.moveTo(txx - R * 0.03, R * 0.0 + tt * R * 0.005);
+      ctx.lineTo(txx, R * 0.07);
+      ctx.lineTo(txx + R * 0.03, R * 0.005 + tt * R * 0.005);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Brow ridge and the burning eye with bloom.
+    const glare = 0.6 + Math.sin(time * 2.1 + h.bob) * 0.4;
+    const eb = ctx.createRadialGradient(R * 0.08, -R * 0.14, 0, R * 0.08, -R * 0.14, R * 0.16);
+    eb.addColorStop(0, `rgba(255, 210, 74, ${(0.6 * glare).toFixed(3)})`);
+    eb.addColorStop(1, 'rgba(255, 210, 74, 0)');
+    ctx.fillStyle = eb;
+    ctx.beginPath();
+    ctx.arc(R * 0.08, -R * 0.14, R * 0.16, 0, 6.283);
+    ctx.fill();
+    ctx.fillStyle = `rgba(255, 210, 74, ${(0.75 + glare * 0.25).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.ellipse(R * 0.08, -R * 0.14, R * 0.085, R * 0.038, 0.15, 0, 6.283);
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(-R * 0.02, -R * 0.22);
+    ctx.lineTo(R * 0.17, -R * 0.18);
+    ctx.stroke();
+    // Two solid horns swept back off the crown, tapering to points.
+    for (const [ox, len] of [
+      [-R * 0.1, R * 0.5],
+      [R * 0.04, R * 0.34]
+    ] as const) {
+      ctx.beginPath();
+      ctx.moveTo(ox + R * 0.07, -R * 0.24);
+      ctx.quadraticCurveTo(ox - len * 0.5, -R * 0.3 - len * 0.55, ox - len, -R * 0.2 - len * 0.75);
+      ctx.quadraticCurveTo(ox - len * 0.35, -R * 0.26 - len * 0.3, ox - R * 0.09, -R * 0.16);
+      ctx.closePath();
+      ctx.fillStyle = '#c9b8dd';
+      ctx.fill();
+      ctx.strokeStyle = STICKER_OUTLINE;
+      ctx.lineWidth = lw * 0.6;
+      ctx.stroke();
+    }
 
-  // THE TRIBUTE MARCH: a queue of tokens rolling up the causeway into the
-  // maw, single file, endless. More damning than a spiral: it looks
-  // organised. The old spiral suction rides above it, thinned.
+    ctx.restore();
+  }
+
+  /* THE FIRE: the centre head's green plume, flickering, with embers. */
+  {
+    const head = HEADS[2];
+    const bob = Math.sin(time * 0.7 + head.bob) * R * 0.05;
+    const fx = head.hx - R * 0.45;
+    const fy = head.hy + bob + R * 0.05;
+    const len = R * (0.9 + Math.sin(time * 6.7) * 0.12 + Math.sin(time * 11.3) * 0.06);
+    for (const [spread, alpha, col] of [
+      [0.3, 0.22, TOXIC],
+      [0.2, 0.4, TOXIC],
+      [0.1, 0.8, '#d8ffb0']
+    ] as const) {
+      ctx.fillStyle = col;
+      ctx.globalAlpha = alpha;
+      for (let i = 0; i <= 10; i++) {
+        const t = i / 10;
+        const px = fx - t * len;
+        const py = fy - t * len * 0.55 + Math.sin(time * 9 + t * 7) * R * 0.05 * t;
+        ctx.beginPath();
+        ctx.arc(px, py, R * (0.05 + t * spread), 0, 6.283);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+    // Embers drifting off the plume's end.
+    for (let k = 0; k < 4; k++) {
+      const ph = (time * 0.5 + k / 4) % 1;
+      ctx.globalAlpha = (1 - ph) * 0.8;
+      ctx.fillStyle = TOXIC;
+      ctx.beginPath();
+      ctx.arc(fx - len - ph * R * 0.5, fy - len * 0.55 - ph * R * 0.7 + Math.sin(k * 3.1) * R * 0.15, R * 0.03, 0, 6.283);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------- the hoard and the tribute march ---------- */
+  // The mound he guards, glowing.
+  const mound = ctx.createRadialGradient(R * 0.1, R * 0.85, 0, R * 0.1, R * 0.85, R * 0.7);
+  mound.addColorStop(0, 'rgba(255, 210, 74, 0.24)');
+  mound.addColorStop(1, 'rgba(255, 210, 74, 0)');
+  ctx.fillStyle = mound;
+  ctx.beginPath();
+  ctx.ellipse(R * 0.1, R * 0.88, R * 0.7, R * 0.3, 0, 0, 6.283);
+  ctx.fill();
+  for (let k = 0; k < 10; k++) {
+    const hx2 = R * 0.1 + Math.sin(k * 2.7) * R * 0.45;
+    const hy2 = R * (0.78 + (k % 3) * 0.08);
+    ctx.beginPath();
+    ctx.ellipse(hx2, hy2, R * 0.085, R * 0.048, 0, 0, 6.283);
+    ctx.fillStyle = k % 2 ? '#ffd24a' : '#f0b429';
+    ctx.fill();
+    ctx.strokeStyle = STICKER_OUTLINE;
+    ctx.lineWidth = lw * 0.5;
+    ctx.stroke();
+  }
+  // The tribute march, still filing in from the west causeway.
   for (let k = 0; k < 6; k++) {
-    const t = ((time * 0.16 + k / 6) % 1);
-    const px = -R * 1.6 + t * R * 1.6;
-    const py = R * 1.28 - t * R * 0.55 + Math.sin(t * 12) * R * 0.02;
+    const t = (time * 0.16 + k / 6) % 1;
+    const px = -R * 1.9 + t * R * 1.9;
+    const py = R * 1.32 - t * R * 0.45 + Math.sin(t * 12) * R * 0.02;
     ctx.globalAlpha = t > 0.92 ? (1 - t) / 0.08 : 0.9;
     ctx.beginPath();
     ctx.ellipse(px, py, R * 0.065, R * 0.05, 0.1, 0, 6.283);
@@ -2239,14 +2219,15 @@ function drawJsonBoss(
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
-  for (let k = 0; k < 8; k++) {
+  // And the spiral suction above, thinned: the sky tithe.
+  for (let k = 0; k < 7; k++) {
     const seed = k * 2.399963;
-    const phase = (time * 0.24 + k / 8) % 1;
-    const rad = R * (2.5 - phase * 2.35);
+    const phase = (time * 0.24 + k / 7) % 1;
+    const rad = R * (2.5 - phase * 2.2);
     const ang = seed + phase * 3.8;
     const tx2 = Math.cos(ang) * rad;
-    const ty2 = Math.sin(ang) * rad * 0.42 + R * 0.62 * phase;
-    ctx.globalAlpha = 0.2 + phase * 0.7;
+    const ty2 = Math.sin(ang) * rad * 0.42 + R * 0.5 * phase;
+    ctx.globalAlpha = 0.2 + phase * 0.65;
     ctx.beginPath();
     ctx.ellipse(tx2, ty2, R * 0.05, R * 0.065, ang, 0, 6.283);
     ctx.fillStyle = '#ffd24a';
@@ -2256,21 +2237,25 @@ function drawJsonBoss(
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
-  // The hoard the maw cannot quite swallow.
-  for (let k = 0; k < 7; k++) {
-    const hx = Math.sin(k * 2.7) * R * 0.4;
-    const hy2 = R * (0.78 + (k % 3) * 0.1);
-    ctx.beginPath();
-    ctx.ellipse(hx, hy2, R * 0.09, R * 0.05, 0, 0, 6.283);
-    ctx.fillStyle = k % 2 ? '#ffd24a' : '#f0b429';
-    ctx.fill();
-    ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.5;
-    ctx.stroke();
-  }
 
-  /* ---------- LAYER 8: framing thorns and the lightning ---------- */
-  // Foreground thorn rocks at the corners, the Cyclades island frame.
+  /* ---------- lightning and the framing thorns ---------- */
+  const burst = (time * 0.42) % 1;
+  if (burst < 0.14) {
+    const fade = 1 - burst / 0.14;
+    const side = Math.floor(time * 0.42) % 2 === 0 ? 1 : -1;
+    ctx.strokeStyle = TOXIC;
+    ctx.globalAlpha = 0.85 * fade;
+    ctx.lineWidth = lw * 0.7;
+    ctx.beginPath();
+    ctx.moveTo(side * R * 0.15, -R * 2.5);
+    ctx.lineTo(side * R * 0.55, -R * 2.85);
+    ctx.lineTo(side * R * 0.43, -R * 2.9);
+    ctx.lineTo(side * R * 0.9, -R * 3.25);
+    ctx.moveTo(side * R * 0.55, -R * 2.85);
+    ctx.lineTo(side * R * 0.77, -R * 2.68);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
   for (const side of [-1, 1]) {
     ctx.beginPath();
     ctx.moveTo(side * R * 1.9, R * 1.15);
@@ -2281,38 +2266,6 @@ function drawJsonBoss(
     ctx.fill();
     ctx.strokeStyle = 'rgba(124, 255, 77, 0.25)';
     ctx.lineWidth = lw * 0.4;
-    ctx.stroke();
-  }
-  // Branching green lightning off the crown, brief deterministic bursts.
-  const burst = (time * 0.42) % 1;
-  if (burst < 0.14) {
-    const fade = 1 - burst / 0.14;
-    const side = Math.floor(time * 0.42) % 2 === 0 ? 1 : -1;
-    ctx.strokeStyle = TOXIC;
-    ctx.globalAlpha = 0.85 * fade;
-    ctx.lineWidth = lw * 0.7;
-    ctx.beginPath();
-    ctx.moveTo(side * R * 0.1, -R * 2.6);
-    ctx.lineTo(side * R * 0.5, -R * 2.95);
-    ctx.lineTo(side * R * 0.38, -R * 3.0);
-    ctx.lineTo(side * R * 0.85, -R * 3.35);
-    ctx.moveTo(side * R * 0.5, -R * 2.95);
-    ctx.lineTo(side * R * 0.72, -R * 2.78);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-  }
-
-  // Captive tokens orbiting the Emperor's crown.
-  for (let k = 0; k < 5; k++) {
-    const a = time * 0.7 + (k / 5) * 6.283;
-    const ox = Math.cos(a) * R * 0.85;
-    const oy = -R * 2.75 + Math.sin(a) * R * 0.14;
-    ctx.beginPath();
-    ctx.ellipse(ox, oy, R * 0.05, R * 0.065, 0, 0, 6.283);
-    ctx.fillStyle = '#ffd24a';
-    ctx.fill();
-    ctx.strokeStyle = STICKER_OUTLINE;
-    ctx.lineWidth = lw * 0.5;
     ctx.stroke();
   }
   ctx.restore();
