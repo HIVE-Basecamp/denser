@@ -129,7 +129,7 @@ export const CLUSTERS: readonly Cluster[] = [
   { id: 'arcade_bay', x: 1400, y: -100, link: 'trail', satellites: [] },
   // Perches: tiny rail moorings that let a big landmark stand exactly where
   // Bryan's line calls for, even when that spot is a step off the coast.
-  { id: 'ferris_perch', x: -1050, y: -5050, link: 'trail', satellites: [] },
+  { id: 'ferris_perch', x: -1050, y: -5400, link: 'trail', satellites: [] },
   { id: 'witty_perch', x: 2450, y: -5150, link: 'trail', satellites: [] },
 
   /* ---- decentralised offshoots: little stars trailing off into space ---- */
