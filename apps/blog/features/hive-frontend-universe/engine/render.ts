@@ -1791,24 +1791,10 @@ function drawCube(ctx: CanvasRenderingContext2D, c: Cube): void {
 
 function drawHud(scene: RenderScene): void {
   const { ctx, hud } = scene;
-  // Scrim behind the readout so the text never fights the world under it.
-  const lines =
-    4 +
-    (hud.placesLabel !== undefined ? 1 : 0) +
-    (hud.gemsLabel !== undefined ? 1 : 0) +
-    (scene.debugGrid ? 1 : 0);
-  ctx.fillStyle = 'rgba(10, 5, 16, 0.65)';
-  ctx.beginPath();
-  const sw = 190;
-  const sh = 14 + lines * 19;
-  const rr = 10;
-  ctx.moveTo(8 + rr, 6);
-  ctx.arcTo(8 + sw, 6, 8 + sw, 6 + sh, rr);
-  ctx.arcTo(8 + sw, 6 + sh, 8, 6 + sh, rr);
-  ctx.arcTo(8, 6 + sh, 8, 6, rr);
-  ctx.arcTo(8, 6, 8 + sw, 6, rr);
-  ctx.closePath();
-  ctx.fill();
+  // No scrim box any more (Bryan: "the score card stuff is bright enough
+  // and doesnt need that shaded box") - it was shading whatever stood in
+  // the top-left corner, the hydra's west head included. The text draws
+  // straight over the world.
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.font = `600 13px ${MONO}`;
