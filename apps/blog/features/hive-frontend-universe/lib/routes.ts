@@ -56,9 +56,7 @@ export const NEWB_TRAIL_ID = 'newb-trail';
  */
 const DAPPS_LINE_STOPS = [
   'search',
-  'write_post',
   'wallet',
-  'communities_gate',
   'healthchecker',
   'block_explorer',
   'developer_portal'

@@ -214,12 +214,14 @@ export const LANDMARKS: readonly Landmark[] = [
   // things, instead of hanging off the far eastern rim. Move it by editing
   // this one pair of coordinates.
   { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'cluster', cluster: 'arcade_bay', angleDeg: 90, dist: 250 }, big: true },
-  { id: 'write_post', kind: 'internal', path: '/submit.html', labelKey: 'hive_frontend_universe.landmarks.write_post', category: 'tool', icon: 'quill', place: { in: 'body', x: -1150, y: -900 } },
+  // ('write_post' left the map too, same order: it lives as the comb's
+  // first pane.)
   { id: 'search', kind: 'internal', path: '/search', labelKey: 'hive_frontend_universe.landmarks.search', category: 'tool', icon: 'magnifier', place: { in: 'body', x: -2900, y: -1300 } },
   { id: 'wallet', kind: 'wallet', path: '/', labelKey: 'hive_frontend_universe.landmarks.wallet', category: 'tool', icon: 'wallet', place: { in: 'body', x: -1500, y: 1500 } },
-  { id: 'posts', kind: 'internal', path: '/trending', labelKey: 'navigation.main_nav_bar.posts', category: 'social', icon: 'newspaper', place: { in: 'body', x: -3600, y: 400 } },
+  // ('posts' and 'communities_gate' left the map at Bryan's order: both
+  // live as panes of the Hive Comb Home now, like the paperwork before
+  // them. The comb is the front door for the everyday links.)
   { id: 'chat', kind: 'chat', path: '/', labelKey: 'navigation.sidebar.openhive_chat', category: 'social', icon: 'bubble', place: { in: 'body', x: -2600, y: 2200 } },
-  { id: 'communities_gate', kind: 'internal', path: '/communities', labelKey: 'hive_frontend_universe.landmarks.communities', category: 'social', icon: 'gate', place: { in: 'body', x: -4200, y: 950 } },
   { id: 'welcome', kind: 'internal', path: '/welcome', labelKey: 'navigation.sidebar.welcome', category: 'info', icon: 'flag', place: { in: 'body', x: -3000, y: -2300 } },
 
   /* ---- THE CENTRE BLADE: governance country ---- */
@@ -476,6 +478,9 @@ export const ISLAND_CHIPS: readonly {
  */
 export const ROSE_WINDOW_PANES: readonly { labelKey: string; kind: LandmarkKind; path: string }[] = [
   { labelKey: 'hive_frontend_universe.landmarks.write_post', kind: 'internal', path: '/submit.html' },
+  // The Posts feed moved INTO the comb (Bryan's order), joining the
+  // communities pane that was already here; both left the map as landmarks.
+  { labelKey: 'navigation.main_nav_bar.posts', kind: 'internal', path: '/trending' },
   { labelKey: 'hive_frontend_universe.landmarks.wallet', kind: 'wallet', path: '/' },
   { labelKey: 'navigation.main_nav_bar.sign_up', kind: 'external', path: 'https://signup.hive.io/' },
   { labelKey: 'hive_frontend_universe.landmarks.communities', kind: 'internal', path: '/communities' },

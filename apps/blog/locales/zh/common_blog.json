@@ -835,7 +835,7 @@
       "version": "版本",
       "last_block": "最新区块",
       "missed": "错过区块",
-      "votes": "支持票",
+      "votes": "HP票数",
       "hbd_apr": "HBD储蓄利率",
       "price_feed": "价格喂价",
       "creation_fee": "开户费用",

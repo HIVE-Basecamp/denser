@@ -835,7 +835,7 @@
       "version": "バージョン",
       "last_block": "最新ブロック",
       "missed": "失敗ブロック",
-      "votes": "承認票",
+      "votes": "HP票",
       "hbd_apr": "HBD貯蓄金利",
       "price_feed": "価格フィード",
       "creation_fee": "アカウント作成料",

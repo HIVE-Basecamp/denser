@@ -937,7 +937,7 @@
       "version": "Version",
       "last_block": "Last block",
       "missed": "Missed blocks",
-      "votes": "Approval",
+      "votes": "HP votes",
       "hbd_apr": "HBD savings APR",
       "price_feed": "Price feed",
       "creation_fee": "Account fee",

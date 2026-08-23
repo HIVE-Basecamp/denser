@@ -2886,8 +2886,16 @@ const ROSE_LEAD = '#241333';
 /** Hex-cell size of the comb (centre-to-corner), in units of the window R. */
 const COMB_S = 0.26;
 
-/** The two ring-2 cells that stay wax-capped instead of holding panes. */
-const COMB_CAPPED = [60, 90] as const;
+/**
+ * The twelve outer comb slots in pane order, clockwise from the top. Panes
+ * fill these first; whatever slots are left over stay wax-capped, so the
+ * comb absorbs new links without redesign (Bryan keeps moving icons in).
+ */
+function combSlots(R: number): { x: number; y: number; deg: number }[] {
+  return combSpots(R)
+    .filter((sp) => sp.ring === 2)
+    .sort((a, b) => ((a.deg + 90) % 360) - ((b.deg + 90) % 360));
+}
 
 /** All eighteen non-centre cell spots of the comb, hex-grid honest. */
 function combSpots(R: number): { x: number; y: number; ring: 1 | 2; deg: number }[] {
@@ -2912,10 +2920,8 @@ function combSpots(R: number): { x: number; y: number; ring: 1 | 2; deg: number 
 /** The ten pane cells, clockwise from the top. Shared by drawing, the
  *  label pass and the click hit test, so glass and target never drift. */
 export function rosePaneCentre(k: number, count: number, R: number): { x: number; y: number } {
-  const panes = combSpots(R)
-    .filter((sp) => sp.ring === 2 && !COMB_CAPPED.includes(sp.deg as 60 | 90))
-    .sort((a, b) => ((a.deg + 90) % 360) - ((b.deg + 90) % 360));
-  const sp = panes[k % panes.length];
+  const slots = combSlots(R);
+  const sp = slots[k % slots.length];
   return { x: sp.x, y: sp.y };
 }
 
@@ -3114,9 +3120,11 @@ export function drawRoseWindow(
     }
     hi++;
   }
-  // The two wax-capped cells, lighter gold, dimpled.
-  for (const sp of spots) {
-    if (sp.ring !== 2 || !COMB_CAPPED.includes(sp.deg as 60 | 90)) continue;
+  // Whatever outer slots the panes do not use stay wax-capped, lighter
+  // gold, dimpled.
+  const slots = combSlots(R);
+  for (let k = paneCount; k < slots.length; k++) {
+    const sp = slots[k];
     cell(sp.x, sp.y, cr, sp.deg + 200);
     ctx.fillStyle = '#f2c56a';
     ctx.fill();
