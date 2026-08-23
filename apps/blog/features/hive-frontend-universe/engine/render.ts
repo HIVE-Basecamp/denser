@@ -42,7 +42,6 @@ import {
   drawTrollHole,
   drawSteemRuins,
   drawIslandChip,
-  SHUTTLE_WINDOWS,
   FERRIS_SPIN
 } from './icons';
 import { drawCritters } from './critters';
@@ -174,10 +173,10 @@ const BIG_SIZE: Partial<Record<IconKey, number>> = {
   arcadebldg: 133,
   blackhole: 119,
   jsonboss: 165,
-  launchpad: 140,
+  // 180 since the two dApp ships merged into this one bigger craft.
+  launchpad: 180,
   sockmount: 145,
   rosewindow: 140,
-  shuttle: 125,
   tent: 350
 };
 
@@ -1398,13 +1397,11 @@ export function drawScene(scene: RenderScene): void {
     // draws the holes (DAPP_WINDOWS, same list); once each dApp account's
     // avatar loads it is clipped into its window. Until then the icon's own
     // coloured glass shows, so nothing ever looks broken.
-    if (lm.icon === 'launchpad' || lm.icon === 'shuttle') {
+    if (lm.icon === 'launchpad') {
       const shipR = s * 2.2;
-      const slots = lm.icon === 'launchpad' ? DAPP_WINDOWS : SHUTTLE_WINDOWS;
-      const withLogos = DAPP_DIRECTORY.filter((dd) => dd.account);
-      // The station wears the first four logo accounts; the shuttle wears
-      // the rest, so the two ships carry DIFFERENT faces of the ecosystem.
-      const crew = lm.icon === 'launchpad' ? withLogos.slice(0, 4) : withLogos.slice(4);
+      const slots = DAPP_WINDOWS;
+      // ONE ship since the merge: every logo account rides the same craft.
+      const crew = DAPP_DIRECTORY.filter((dd) => dd.account);
       for (let k = 0; k < slots.length && k < crew.length; k++) {
         const win = slots[k];
         const img = crew[k].account ? avatarImage(crew[k].account as string) : null;
@@ -1857,10 +1854,15 @@ function drawHazardsOnBug(
   // (teleport fires at the midpoint, hidden inside), lifts away 0.5 to 1.
   if (hz.sockT !== null) {
     const t = hz.sockT;
-    const drop = t < 0.5 ? t / 0.5 : 1;
-    const lift = t > 0.5 ? (t - 0.5) / 0.5 : 0;
+    // Three beats: drop (0 to 0.3), HOLD covering the bug (0.3 to 0.7,
+    // the part Bryan wanted to actually see), lift away (0.7 to 1).
+    const drop = t < 0.3 ? t / 0.3 : 1;
+    const lift = t > 0.7 ? (t - 0.7) / 0.3 : 0;
     const sy = y - 170 + drop * 170 - lift * 330;
-    const squash = 1 + Math.sin(Math.min(drop, 1) * Math.PI) * 0.12;
+    // A slow contented squeeze while it holds, like a sock digesting.
+    const holding = t >= 0.3 && t <= 0.7;
+    const squash =
+      1 + (holding ? Math.sin((t - 0.3) * 15) * 0.05 : Math.sin(Math.min(drop, 1) * Math.PI) * 0.12);
     ctx.save();
     ctx.translate(x, sy);
     ctx.scale(2.6 * squash, 2.6 / squash);

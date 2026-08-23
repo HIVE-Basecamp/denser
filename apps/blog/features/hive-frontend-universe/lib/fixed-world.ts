@@ -167,7 +167,6 @@ export type IconKey =
   | 'jsonboss'
   | 'sockmount'
   | 'rosewindow'
-  | 'shuttle'
   | 'pulse'
   | 'gate';
 
@@ -239,7 +238,6 @@ export const LANDMARKS: readonly Landmark[] = [
   { id: 'terms', kind: 'internal', path: '/tos.html', labelKey: 'navigation.sidebar.terms_of_service', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'records', angleDeg: 235, dist: 470 } },
   // Launch (walled off for now).
   { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 0, dist: 1050 }, big: true },
-  { id: 'hive_dapps', kind: 'external', path: 'https://hivedapps.com/', labelKey: 'navigation.explore_nav.hive_dapps', category: 'dapp', icon: 'shuttle', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 180, dist: 1050 }, big: true },
   // The gateway (walled off): a lone door in the dark.
   { id: 'sign_up', kind: 'external', path: 'https://signup.hive.io/', labelKey: 'navigation.main_nav_bar.sign_up', category: 'social', icon: 'door', place: { in: 'cluster', cluster: 'gateway', angleDeg: 180, dist: 500 } },
   // THE MIGHTY J SON himself, crouched on his keep at the edge of the world.
@@ -271,6 +269,7 @@ export const DAPP_DIRECTORY: readonly { name: string; url: string; account?: str
   { name: '3Speak', url: 'https://3speak.tv', account: 'threespeak' },
   { name: 'Actifit', url: 'https://actifit.io', account: 'actifit' },
   { name: 'TribalDex', url: 'https://tribaldex.com' },
+  { name: 'HiveDApps', url: 'https://hivedapps.com/' },
   { name: 'Hive.io', url: 'https://hive.io', account: 'hiveio' }
 ];
 

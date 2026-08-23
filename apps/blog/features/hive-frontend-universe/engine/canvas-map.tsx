@@ -1289,7 +1289,7 @@ const Stage = ({ board }: { board: Board }) => {
           links={
             atLandmark.id === 'arcade'
               ? ARCADE_GAMES.map((g) => ({ label: g.name, href: g.url }))
-              : atLandmark.id === 'our_dapps' || atLandmark.id === 'hive_dapps'
+              : atLandmark.id === 'our_dapps'
                 ? DAPP_DIRECTORY.map((d) => ({ label: d.name, href: d.url }))
                 : atLandmark.id === 'rose_window'
                   ? ROSE_WINDOW_PANES.map((pane) => ({
@@ -1336,6 +1336,9 @@ const Stage = ({ board }: { board: Board }) => {
           mapHeldRef.current = held;
         }}
         onMapTap={toggleFullMap}
+        onGridTap={() => {
+          gridRef.current = !gridRef.current;
+        }}
       />
     </div>
   );

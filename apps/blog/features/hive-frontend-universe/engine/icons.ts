@@ -217,9 +217,6 @@ export function drawIcon(
     case 'rosewindow':
       drawRoseWindow(ctx, x, y, s * 2.2, time);
       break;
-    case 'shuttle':
-      drawShuttle(ctx, x, y, s * 2.2, col, time);
-      break;
     case 'spaceship': {
       // Small rocket in flight.
       ctx.beginPath();
@@ -714,10 +711,14 @@ function drawTowers(
  * same holes this function draws: one list, two consumers, never apart.
  */
 export const DAPP_WINDOWS: readonly { dx: number; dy: number; r: number }[] = [
-  { dx: -0.62, dy: -0.05, r: 0.21 },
-  { dx: -0.22, dy: -0.18, r: 0.23 },
-  { dx: 0.22, dy: -0.18, r: 0.23 },
-  { dx: 0.62, dy: -0.05, r: 0.21 }
+  // Six slots since the two dApp ships merged into this one bigger craft
+  // (Bryan: "basically the same thing... 1 ship, bigger, hold both").
+  { dx: -0.68, dy: -0.03, r: 0.19 },
+  { dx: -0.36, dy: -0.16, r: 0.21 },
+  { dx: 0, dy: -0.2, r: 0.22 },
+  { dx: 0.36, dy: -0.16, r: 0.21 },
+  { dx: 0.68, dy: -0.03, r: 0.19 },
+  { dx: 0, dy: 0.03, r: 0.17 }
 ];
 
 /**
@@ -2067,108 +2068,6 @@ export function drawIslandChip(
     ctx.arc((k - 0.5) * s * 0.5, py, Math.max(1.5, s * 0.07), 0, 6.283);
     ctx.fill();
   }
-  ctx.restore();
-}
-
-/**
- * Window slots on the hive_dapps SHUTTLE, in ship-radius units, shared with
- * the renderer exactly like DAPP_WINDOWS: the icon draws the holes, the
- * renderer fills them with real dApp logos once their avatars load.
- */
-export const SHUTTLE_WINDOWS: readonly { dx: number; dy: number; r: number }[] = [
-  { dx: -0.45, dy: -0.1, r: 0.24 },
-  { dx: 0.1, dy: -0.1, r: 0.24 },
-  { dx: 0.62, dy: -0.1, r: 0.2 }
-];
-
-/**
- * THE SHUTTLE: hive_dapps' own little ship, sibling to the round station
- * but its own silhouette: a horizontal ferry-bus hull with a raked nose,
- * a tail fin, three round windows (real logos once loaded), and a pulsing
- * twin-engine wash. Bryan's order: hive_dapps deserves its own craft, not
- * a hand-me-down rocket doodle.
- */
-function drawShuttle(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  R: number,
-  col: string,
-  time: number
-): void {
-  const lw = Math.max(3.5, R * 0.06);
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  // Hull: a chunky bus with a raked nose to the right.
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.95, -R * 0.34);
-  ctx.lineTo(R * 0.55, -R * 0.34);
-  ctx.quadraticCurveTo(R * 1.05, -R * 0.28, R * 1.1, R * 0.05);
-  ctx.quadraticCurveTo(R * 1.05, R * 0.34, R * 0.6, R * 0.34);
-  ctx.lineTo(-R * 0.95, R * 0.34);
-  ctx.quadraticCurveTo(-R * 1.1, 0, -R * 0.95, -R * 0.34);
-  ctx.closePath();
-  ctx.fillStyle = '#e9eef8';
-  ctx.fill();
-  ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw;
-  ctx.stroke();
-  // Tail fin.
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.75, -R * 0.3);
-  ctx.lineTo(-R * 0.95, -R * 0.85);
-  ctx.lineTo(-R * 0.55, -R * 0.34);
-  ctx.closePath();
-  ctx.fillStyle = '#e3123a';
-  ctx.fill();
-  ctx.stroke();
-  // Belly band in the landmark's category colour.
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(-R * 0.95, R * 0.12);
-  ctx.lineTo(R * 1.02, R * 0.12);
-  ctx.lineTo(R * 1.0, R * 0.34);
-  ctx.lineTo(-R * 0.95, R * 0.34);
-  ctx.closePath();
-  ctx.fillStyle = col;
-  ctx.globalAlpha = 0.85;
-  ctx.fill();
-  ctx.restore();
-  // The windows: renderer paints real logos into these slots; coloured
-  // glass with a slow chase until then.
-  const PORT = ['#5BE39C', '#FFC24D', '#B79CFF'];
-  for (let k = 0; k < SHUTTLE_WINDOWS.length; k++) {
-    const w = SHUTTLE_WINDOWS[k];
-    const lit = Math.floor(time * 1.2) % SHUTTLE_WINDOWS.length === k;
-    ctx.beginPath();
-    ctx.arc(w.dx * R, w.dy * R, w.r * R, 0, 6.283);
-    ctx.fillStyle = PORT[k];
-    ctx.globalAlpha = lit ? 1 : 0.7;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = lw * 0.7;
-    ctx.stroke();
-  }
-  // Cockpit glass on the nose.
-  ctx.beginPath();
-  ctx.arc(R * 0.92, -R * 0.02, R * 0.14, 0, 6.283);
-  ctx.fillStyle = 'rgba(155, 232, 255, 0.5)';
-  ctx.fill();
-  ctx.stroke();
-  // Twin engine wash off the tail, pulsing.
-  const f = 0.5 + Math.sin(time * 6) * 0.5;
-  ctx.fillStyle = '#FFC24D';
-  for (const ey of [-R * 0.16, R * 0.18]) {
-    ctx.globalAlpha = 0.35 + f * 0.5;
-    ctx.beginPath();
-    ctx.moveTo(-R * 1.02, ey - R * 0.08);
-    ctx.quadraticCurveTo(-R * (1.3 + f * 0.2), ey, -R * 1.02, ey + R * 0.08);
-    ctx.closePath();
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
   ctx.restore();
 }
 

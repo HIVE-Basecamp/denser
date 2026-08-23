@@ -29,8 +29,11 @@ const GOO_SECONDS = 3.2;
 export const GOO_SLOW = 0.42;
 /** Jumps needed to tear out of a pasta wrap. */
 const WRAP_JUMPS = 3;
-/** The sock-envelop animation, seconds. Teleport fires at its midpoint. */
-const SOCK_SECONDS = 1.15;
+/** The sock-envelop animation, seconds. Slowed on Bryan's playtest note
+ *  ("i want to really see the sock cover the player"): the sock drops,
+ *  HOLDS closed over the bug for a long beat, then lifts away. The
+ *  teleport still fires at the midpoint, hidden inside the hold. */
+const SOCK_SECONDS = 2.2;
 /** Per-critter re-arm times, so one nuisance cannot chain-lock the player. */
 const SOCK_COOLDOWN = 6;
 const GOO_COOLDOWN = 5;

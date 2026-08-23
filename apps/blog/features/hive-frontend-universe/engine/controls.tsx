@@ -24,6 +24,9 @@ export interface ControlsProps {
   onMapHold: (held: boolean) => void;
   /** Tapped MAP (a quick press): toggle the full travel map. */
   onMapTap: () => void;
+  /** Toggle the planning grid overlay (mirrors the G key, which proved
+   *  unreliable when page focus wandered). */
+  onGridTap: () => void;
 }
 
 const RING = 116;
@@ -31,7 +34,7 @@ const KNOB = 46;
 /** Presses shorter than this are taps; longer are holds. */
 const TAP_MS = 250;
 
-export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap }: ControlsProps) => {
+export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap, onGridTap }: ControlsProps) => {
   const ringRef = useRef<HTMLDivElement>(null);
   const mapDownAt = useRef(0);
   const [knob, setKnob] = useState({ x: 0, y: 0, active: false });
@@ -88,6 +91,18 @@ export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap }: Contr
           }}
         />
       </div>
+
+      {/* GRID toggle, above MAP: the planning overlay, one tap on, one off */}
+      <button
+        type="button"
+        data-testid="hfu-grid-button"
+        className="pointer-events-auto absolute bottom-[164px] right-6 h-10 w-12 select-none rounded-full border-2 border-[#8cdcff]/40 bg-white/[0.03] font-mono text-sm font-bold text-[#8cdcff] active:bg-[#8cdcff]/20 touch-none"
+        onPointerDown={onGridTap}
+        onContextMenu={(e) => e.preventDefault()}
+        aria-label="grid"
+      >
+        #
+      </button>
 
       {/* MAP (hold), above HOP, bottom right */}
       <button
