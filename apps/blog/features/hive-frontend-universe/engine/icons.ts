@@ -2872,25 +2872,51 @@ const ROSE_GLASS: readonly string[] = ['#FF5C8A', '#FFC14D', '#4CE0A0', '#5CA8FF
 const ROSE_LEAD = '#241333';
 
 /**
- * THE ROSE WINDOW: the link cathedral, from Bryan's Sagrada brief. A great
- * stained-glass wheel standing on the strait: twelve outer panes, six inner
- * petals, and a glowing oculus at the heart. The panes shimmer one at a
- * time, slowly, like sun moving behind glass; the leading keeps it in the
- * chunky sticker language. Its landing panel rounds up the headline
- * hive.blog actions, one pane each.
+ * HIVE COMB HOME (was the Rose Window). Bryan: "go look at real images of
+ * honeycombs... nature gives you the answer. just go mimic a real honey
+ * comb. but keep the fun color changing." So this is a REAL comb now: one
+ * wax slab hanging from a branch, cells hex-PACKED and sharing walls the
+ * way bees actually build - centre cell, a ring of six honey cells, and an
+ * outer ring of twelve where the ten link panes live in their stained-glass
+ * colors (the two spare cells are wax-capped). Slight waviness and a slow
+ * breath keep it organic; honey drips off the bottom edge and one bee is
+ * always on patrol.
  */
-/**
- * Pane-ring geometry, shared by the window drawing, the renderer's label
- * pass and canvas-map's pane hit test: one list, three consumers, never
- * apart (the DAPP_WINDOWS rule). Radii are in units of the window's R.
- */
-export const ROSE_PANE_RING = { inner: 0.6, outer: 0.92 } as const;
 
-/** Centre of outer pane k of `count`, as an offset from the window centre. */
+/** Hex-cell size of the comb (centre-to-corner), in units of the window R. */
+const COMB_S = 0.26;
+
+/** The two ring-2 cells that stay wax-capped instead of holding panes. */
+const COMB_CAPPED = [60, 90] as const;
+
+/** All eighteen non-centre cell spots of the comb, hex-grid honest. */
+function combSpots(R: number): { x: number; y: number; ring: 1 | 2; deg: number }[] {
+  const s = COMB_S * R;
+  const d = Math.sqrt(3) * s; // neighbour centre distance
+  const spots: { x: number; y: number; ring: 1 | 2; deg: number }[] = [];
+  for (let i = 0; i < 6; i++) {
+    const ca = (Math.PI / 180) * (i * 60);
+    spots.push({ x: Math.cos(ca) * d, y: Math.sin(ca) * d, ring: 1, deg: i * 60 });
+    spots.push({ x: Math.cos(ca) * 2 * d, y: Math.sin(ca) * 2 * d, ring: 2, deg: i * 60 });
+    const ea = (Math.PI / 180) * (i * 60 + 30);
+    spots.push({
+      x: Math.cos(ea) * Math.sqrt(3) * d,
+      y: Math.sin(ea) * Math.sqrt(3) * d,
+      ring: 2,
+      deg: i * 60 + 30
+    });
+  }
+  return spots;
+}
+
+/** The ten pane cells, clockwise from the top. Shared by drawing, the
+ *  label pass and the click hit test, so glass and target never drift. */
 export function rosePaneCentre(k: number, count: number, R: number): { x: number; y: number } {
-  const a = ((k + 0.5) / count) * 6.283 - 1.5708;
-  const r = R * ((ROSE_PANE_RING.inner + ROSE_PANE_RING.outer) / 2);
-  return { x: Math.cos(a) * r, y: Math.sin(a) * r };
+  const panes = combSpots(R)
+    .filter((sp) => sp.ring === 2 && !COMB_CAPPED.includes(sp.deg as 60 | 90))
+    .sort((a, b) => ((a.deg + 90) % 360) - ((b.deg + 90) % 360));
+  const sp = panes[k % panes.length];
+  return { x: sp.x, y: sp.y };
 }
 
 export function drawRoseWindow(
@@ -2900,30 +2926,22 @@ export function drawRoseWindow(
   R: number,
   time: number
 ): void {
-  // HONEYCOMB REBUILD (Bryan's order): every pane is a comb cell now, and
-  // none of them is a perfect hexagon. Each cell's corners carry a fixed
-  // per-cell wobble plus a slow breathing undulation, so the whole window
-  // reads as living comb, not stamped geometry. The pane CENTRES stay on
-  // the exported ring (rosePaneCentre), so the click targets and the words
-  // in the panes keep lining up with the glass.
   const lw = Math.max(3, R * 0.05);
   ctx.save();
   ctx.translate(x, y);
   ctx.lineJoin = 'round';
-  // Deterministic per-corner wobble, same for every player.
+  // Deterministic small wobble, same for every player.
   const wob = (i: number) => {
     const v = Math.sin(i * 12.9898) * 43758.5453;
     return (v - Math.floor(v)) - 0.5;
   };
-  // One organic comb cell: six corners, each pushed off the perfect hex by
-  // its own fixed amount and slowly undulating on its own clock.
-  const combCell = (cx: number, cy: number, r: number, seed: number, spin: number) => {
+  // One comb cell: a near-regular hexagon with slight waviness and a slow
+  // breath. Corners sit at 30+60k so shared walls face the neighbours.
+  const cell = (cx: number, cy: number, r: number, seed: number) => {
     ctx.beginPath();
     for (let i = 0; i < 6; i++) {
-      const a = spin + (i / 6) * 6.283 + wob(seed * 7 + i) * 0.16;
-      const rr =
-        r *
-        (1 + wob(seed * 13 + i * 3) * 0.14 + Math.sin(time * 0.9 + seed * 1.7 + i * 2.1) * 0.035);
+      const a = Math.PI / 6 + (i / 6) * 6.283 + wob(seed * 7 + i) * 0.05;
+      const rr = r * (1 + wob(seed * 13 + i * 3) * 0.05 + Math.sin(time * 0.8 + seed * 1.9 + i) * 0.015);
       const px = cx + Math.cos(a) * rr;
       const py = cy + Math.sin(a) * rr;
       if (i === 0) ctx.moveTo(px, py);
@@ -2931,95 +2949,203 @@ export function drawRoseWindow(
     }
     ctx.closePath();
   };
-  // A soft holy glow behind the whole window.
-  const halo = ctx.createRadialGradient(0, 0, R * 0.3, 0, 0, R * 1.8);
-  halo.addColorStop(0, 'rgba(255, 217, 160, 0.22)');
-  halo.addColorStop(1, 'rgba(255, 217, 160, 0)');
+  // Warm glow behind the comb.
+  const halo = ctx.createRadialGradient(0, 0, R * 0.3, 0, 0, R * 1.9);
+  halo.addColorStop(0, 'rgba(255, 200, 120, 0.22)');
+  halo.addColorStop(1, 'rgba(255, 200, 120, 0)');
   ctx.fillStyle = halo;
   ctx.beginPath();
-  ctx.arc(0, 0, R * 1.8, 0, 6.283);
+  ctx.arc(0, 0, R * 1.9, 0, 6.283);
   ctx.fill();
-  // Stone backdrop: a wobbly organic disc, not a compass circle.
+  // THE BRANCH it hangs from, as real combs do.
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = R * 0.115;
   ctx.beginPath();
-  for (let i = 0; i <= 18; i++) {
-    const a = (i / 18) * 6.283;
-    const rr = R * (1.04 + wob(i % 18) * 0.03 + Math.sin(time * 0.6 + i * 1.3) * 0.012);
-    const px = Math.cos(a) * rr;
-    const py = Math.sin(a) * rr;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+  ctx.moveTo(-R * 1.45, -R * 1.28);
+  ctx.quadraticCurveTo(0, -R * 1.44, R * 1.5, -R * 1.34);
+  ctx.stroke();
+  ctx.strokeStyle = '#5a3d22';
+  ctx.lineWidth = R * 0.08;
+  ctx.beginPath();
+  ctx.moveTo(-R * 1.45, -R * 1.28);
+  ctx.quadraticCurveTo(0, -R * 1.44, R * 1.5, -R * 1.34);
+  ctx.stroke();
+  // A twig stub forking off it.
+  ctx.lineWidth = R * 0.045;
+  ctx.beginPath();
+  ctx.moveTo(R * 0.85, -R * 1.37);
+  ctx.quadraticCurveTo(R * 1.1, -R * 1.55, R * 1.32, -R * 1.6);
+  ctx.stroke();
+  // THE WAX SLAB: one organic blob of comb, wider than tall, hung from the
+  // branch by two wax stems. Its edge is wavy the way a built comb is.
+  const slab = () => {
+    ctx.beginPath();
+    for (let i = 0; i <= 22; i++) {
+      const a = (i / 22) * 6.283;
+      const rr =
+        R * (1.17 + wob(i % 22) * 0.05 + Math.sin(time * 0.5 + i * 1.7) * 0.012) *
+        (1 - 0.06 * Math.sin(a));
+      const px = Math.cos(a) * rr;
+      const py = Math.sin(a) * rr * 0.97;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  };
+  // Wax stems up to the branch first, behind the slab.
+  ctx.fillStyle = '#6b4a1c';
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw * 0.6;
+  for (const [sx, sw] of [
+    [-R * 0.42, R * 0.24],
+    [R * 0.38, R * 0.3]
+  ] as const) {
+    ctx.beginPath();
+    ctx.moveTo(sx - sw * 0.35, -R * 1.34);
+    ctx.lineTo(sx + sw * 0.35, -R * 1.36);
+    ctx.lineTo(sx + sw * 0.55, -R * 1.05);
+    ctx.lineTo(sx - sw * 0.55, -R * 1.03);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
   }
-  ctx.closePath();
-  ctx.fillStyle = '#191024';
+  slab();
+  const wax = ctx.createRadialGradient(0, -R * 0.2, R * 0.2, 0, 0, R * 1.25);
+  wax.addColorStop(0, '#6b4a1c');
+  wax.addColorStop(1, '#432a0e');
+  ctx.fillStyle = wax;
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw * 1.4;
+  ctx.lineWidth = lw * 1.2;
   ctx.stroke();
-  // The outer comb ring: one living cell per REAL pane, breathing on its
-  // own slow clock so the window never strobes.
+  // THE CELLS, hex-packed and sharing walls: the wax showing between the
+  // inset cell mouths IS the wall, exactly like the real thing.
+  const cr = COMB_S * R * 0.88;
+  const spots = combSpots(R);
   const paneCount = ROSE_WINDOW_PANES.length;
+  // Ring 1: six honey cells, full and glossy.
+  for (const sp of spots) {
+    if (sp.ring !== 1) continue;
+    const gleam = 0.8 + Math.sin(time * 0.7 + sp.deg) * 0.2;
+    cell(sp.x, sp.y, cr, sp.deg + 100);
+    const honey = ctx.createRadialGradient(sp.x - cr * 0.3, sp.y - cr * 0.35, cr * 0.1, sp.x, sp.y, cr * 1.15);
+    honey.addColorStop(0, `rgba(255, 196, 77, ${gleam.toFixed(3)})`);
+    honey.addColorStop(1, 'rgba(178, 106, 18, 0.95)');
+    ctx.fillStyle = honey;
+    ctx.fill();
+    ctx.strokeStyle = '#2e1c08';
+    ctx.lineWidth = lw * 0.7;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255, 240, 200, 0.5)';
+    ctx.beginPath();
+    ctx.ellipse(sp.x - cr * 0.3, sp.y - cr * 0.35, cr * 0.22, cr * 0.12, -0.6, 0, 6.283);
+    ctx.fill();
+  }
+  // The two wax-capped cells.
+  for (const sp of spots) {
+    if (sp.ring !== 2 || !COMB_CAPPED.includes(sp.deg as 60 | 90)) continue;
+    cell(sp.x, sp.y, cr, sp.deg + 200);
+    ctx.fillStyle = '#d8ab58';
+    ctx.fill();
+    ctx.strokeStyle = '#2e1c08';
+    ctx.lineWidth = lw * 0.7;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(90, 55, 15, 0.35)';
+    ctx.beginPath();
+    ctx.arc(sp.x + cr * 0.1, sp.y + cr * 0.08, cr * 0.32, 0, 6.283);
+    ctx.fill();
+  }
+  // THE TEN PANE CELLS: stained glass set in wax, breathing colour kept.
   for (let k = 0; k < paneCount; k++) {
     const c = rosePaneCentre(k, paneCount, R);
     const lit = 0.68 + Math.sin(time * 0.6 + k * 1.9) * 0.24;
-    combCell(c.x, c.y, R * 0.215, k + 1, ((k + 0.5) / paneCount) * 6.283);
+    cell(c.x, c.y, cr, k + 1);
     ctx.fillStyle = ROSE_GLASS[k % 6];
     ctx.globalAlpha = lit;
     ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = ROSE_LEAD;
-    ctx.lineWidth = lw;
+    ctx.strokeStyle = '#2e1c08';
+    ctx.lineWidth = lw * 0.7;
     ctx.stroke();
   }
-  // Six inner comb cells, offset half a step, a shade brighter.
-  for (let k = 0; k < 6; k++) {
-    const a = (k / 6) * 6.283 - 1.5708 + 0.26;
-    const cx = Math.cos(a) * R * 0.38;
-    const cy = Math.sin(a) * R * 0.38;
-    const lit = 0.74 + Math.sin(time * 0.5 + k * 2.4 + 2) * 0.22;
-    combCell(cx, cy, R * 0.15, k + 30, a);
-    ctx.fillStyle = ROSE_GLASS[(k * 2 + 1) % 6];
-    ctx.globalAlpha = lit;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = ROSE_LEAD;
-    ctx.lineWidth = lw;
-    ctx.stroke();
-  }
-  // The oculus: a warm gold comb heart with the Hive diamond in glass.
+  // The heart cell: warm gold with the Hive diamond in glass.
   const beat = 0.7 + Math.sin(time * 1.1) * 0.3;
-  const oc = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.21);
+  cell(0, 0, cr, 77);
+  const oc = ctx.createRadialGradient(0, 0, 0, 0, 0, cr * 1.1);
   oc.addColorStop(0, `rgba(255, 240, 200, ${(0.75 + beat * 0.25).toFixed(3)})`);
-  oc.addColorStop(1, 'rgba(255, 194, 77, 0.35)');
-  combCell(0, 0, R * 0.2, 77, 0.52);
+  oc.addColorStop(1, 'rgba(255, 194, 77, 0.4)');
   ctx.fillStyle = oc;
   ctx.fill();
-  ctx.strokeStyle = ROSE_LEAD;
-  ctx.lineWidth = lw;
+  ctx.strokeStyle = '#2e1c08';
+  ctx.lineWidth = lw * 0.7;
   ctx.stroke();
-  const d = R * 0.1;
+  const d2 = R * 0.1;
   ctx.beginPath();
-  ctx.moveTo(0, -d);
-  ctx.lineTo(d * 0.85, 0);
-  ctx.lineTo(0, d);
-  ctx.lineTo(-d * 0.85, 0);
+  ctx.moveTo(0, -d2);
+  ctx.lineTo(d2 * 0.85, 0);
+  ctx.lineTo(0, d2);
+  ctx.lineTo(-d2 * 0.85, 0);
   ctx.closePath();
   ctx.fillStyle = '#E31337';
   ctx.fill();
-  ctx.strokeStyle = ROSE_LEAD;
-  ctx.lineWidth = lw * 0.7;
+  ctx.strokeStyle = '#2e1c08';
+  ctx.lineWidth = lw * 0.6;
   ctx.stroke();
-  // Two stone feet planting it on the bridge.
-  ctx.fillStyle = '#241333';
-  ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw;
-  for (const side of [-1, 1]) {
+  // HONEY DRIPS off the bottom edge, slowly stretching and letting go.
+  for (const [dx, ph, len] of [
+    [-R * 0.32, 0, R * 0.34],
+    [R * 0.18, 2.4, R * 0.46],
+    [R * 0.62, 4.4, R * 0.26]
+  ] as const) {
+    const stretch = 1 + Math.sin(time * 0.6 + ph) * 0.18;
+    const topY = R * 1.08;
     ctx.beginPath();
-    ctx.moveTo(side * R * 0.55, R * 0.84);
-    ctx.lineTo(side * R * 0.8, R * 1.28);
-    ctx.lineTo(side * R * 0.32, R * 1.28);
+    ctx.moveTo(dx - R * 0.055, topY);
+    ctx.quadraticCurveTo(dx - R * 0.05, topY + len * stretch * 0.6, dx, topY + len * stretch);
+    ctx.quadraticCurveTo(dx + R * 0.05, topY + len * stretch * 0.6, dx + R * 0.055, topY);
     ctx.closePath();
+    const dg = ctx.createLinearGradient(0, topY, 0, topY + len * stretch);
+    dg.addColorStop(0, '#b26a12');
+    dg.addColorStop(1, '#ffc44d');
+    ctx.fillStyle = dg;
     ctx.fill();
+    ctx.strokeStyle = '#2e1c08';
+    ctx.lineWidth = lw * 0.4;
     ctx.stroke();
+    // The gleam at the drip's fat end.
+    ctx.fillStyle = 'rgba(255, 240, 200, 0.7)';
+    ctx.beginPath();
+    ctx.arc(dx - R * 0.015, topY + len * stretch * 0.8, R * 0.02, 0, 6.283);
+    ctx.fill();
+  }
+  // One bee on patrol, always circling its home.
+  {
+    const ba = time * 0.55;
+    const bx = Math.cos(ba) * R * 1.42;
+    const by = Math.sin(ba) * R * 1.1 - R * 0.1;
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.rotate(ba + Math.PI / 2 + (Math.sin(ba) < 0 ? 0 : 0));
+    ctx.fillStyle = '#ffd24a';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, R * 0.055, R * 0.038, 0, 0, 6.283);
+    ctx.fill();
+    ctx.strokeStyle = '#141019';
+    ctx.lineWidth = R * 0.016;
+    ctx.beginPath();
+    ctx.moveTo(-R * 0.015, -R * 0.036);
+    ctx.lineTo(-R * 0.015, R * 0.036);
+    ctx.moveTo(R * 0.02, -R * 0.03);
+    ctx.lineTo(R * 0.02, R * 0.03);
+    ctx.stroke();
+    const buzz = Math.sin(time * 26) * 0.35;
+    ctx.fillStyle = 'rgba(200, 230, 255, 0.75)';
+    for (const ws of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(-R * 0.02, ws * R * 0.045, R * 0.035, R * 0.018, ws * (0.7 + buzz), 0, 6.283);
+      ctx.fill();
+    }
+    ctx.restore();
   }
   ctx.restore();
 }
