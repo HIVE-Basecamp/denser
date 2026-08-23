@@ -1693,10 +1693,10 @@ function drawJsonBoss(
   ctx.lineCap = 'round';
 
   const TOXIC = '#7CFF4D';
-  const SHADOW = '#241640';
-  const MID = '#3c1f57';
-  const HI = '#5a3585';
-  const BELLY = '#8a5fc0';
+  const SHADOW = '#0c3230';
+  const MID = '#15635a';
+  const HI = '#2a8f7f';
+  const BELLY = '#a8e06a';
 
   /* ---------- backdrop: aura, streaks, storm rings, far spires ---------- */
   const aura = ctx.createRadialGradient(0, -R * 0.5, R * 0.4, 0, -R * 0.5, R * 3.1);
@@ -1932,15 +1932,15 @@ function drawJsonBoss(
     ctx.quadraticCurveTo(wx(0.5), R * 0.04, 0, R * 0.12);
     ctx.closePath();
     const wg = ctx.createLinearGradient(0, -R * 1.4, 0, R * 0.1);
-    wg.addColorStop(0, '#1c1030');
-    wg.addColorStop(1, '#120a20');
+    wg.addColorStop(0, '#8a1f4d');
+    wg.addColorStop(1, '#54102f');
     ctx.fillStyle = wg;
     ctx.fill();
     ctx.strokeStyle = STICKER_OUTLINE;
     ctx.lineWidth = lw * 0.9;
     ctx.stroke();
     // Wing fingers.
-    ctx.strokeStyle = HI;
+    ctx.strokeStyle = '#ff6fa5';
     ctx.lineWidth = lw * 0.5;
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -1950,7 +1950,7 @@ function drawJsonBoss(
     ctx.moveTo(0, 0);
     ctx.quadraticCurveTo(wx(0.55), -R * 0.26, wx(0.85), -R * 0.1);
     ctx.stroke();
-    ctx.strokeStyle = 'rgba(124, 255, 77, 0.35)';
+    ctx.strokeStyle = 'rgba(255, 127, 174, 0.5)';
     ctx.lineWidth = lw * 0.45;
     ctx.beginPath();
     ctx.moveTo(wx(1.9), -R * 1.5);
@@ -1972,7 +1972,7 @@ function drawJsonBoss(
   ctx.lineTo(0, R * 0.2);
   ctx.lineTo(-R * 0.14, R * 0.06);
   ctx.closePath();
-  ctx.fillStyle = MID;
+  ctx.fillStyle = '#c22553';
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
   ctx.lineWidth = lw * 0.7;
@@ -2019,7 +2019,7 @@ function drawJsonBoss(
       ctx.quadraticCurveTo(bx2 + R * 0.06, R * 0.92, bx2 + R * 0.015, R * 1.1);
       ctx.quadraticCurveTo(bx2 - R * 0.015, R * 0.96, bx2 - R * 0.075, R * 0.9);
       ctx.closePath();
-      ctx.fillStyle = '#c9b8dd';
+      ctx.fillStyle = '#f2e3c2';
       ctx.fill();
       ctx.strokeStyle = STICKER_OUTLINE;
       ctx.lineWidth = lw * 0.5;
@@ -2045,8 +2045,8 @@ function drawJsonBoss(
     const hx = h.hx;
     const hy = h.hy + bob;
     limb(h.nx0, h.ny0, h.ncx, h.ncy, hx, hy, h.r0, h.r1, h.tone);
-    // Dorsal spikes along the neck's outer edge.
-    ctx.fillStyle = SHADOW;
+    // Dorsal spikes along the neck's outer edge: a magenta crest.
+    ctx.fillStyle = '#d62a63';
     for (let i = 2; i <= 12; i += 2) {
       const t = i / 14;
       const px = (1 - t) * (1 - t) * h.nx0 + 2 * (1 - t) * t * h.ncx + t * t * hx;
@@ -2099,7 +2099,7 @@ function drawJsonBoss(
     ctx.quadraticCurveTo(R * 0.26, R * (0.06 + jaw * 0.5), R * 0.06, R * 0.1);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = '#e8e0f4';
+    ctx.fillStyle = '#f2e3c2';
     for (let tt = 0; tt < 3; tt++) {
       const txx = R * (0.14 + tt * 0.12);
       ctx.beginPath();
@@ -2112,13 +2112,13 @@ function drawJsonBoss(
     // Brow ridge and the burning eye with bloom.
     const glare = 0.6 + Math.sin(time * 2.1 + h.bob) * 0.4;
     const eb = ctx.createRadialGradient(R * 0.08, -R * 0.14, 0, R * 0.08, -R * 0.14, R * 0.16);
-    eb.addColorStop(0, `rgba(255, 210, 74, ${(0.6 * glare).toFixed(3)})`);
+    eb.addColorStop(0, `rgba(255, 138, 42, ${(0.6 * glare).toFixed(3)})`);
     eb.addColorStop(1, 'rgba(255, 210, 74, 0)');
     ctx.fillStyle = eb;
     ctx.beginPath();
     ctx.arc(R * 0.08, -R * 0.14, R * 0.16, 0, 6.283);
     ctx.fill();
-    ctx.fillStyle = `rgba(255, 210, 74, ${(0.75 + glare * 0.25).toFixed(3)})`;
+    ctx.fillStyle = `rgba(255, 138, 42, ${(0.75 + glare * 0.25).toFixed(3)})`;
     ctx.beginPath();
     ctx.ellipse(R * 0.08, -R * 0.14, R * 0.085, R * 0.038, 0.15, 0, 6.283);
     ctx.fill();
@@ -2138,7 +2138,7 @@ function drawJsonBoss(
       ctx.quadraticCurveTo(ox - len * 0.5, -R * 0.3 - len * 0.55, ox - len, -R * 0.2 - len * 0.75);
       ctx.quadraticCurveTo(ox - len * 0.35, -R * 0.26 - len * 0.3, ox - R * 0.09, -R * 0.16);
       ctx.closePath();
-      ctx.fillStyle = '#c9b8dd';
+      ctx.fillStyle = '#f2e3c2';
       ctx.fill();
       ctx.strokeStyle = STICKER_OUTLINE;
       ctx.lineWidth = lw * 0.6;
