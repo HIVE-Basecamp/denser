@@ -1658,7 +1658,8 @@ export function drawScene(scene: RenderScene): void {
     ctx.fillStyle = PALETTE.hive;
     ctx.save();
     ctx.translate(player.x, player.y);
-    const s = 9 / z;
+    // 12 (was 9): grown so the black Hive stripes stay legible on it.
+    const s = 12 / z;
     ctx.beginPath();
     ctx.moveTo(0, -s);
     ctx.lineTo(s, 0);
@@ -1669,6 +1670,10 @@ export function drawScene(scene: RenderScene): void {
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 1.5 / z;
     ctx.stroke();
+    // The black Hive stripes on the map marker too (Bryan's order covers
+    // "the red diamond that represents the players location" at BOTH
+    // zooms). Sized in screen space with the diamond, never mirrored.
+    drawHiveMark(ctx, 0, 0, s * 1.05, '#141019');
     ctx.restore();
   }
 
