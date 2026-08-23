@@ -17,6 +17,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from '@/blog/i18n/client';
+import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBoard } from '../hooks/use-board';
 import { useCommunities } from '../hooks/use-communities';
 import { useWitnesses } from '../hooks/use-witnesses';
@@ -123,6 +124,14 @@ const Stage = ({ board }: { board: Board }) => {
   const { t } = useTranslation('common_blog');
   const { data: communities } = useCommunities();
   const { data: witnesses } = useWitnesses();
+  // The signed-in player's avatar RIDES the bug (Bryan's mount design).
+  // The page only mounts behind the login gate, so the username is stable
+  // for the life of the stage.
+  const { user } = useUserClient();
+  const playerHandle = user?.isLoggedIn ? user.username : undefined;
+  useEffect(() => {
+    if (playerHandle) requestAvatar(playerHandle);
+  }, [playerHandle]);
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [atNode, setAtNode] = useState(-1);
@@ -1214,6 +1223,7 @@ const Stage = ({ board }: { board: Board }) => {
         landmarks: landmarkVisuals,
         roseLabels,
         newbieVisited: visitedNewbsRef.current,
+        playerHandle,
         communities: communityVisualsRef.current,
         factories,
         cubes,

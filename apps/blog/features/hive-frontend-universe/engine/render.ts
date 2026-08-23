@@ -311,6 +311,12 @@ export interface RenderScene {
    */
   newbieVisited?: ReadonlySet<number>;
   /**
+   * The signed-in player's account: their avatar RIDES the bug (Bryan's
+   * mount design, built ready for future multiplayer where every player's
+   * icon rides their own bug).
+   */
+  playerHandle?: string;
+  /**
    * THE PLANNING GRID: a toggleable overlay (G key) lettering the world
    * into 700px boxes, columns A-Z west to east, rows 1-26 north to south,
    * so Bryan can direct work by box ("put it at G-17"). Debug chrome, off
@@ -1654,7 +1660,7 @@ export function drawScene(scene: RenderScene): void {
 
   const bugX = scene.rideOverlay ? scene.rideOverlay.x : player.x;
   const bugY = scene.rideOverlay ? scene.rideOverlay.y : player.y;
-  drawBug(ctx, player, time, bugX, bugY);
+  drawBug(ctx, player, time, bugX, bugY, scene.playerHandle ? avatarImage(scene.playerHandle) : null);
   // The worn helmet resolves at play zoom only; below that the dome would
   // be sub-2px mush (LOD rule: identity survives, detail does not).
   if (scene.helmetState && z >= 0.22) {
@@ -2022,7 +2028,8 @@ function drawBug(
   p: PlayerState,
   time: number,
   atX: number,
-  atY: number
+  atY: number,
+  rider: HTMLImageElement | null
 ): void {
   const BW = 19;
   const BH = 21;
@@ -2046,26 +2053,22 @@ function drawBug(
   ctx.globalAlpha = 1;
   ctx.restore();
 
+  // THE REINS (Bryan's mount design): the two eye tentacles grew LONGER,
+  // rooted in the body, swinging wide AROUND the rider's circle and coming
+  // out over the top. Stalks first; the eyeballs are drawn LAST so they
+  // peek out over the rider.
+  const eyeTips: [number, number][] = [];
   for (let e = -1; e <= 1; e += 2) {
-    const tx = e * 10 + p.face * 2.4;
-    const ty = -29 + Math.sin(time * 4 + e) * 1.6;
+    const tx = e * 8 + p.face * 2.6;
+    const ty = -47 + Math.sin(time * 4 + e) * 1.8;
+    eyeTips.push([tx, ty]);
     ctx.strokeStyle = PALETTE.hiveLit;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(e * 5, -10);
-    ctx.quadraticCurveTo(e * 12, -22, tx, ty);
+    ctx.moveTo(e * 6, -12);
+    ctx.quadraticCurveTo(e * 17, -22, e * 15, -33);
+    ctx.quadraticCurveTo(e * 13, -41, tx, ty);
     ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(tx, ty, 4.6, 0, 6.283);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-    ctx.strokeStyle = '#5c0a16';
-    ctx.lineWidth = 1.2;
-    ctx.stroke();
-    ctx.fillStyle = PALETTE.hiveBlack;
-    ctx.beginPath();
-    ctx.arc(tx + p.face * 1.7, ty + 0.5, 2, 0, 6.283);
-    ctx.fill();
   }
 
   ctx.beginPath();
@@ -2085,6 +2088,78 @@ function drawBug(
   // flip: the body faces left/right via `face` coordinate offsets only,
   // never a flip transform, so the mark can never appear backwards.
   drawHiveMark(ctx, 0, 0.5, 24, '#141019');
+
+  // THE RIDER: the signed-in player's own avatar, perched on the diamond's
+  // top tip, riding the bug. Little boots dangle onto the shoulders first,
+  // behind the circle.
+  const rr = 10;
+  const rcy = -BH - 6;
+  ctx.fillStyle = '#141019';
+  for (const e of [-1, 1]) {
+    ctx.beginPath();
+    ctx.ellipse(e * 5.4, -16.2, 3, 2, e * 0.5, 0, 6.283);
+    ctx.fill();
+  }
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(0, rcy, rr, 0, 6.283);
+  ctx.clip();
+  if (rider) {
+    ctx.drawImage(rider, -rr, rcy - rr, rr * 2, rr * 2);
+  } else {
+    // Until the avatar loads: a warm rider-shaped placeholder.
+    ctx.fillStyle = '#ffd24a';
+    ctx.fillRect(-rr, rcy - rr, rr * 2, rr * 2);
+    ctx.fillStyle = '#8a5a00';
+    ctx.beginPath();
+    ctx.arc(0, rcy - 2.5, 3.4, 0, 6.283);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(0, rcy + 6, 5.5, 4, 0, Math.PI, 0);
+    ctx.fill();
+  }
+  ctx.restore();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.arc(0, rcy, rr, 0, 6.283);
+  ctx.stroke();
+
+  // Little arms out from the rider, hands gripping the reins where the
+  // stalks pass beside the circle.
+  ctx.strokeStyle = '#141019';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  for (const e of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(e * 8, rcy - 2);
+    ctx.quadraticCurveTo(e * 12.5, rcy - 4, e * 14.2, rcy - 6);
+    ctx.stroke();
+    ctx.fillStyle = '#141019';
+    ctx.beginPath();
+    ctx.arc(e * 14.5, rcy - 6.4, 2.1, 0, 6.283);
+    ctx.fill();
+  }
+
+  // The EYEBALLS, bigger now and drawn over everything: peeking out over
+  // the top of the rider like the bug is watching where it carries them.
+  for (const [tx, ty] of eyeTips) {
+    ctx.beginPath();
+    ctx.arc(tx, ty, 6.2, 0, 6.283);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#5c0a16';
+    ctx.lineWidth = 1.3;
+    ctx.stroke();
+    ctx.fillStyle = PALETTE.hiveBlack;
+    ctx.beginPath();
+    ctx.arc(tx + p.face * 2.2, ty + 0.6, 2.7, 0, 6.283);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(tx - 1.6, ty - 1.9, 1, 0, 6.283);
+    ctx.fill();
+  }
 
   if (p.mode === 'drift') {
     const f = clamp(p.fuel / 2.4, 0, 1);
