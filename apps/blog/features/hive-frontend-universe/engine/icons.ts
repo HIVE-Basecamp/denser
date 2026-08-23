@@ -1664,10 +1664,14 @@ export function drawTrollHole(
 }
 
 /**
- * THE MIGHTY J SON: the villain himself, a hulking monster whose body IS a
- * pair of curly braces, crouched on his keep hoarding a mountain of stolen
- * tokens. Overlord of the sock puppets, bots, scammers, spammers and
- * extractors. Big, bold, and just a little ridiculous, as a good boss is.
+ * EMPEROR J SON'S FORTRESS, complete redesign (pass 22, Bryan: "it doesnt
+ * stand out..and it doesnt say evil power hungry fortress"). FORTRESS FIRST
+ * now: a towering obsidian citadel wrapped in a toxic-green storm, the only
+ * green structure in a red world, so the north-east corner reads WRONG from
+ * anywhere. A fanged gate devours the stolen tokens, chains hang between the
+ * flank towers, a giant glowing brace sigil brands the keep, green lightning
+ * cracks off the crown, and the Emperor himself (his established brace-armed
+ * form, kept for lore) sits enthroned at the very top, glaring.
  */
 function drawJsonBoss(
   ctx: CanvasRenderingContext2D,
@@ -1682,70 +1686,225 @@ function drawJsonBoss(
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
-  // A cold dark aura first, so the whole corner of the map feels wrong
-  // before the castle even resolves. The one place with no warm pool.
-  const aura = ctx.createRadialGradient(0, 0, R * 0.4, 0, 0, R * 2.6);
-  aura.addColorStop(0, 'rgba(30, 8, 40, 0.55)');
+  const OBSIDIAN = '#0c0714';
+  const RIM = '#4d2a6e';
+  const TOXIC = '#7CFF4D';
+  const TOXIC_DIM = 'rgba(124, 255, 77, 0.16)';
+
+  // The cold dark aura: the one corner with no warm pool, bigger than before.
+  const aura = ctx.createRadialGradient(0, -R * 0.5, R * 0.4, 0, -R * 0.5, R * 3.1);
+  aura.addColorStop(0, 'rgba(24, 6, 34, 0.6)');
   aura.addColorStop(1, 'rgba(10, 4, 18, 0)');
   ctx.fillStyle = aura;
   ctx.beginPath();
-  ctx.arc(0, 0, R * 2.6, 0, 6.283);
+  ctx.arc(0, -R * 0.5, R * 3.1, 0, 6.283);
   ctx.fill();
 
-  // THE SHARD CASTLE: a crown of jagged black obsidian shards behind the
-  // Emperor, each with a cold violet rim and a burning red slit window. Half
-  // fortress, half surfaced submarine: the hull swells out of the void-sea.
-  const SHARDS: readonly [number, number, number][] = [
-    [-1.45, 0.55, 0.34],
-    [-0.95, 1.15, 0.42],
-    [-0.4, 1.7, 0.5],
-    [0.25, 2.05, 0.55],
-    [0.85, 1.35, 0.44],
-    [1.4, 0.7, 0.36]
-  ];
-  for (const [sx, h, w] of SHARDS) {
+  // THE STORM: three slow counter-rotating rings of sickly green energy
+  // circling the citadel. This is what makes it stand out against the void:
+  // black-on-black never read, green-on-black cannot be missed.
+  for (let k = 0; k < 3; k++) {
+    const rr = R * (1.55 + k * 0.38);
+    const rot = time * (k % 2 === 0 ? 0.18 : -0.13) + k * 2.1;
+    ctx.strokeStyle = TOXIC;
+    ctx.globalAlpha = 0.16 - k * 0.03;
+    ctx.lineWidth = R * (0.11 - k * 0.02);
+    ctx.setLineDash([rr * 0.9, rr * 0.55]);
+    ctx.lineDashOffset = -rot * rr;
     ctx.beginPath();
-    ctx.moveTo(R * (sx - w * 0.55), R * 1.05);
-    ctx.lineTo(R * (sx - w * 0.14), R * (1.05 - h) + R * 0.12);
-    ctx.lineTo(R * sx, R * (1.05 - h));
-    ctx.lineTo(R * (sx + w * 0.3), R * (1.05 - h) + R * 0.3);
-    ctx.lineTo(R * (sx + w * 0.55), R * 1.05);
-    ctx.closePath();
-    ctx.fillStyle = '#0c0714';
-    ctx.fill();
-    ctx.strokeStyle = '#4d2a6e';
-    ctx.lineWidth = lw * 0.8;
+    ctx.ellipse(0, -R * 0.45, rr, rr * 0.62, 0, 0, 6.283);
     ctx.stroke();
-    // The slit window, burning like a watching eye.
-    const flick = 0.6 + Math.sin(time * 3.1 + sx * 5) * 0.4;
-    ctx.fillStyle = `rgba(255, 60, 70, ${(0.45 + flick * 0.55).toFixed(3)})`;
-    ctx.fillRect(R * (sx - 0.035), R * (1.05 - h * 0.72), R * 0.07, R * h * 0.3);
   }
-  // The submarine hull the shards stand on, rivets and all.
+  ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
+  ctx.globalAlpha = 1;
+
+  // GREEN LIGHTNING off the crown, in short deterministic bursts: jagged,
+  // brief, and gone, so the fortress feels charged rather than strobing.
+  const burst = (time * 0.42) % 1;
+  if (burst < 0.14) {
+    const fade = 1 - burst / 0.14;
+    const side = Math.floor(time * 0.42) % 2 === 0 ? 1 : -1;
+    ctx.strokeStyle = TOXIC;
+    ctx.globalAlpha = 0.85 * fade;
+    ctx.lineWidth = lw * 0.7;
+    ctx.beginPath();
+    ctx.moveTo(side * R * 0.12, -R * 2.1);
+    ctx.lineTo(side * R * 0.5, -R * 2.45);
+    ctx.lineTo(side * R * 0.38, -R * 2.5);
+    ctx.lineTo(side * R * 0.85, -R * 2.85);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // The scorched rock the citadel grips, rivet lights along its brow.
   ctx.beginPath();
-  ctx.ellipse(0, R * 1.08, R * 1.7, R * 0.34, 0, Math.PI, 0);
+  ctx.ellipse(0, R * 1.08, R * 1.75, R * 0.34, 0, Math.PI, 0);
   ctx.closePath();
   ctx.fillStyle = '#140b20';
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
   ctx.lineWidth = lw;
   ctx.stroke();
-  for (let k = -3; k <= 3; k++) {
+
+  // THE CURTAIN WALL: a broad battlemented rampart with spiked merlons.
+  ctx.beginPath();
+  ctx.moveTo(-R * 1.5, R * 1.02);
+  ctx.lineTo(-R * 1.32, R * 0.1);
+  for (let k = 0; k < 6; k++) {
+    const bx = -R * 1.32 + (k / 5) * R * 2.64;
+    ctx.lineTo(bx - R * 0.09, R * 0.1);
+    ctx.lineTo(bx, -R * 0.14);
+    ctx.lineTo(bx + R * 0.09, R * 0.1);
+  }
+  ctx.lineTo(R * 1.32, R * 0.1);
+  ctx.lineTo(R * 1.5, R * 1.02);
+  ctx.closePath();
+  ctx.fillStyle = OBSIDIAN;
+  ctx.fill();
+  ctx.strokeStyle = RIM;
+  ctx.lineWidth = lw * 0.9;
+  ctx.stroke();
+
+  // FLANK TOWERS with spiked crowns and hooded green slit windows.
+  for (const side of [-1, 1]) {
+    const tx = side * R * 1.05;
     ctx.beginPath();
-    ctx.arc(R * k * 0.42, R * 1.02, R * 0.03, 0, 6.283);
-    ctx.fillStyle = '#4d2a6e';
+    ctx.moveTo(tx - R * 0.28, R * 0.5);
+    ctx.lineTo(tx - R * 0.22, -R * 1.15);
+    ctx.lineTo(tx - R * 0.3, -R * 1.4);
+    ctx.lineTo(tx - R * 0.08, -R * 1.22);
+    ctx.lineTo(tx + R * 0.04, -R * 1.52);
+    ctx.lineTo(tx + R * 0.16, -R * 1.22);
+    ctx.lineTo(tx + R * 0.3, -R * 1.38);
+    ctx.lineTo(tx + R * 0.24, -R * 1.12);
+    ctx.lineTo(tx + R * 0.28, R * 0.5);
+    ctx.closePath();
+    ctx.fillStyle = OBSIDIAN;
+    ctx.fill();
+    ctx.strokeStyle = RIM;
+    ctx.lineWidth = lw * 0.9;
+    ctx.stroke();
+    for (let w = 0; w < 3; w++) {
+      const flick = 0.55 + Math.sin(time * 2.7 + side * 2 + w * 1.9) * 0.45;
+      ctx.fillStyle = `rgba(124, 255, 77, ${(0.35 + flick * 0.6).toFixed(3)})`;
+      ctx.fillRect(tx - R * 0.035, -R * (0.95 - w * 0.42), R * 0.07, R * 0.22);
+    }
+  }
+
+  // THE KEEP: the central shard tower, tallest thing in the east, crowned
+  // with jagged spikes.
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.46, R * 0.2);
+  ctx.lineTo(-R * 0.36, -R * 1.85);
+  ctx.lineTo(-R * 0.44, -R * 2.1);
+  ctx.lineTo(-R * 0.18, -R * 1.95);
+  ctx.lineTo(0, -R * 2.28);
+  ctx.lineTo(R * 0.18, -R * 1.95);
+  ctx.lineTo(R * 0.44, -R * 2.1);
+  ctx.lineTo(R * 0.36, -R * 1.85);
+  ctx.lineTo(R * 0.46, R * 0.2);
+  ctx.closePath();
+  ctx.fillStyle = '#100a1c';
+  ctx.fill();
+  ctx.strokeStyle = RIM;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  // Cracks of power up the keep, glowing faintly.
+  ctx.strokeStyle = TOXIC;
+  ctx.globalAlpha = 0.4 + Math.sin(time * 1.6) * 0.2;
+  ctx.lineWidth = lw * 0.35;
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.2, R * 0.1);
+  ctx.lineTo(-R * 0.12, -R * 0.5);
+  ctx.lineTo(-R * 0.24, -R * 0.9);
+  ctx.moveTo(R * 0.22, -R * 0.3);
+  ctx.lineTo(R * 0.14, -R * 0.85);
+  ctx.lineTo(R * 0.26, -R * 1.3);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // THE SIGIL: a giant glowing brace pair branded on the keep's face, the
+  // JSON crest, pulsing with the fortress's appetite.
+  const sig = 0.65 + Math.sin(time * 1.9) * 0.35;
+  ctx.strokeStyle = `rgba(124, 255, 77, ${(0.5 + sig * 0.5).toFixed(3)})`;
+  ctx.lineWidth = lw * 1.5;
+  // The braces stand APART with their middle tips pointing OUTWARD, the way
+  // { } actually prints. Drawn touching they collapsed into a green X;
+  // drawn tips-inward they read as }{ and the crest stopped saying JSON.
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(side * R * 0.13, -R * 1.72);
+    ctx.quadraticCurveTo(side * R * 0.3, -R * 1.7, side * R * 0.28, -R * 1.52);
+    ctx.quadraticCurveTo(side * R * 0.26, -R * 1.4, side * R * 0.36, -R * 1.37);
+    ctx.quadraticCurveTo(side * R * 0.26, -R * 1.34, side * R * 0.28, -R * 1.22);
+    ctx.quadraticCurveTo(side * R * 0.3, -R * 1.04, side * R * 0.13, -R * 1.02);
+    ctx.stroke();
+  }
+
+  // CHAINS from the keep's shoulders down to the flank towers: power that
+  // holds things. Dotted link runs along a sag curve.
+  ctx.fillStyle = '#6b5a86';
+  for (const side of [-1, 1]) {
+    for (let k = 1; k <= 5; k++) {
+      const t = k / 6;
+      const cx0 = side * R * 0.4;
+      const cy0 = -R * 1.75;
+      const cx1 = side * R * 1.05;
+      const cy1 = -R * 1.2;
+      const mx = (cx0 + cx1) / 2;
+      const my = Math.max(cy0, cy1) + R * 0.25;
+      const px = (1 - t) * (1 - t) * cx0 + 2 * (1 - t) * t * mx + t * t * cx1;
+      const py = (1 - t) * (1 - t) * cy0 + 2 * (1 - t) * t * my + t * t * cy1;
+      ctx.beginPath();
+      ctx.arc(px, py, R * 0.035, 0, 6.283);
+      ctx.fill();
+    }
+  }
+
+  // THE GATE: a fanged maw at the wall's foot, glowing green from deep
+  // inside. This is the mouth every troll hole feeds.
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.34, R * 1.0);
+  ctx.lineTo(-R * 0.34, R * 0.5);
+  ctx.quadraticCurveTo(0, R * 0.18, R * 0.34, R * 0.5);
+  ctx.lineTo(R * 0.34, R * 1.0);
+  ctx.closePath();
+  const maw = ctx.createLinearGradient(0, R * 0.3, 0, R * 1.0);
+  maw.addColorStop(0, 'rgba(124, 255, 77, 0.75)');
+  maw.addColorStop(1, 'rgba(20, 60, 12, 0.9)');
+  ctx.fillStyle = maw;
+  ctx.fill();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  // Portcullis fangs, top and bottom.
+  ctx.fillStyle = OBSIDIAN;
+  for (let k = -2; k <= 2; k++) {
+    const fx = k * R * 0.13;
+    ctx.beginPath();
+    ctx.moveTo(fx - R * 0.05, R * 0.44 - Math.abs(k) * R * 0.04);
+    ctx.lineTo(fx, R * (0.66 - Math.abs(k) * 0.05));
+    ctx.lineTo(fx + R * 0.05, R * 0.44 - Math.abs(k) * R * 0.04);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(fx - R * 0.05, R * 1.0);
+    ctx.lineTo(fx + R * 0.02, R * (0.82 + Math.abs(k) * 0.04));
+    ctx.lineTo(fx + R * 0.09, R * 1.0);
+    ctx.closePath();
     ctx.fill();
   }
 
-  // THE SUCTION: stolen tokens spiralling in from the void, pulled down the
-  // castle gate. This is where every troll hole leads, made visible.
-  for (let k = 0; k < 12; k++) {
+  // THE SUCTION: stolen tokens spiralling in from the whole void, pulled
+  // DOWN INTO the maw. Kept from the old design and aimed at the mouth.
+  for (let k = 0; k < 14; k++) {
     const seed = k * 2.399963;
-    const phase = (time * 0.22 + k / 12) % 1;
-    const rad = R * (2.5 - phase * 2.1);
-    const ang = seed + phase * 3.6;
+    const phase = (time * 0.24 + k / 14) % 1;
+    const rad = R * (2.6 - phase * 2.45);
+    const ang = seed + phase * 3.8;
     const tx = Math.cos(ang) * rad;
-    const ty = Math.sin(ang) * rad * 0.5 + R * 0.2 * phase;
+    const ty = Math.sin(ang) * rad * 0.45 + R * 0.62 * phase;
     ctx.globalAlpha = 0.25 + phase * 0.75;
     ctx.beginPath();
     ctx.ellipse(tx, ty, R * 0.055, R * 0.07, ang, 0, 6.283);
@@ -1756,13 +1915,12 @@ function drawJsonBoss(
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
-
-  // The hoard: a heap of gold tokens spilling down the hull.
-  for (let k = 0; k < 9; k++) {
-    const hx = Math.sin(k * 2.7) * R * 0.55;
-    const hy = R * (0.62 + (k % 3) * 0.12);
+  // The hoard it cannot quite swallow, spilling back out of the gate.
+  for (let k = 0; k < 7; k++) {
+    const hx = Math.sin(k * 2.7) * R * 0.4;
+    const hy = R * (0.78 + (k % 3) * 0.1);
     ctx.beginPath();
-    ctx.ellipse(hx, hy, R * 0.1, R * 0.055, 0, 0, 6.283);
+    ctx.ellipse(hx, hy, R * 0.09, R * 0.05, 0, 0, 6.283);
     ctx.fillStyle = k % 2 ? '#ffd24a' : '#f0b429';
     ctx.fill();
     ctx.strokeStyle = STICKER_OUTLINE;
@@ -1770,21 +1928,21 @@ function drawJsonBoss(
     ctx.stroke();
   }
 
-  // The body: two huge brace-shaped arms around a dark core, breathing.
+  // THE EMPEROR, enthroned on the crown: his established brace-armed form,
+  // smaller than the old crouch but higher than everything, glaring down.
   const breath = 1 + Math.sin(time * 1.3) * 0.03;
   ctx.save();
-  ctx.scale(breath, breath);
-  // Core.
+  ctx.translate(0, -R * 2.42);
+  ctx.scale(breath * 0.55, breath * 0.55);
   ctx.beginPath();
   ctx.ellipse(0, -R * 0.15, R * 0.52, R * 0.62, 0, 0, 6.283);
   ctx.fillStyle = '#3c1f57';
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw;
+  ctx.lineWidth = lw * 1.4;
   ctx.stroke();
-  // The braces, huge and violet, his true form.
   ctx.strokeStyle = '#c98bff';
-  ctx.lineWidth = lw * 2.4;
+  ctx.lineWidth = lw * 3.2;
   for (const side of [-1, 1]) {
     ctx.beginPath();
     ctx.moveTo(side * R * 0.85, -R * 0.75);
@@ -1794,9 +1952,8 @@ function drawJsonBoss(
     ctx.quadraticCurveTo(side * R * 0.45, R * 0.55, side * R * 0.85, R * 0.6);
     ctx.stroke();
   }
-  // Outline pass over the braces so they read as flesh, not neon.
   ctx.strokeStyle = STICKER_OUTLINE;
-  ctx.lineWidth = lw * 0.7;
+  ctx.lineWidth = lw;
   for (const side of [-1, 1]) {
     ctx.beginPath();
     ctx.moveTo(side * R * 0.85, -R * 0.75);
@@ -1806,8 +1963,7 @@ function drawJsonBoss(
     ctx.quadraticCurveTo(side * R * 0.45, R * 0.55, side * R * 0.85, R * 0.6);
     ctx.stroke();
   }
-  // Eyes: two burning slits that sweep the world, then the colon-and-quote
-  // face marks of a creature literally made of JSON.
+  // The burning glare and the colon-and-quote face marks.
   const glare = 0.6 + Math.sin(time * 2.1) * 0.4;
   ctx.fillStyle = 'rgba(255, 210, 74, ' + glare.toFixed(3) + ')';
   for (const side of [-1, 1]) {
@@ -1822,13 +1978,13 @@ function drawJsonBoss(
   ctx.fill();
   ctx.restore();
 
-  // A slow orbit of captive tokens circling his head.
+  // Captive tokens still orbit his head, up on the crown now.
   for (let k = 0; k < 5; k++) {
     const a = time * 0.7 + (k / 5) * 6.283;
-    const ox = Math.cos(a) * R * 0.95;
-    const oy = -R * 0.75 + Math.sin(a) * R * 0.18;
+    const ox = Math.cos(a) * R * 0.55;
+    const oy = -R * 2.6 + Math.sin(a) * R * 0.1;
     ctx.beginPath();
-    ctx.ellipse(ox, oy, R * 0.06, R * 0.075, 0, 0, 6.283);
+    ctx.ellipse(ox, oy, R * 0.05, R * 0.065, 0, 0, 6.283);
     ctx.fillStyle = '#ffd24a';
     ctx.fill();
     ctx.strokeStyle = STICKER_OUTLINE;

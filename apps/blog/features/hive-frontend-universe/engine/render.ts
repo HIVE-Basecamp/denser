@@ -172,7 +172,9 @@ export const BIG_SIZE: Partial<Record<IconKey, number>> = {
   towers: 168,
   arcadebldg: 133,
   blackhole: 119,
-  jsonboss: 165,
+  // 185 with the pass-22 fortress redesign: the villain's silhouette must
+  // win the north-east corner, and the old 165 read as one shard among many.
+  jsonboss: 185,
   // 180 since the two dApp ships merged into this one bigger craft.
   launchpad: 180,
   sockmount: 145,
