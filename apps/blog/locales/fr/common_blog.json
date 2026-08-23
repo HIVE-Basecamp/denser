@@ -813,7 +813,8 @@
       "tokens": "JETONS",
       "helmets": "CASQUES",
       "places": "LIEUX",
-      "gems": "GEMMES"
+      "gems": "GEMMES",
+      "newbs": "NOVICES"
     },
     "map": {
       "hint": "Touchez un lieu pour vous y rendre",

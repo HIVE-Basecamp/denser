@@ -305,6 +305,12 @@ export interface RenderScene {
    */
   roseLabels?: readonly string[];
   /**
+   * THE NEWB TRAIL quest: node ids of newcomer posts already visited this
+   * board. Unvisited newcomer posts wear the quest glow; visited ones
+   * settle to a steady earned ring.
+   */
+  newbieVisited?: ReadonlySet<number>;
+  /**
    * THE PLANNING GRID: a toggleable overlay (G key) lettering the world
    * into 700px boxes, columns A-Z west to east, rows 1-26 north to south,
    * so Bryan can direct work by box ("put it at G-17"). Debug chrome, off
@@ -353,6 +359,10 @@ export interface RenderScene {
     /** Gems collected this board. Eye candy counter, no economy yet. */
     gemsLabel?: string;
     gems?: number;
+    /** The newb-trail quest: newcomer posts visited this board. */
+    newbsLabel?: string;
+    newbs?: number;
+    newbsTotal?: number;
   };
 }
 
@@ -1266,6 +1276,39 @@ export function drawScene(scene: RenderScene): void {
       const rHalo = rNode * (2.1 + mapness * 1.6);
       if (h.isNewcomer) {
         const beat = 0.5 + Math.sin(time * 1.9 + n.id) * 0.5;
+        // THE NEWB TRAIL QUEST GLOW: an unvisited newcomer post burns in
+        // the trail's pink - a soft halo plus two breathing rings, loud on
+        // purpose so "go visit them all" is readable from the map. Once
+        // visited it settles to one steady earned ring.
+        const questDone = scene.newbieVisited?.has(n.id) ?? false;
+        if (!questDone) {
+          const qg = ctx.createRadialGradient(n.x, n.y, rNode * 0.4, n.x, n.y, rNode * 4.2);
+          qg.addColorStop(0, `rgba(255, 95, 208, ${(0.16 + beat * 0.14).toFixed(3)})`);
+          qg.addColorStop(1, 'rgba(255, 95, 208, 0)');
+          ctx.fillStyle = qg;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 4.2, 0, 6.283);
+          ctx.fill();
+          ctx.strokeStyle = '#ff5fd0';
+          ctx.globalAlpha = 0.35 + beat * 0.6;
+          ctx.lineWidth = 3 / Math.max(z, 0.1);
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 2.5 + beat * 9, 0, 6.283);
+          ctx.stroke();
+          ctx.globalAlpha = 0.25 + (1 - beat) * 0.45;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 3.3 + (1 - beat) * 9, 0, 6.283);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        } else {
+          ctx.strokeStyle = '#ff9ee8';
+          ctx.globalAlpha = 0.8;
+          ctx.lineWidth = 2.4 / Math.max(z, 0.1);
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 2.3, 0, 6.283);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
         ctx.strokeStyle = PALETTE.newRing;
         ctx.globalAlpha = 0.2 + beat * 0.7;
         ctx.lineWidth = 2.6 / Math.max(z, 0.1);
@@ -1816,19 +1859,29 @@ function drawHud(scene: RenderScene): void {
   ctx.fillText(`${hud.tokensLabel} ${hud.carried} / ${hud.banked}`, 16, 52);
   ctx.fillStyle = '#9be8ff';
   ctx.fillText(`${hud.helmetsLabel} ${hud.helmets} / ${hud.helmetTotal}`, 16, 71);
+  let hudY = 90;
   if (hud.placesLabel !== undefined) {
     ctx.fillStyle = '#b8ffd2';
-    ctx.fillText(`${hud.placesLabel} ${hud.places} / ${hud.placesTotal}`, 16, 90);
+    ctx.fillText(`${hud.placesLabel} ${hud.places} / ${hud.placesTotal}`, 16, hudY);
+    hudY += 19;
   }
   if (hud.gemsLabel !== undefined) {
     ctx.fillStyle = '#FF9EDA';
-    ctx.fillText(`${hud.gemsLabel} ${hud.gems}`, 16, 109);
+    ctx.fillText(`${hud.gemsLabel} ${hud.gems}`, 16, hudY);
+    hudY += 19;
+  }
+  // The newb-trail quest line, only when this window actually has newcomer
+  // posts to visit.
+  if (hud.newbsLabel !== undefined && (hud.newbsTotal ?? 0) > 0) {
+    ctx.fillStyle = '#ff5fd0';
+    ctx.fillText(`${hud.newbsLabel} ${hud.newbs} / ${hud.newbsTotal}`, 16, hudY);
+    hudY += 19;
   }
   // With the planning grid on, the HUD names the box the bug stands in, so
   // "where should this go" can be answered by walking there and reading it.
   if (scene.debugGrid) {
     ctx.fillStyle = '#8cdcff';
-    ctx.fillText(`[${gridCellName(scene.player.x, scene.player.y)}]`, 16, 109 + (hud.gemsLabel !== undefined ? 19 : 0));
+    ctx.fillText(`[${gridCellName(scene.player.x, scene.player.y)}]`, 16, hudY);
   }
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';

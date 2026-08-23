@@ -36,7 +36,7 @@ import {
 } from '../lib/fixed-world';
 import { mulberry32 } from '../lib/mesh';
 import { getStorageItem, setStorageItem, StorageTTL } from '@ui/lib/storage-with-ttl';
-import { buildRoutes, POST_LINE_ID, DAPPS_LINE_ID } from '../lib/routes';
+import { buildRoutes, buildNewbieTrail, POST_LINE_ID, DAPPS_LINE_ID } from '../lib/routes';
 import {
   landmarkHref,
   profileHref,
@@ -147,6 +147,23 @@ const Stage = ({ board }: { board: Board }) => {
   );
   // The routes seam: named edge-id lists riding ON the mesh, no new geometry.
   const routes = useMemo(() => buildRoutes(world), [world]);
+  /**
+   * THE NEWB TRAIL QUEST (Bryan's order): the REAL posts in this window
+   * written by newcomers, found by the board's own isNewcomer flag. Visit
+   * every one before the window turns and a gem lands in your pocket, to
+   * carry to the DHF ferris wheel like any other gem.
+   */
+  const newbieNodes = useMemo(() => {
+    const s = new Set<number>();
+    for (const n of world.nodes) {
+      if (n.kind === 'house' && board.houses[n.ref]?.isNewcomer) s.add(n.id);
+    }
+    return s;
+  }, [world, board]);
+  const newbieTrail = useMemo(
+    () => buildNewbieTrail(world, Array.from(newbieNodes)),
+    [world, newbieNodes]
+  );
   // The transit map: the flagship post line laid first and solid, then the
   // dApps line dashed on top so shared track reads as two services rather
   // than as one line hiding the other.
@@ -171,9 +188,21 @@ const Stage = ({ board }: { board: Board }) => {
         width: 6.2,
         dash: [30, 22],
         spark: '#e6fcff'
+      },
+      // THE NEWB TRAIL: hot pink, dashed, on top of everything, so the
+      // quest road reads instantly as "this one is special". Empty when
+      // the window has fewer than two newcomer posts.
+      {
+        edges: new Set(newbieTrail.edgeIds),
+        casing: '#2b0620',
+        glow: '#ff9ee8',
+        core: '#ff5fd0',
+        width: 5.4,
+        dash: [18, 15],
+        spark: '#ffe4f6'
       }
     ];
-  }, [routes]);
+  }, [routes, newbieTrail]);
   // The ground: filled landmasses, built ONCE per window and then only filled.
   const ground = useMemo(() => buildGround(board.windowStart), [board.windowStart]);
 
@@ -360,6 +389,11 @@ const Stage = ({ board }: { board: Board }) => {
   const witnessCardOpenRef = useRef(false);
   /** Trophies mounted on the ferris wheel this board (session only). */
   const wheelTrophiesRef = useRef<string[]>([]);
+  /** Newcomer posts visited this board (the newb trail quest). Reset each
+   *  window because the posts themselves turn over with the board. */
+  const visitedNewbsRef = useRef<Set<number>>(new Set());
+  /** The quest's gem is awarded exactly once per board. */
+  const newbAwardedRef = useRef(false);
   /** The planning grid overlay, toggled with G. ON by default while the
    *  game is in active build direction (Bryan's call); G hides it for
    *  recordings. */
@@ -452,6 +486,9 @@ const Stage = ({ board }: { board: Board }) => {
     helmetsRef.current = createHelmets();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
     gemsRef.current = createGems(world, board.windowStart);
+    // The newb trail resets with the board: new window, new posts, new quest.
+    visitedNewbsRef.current = new Set();
+    newbAwardedRef.current = false;
     if (!visitedRef.current) {
       visitedRef.current = new Set(getStorageItem<string[]>('hfu-visited') ?? []);
     }
@@ -955,6 +992,21 @@ const Stage = ({ board }: { board: Board }) => {
         setAtNode(p.atNode);
         // Map completion: parking at a named place marks it visited, forever.
         const vn = p.atNode >= 0 ? nodes[p.atNode] : undefined;
+        // THE NEWB TRAIL: parking at a newcomer's post checks it off; check
+        // them ALL off before the window turns and a gem lands in the
+        // pocket, ready to carry to the ferris wheel.
+        if (vn?.kind === 'house' && newbieNodes.has(p.atNode)) {
+          visitedNewbsRef.current.add(p.atNode);
+          if (
+            !newbAwardedRef.current &&
+            newbieNodes.size > 0 &&
+            visitedNewbsRef.current.size >= newbieNodes.size &&
+            gemsRef.current
+          ) {
+            newbAwardedRef.current = true;
+            gemsRef.current.collected++;
+          }
+        }
         if (vn?.kind === 'landmark' && visitedRef.current) {
           const id = LANDMARKS[vn.ref]?.id;
           if (id && !visitedRef.current.has(id)) {
@@ -1161,6 +1213,7 @@ const Stage = ({ board }: { board: Board }) => {
         houses: houseVisuals,
         landmarks: landmarkVisuals,
         roseLabels,
+        newbieVisited: visitedNewbsRef.current,
         communities: communityVisualsRef.current,
         factories,
         cubes,
@@ -1196,6 +1249,9 @@ const Stage = ({ board }: { board: Board }) => {
           placesTotal: LANDMARKS.length,
           gemsLabel: t('hive_frontend_universe.hud.gems'),
           gems: gemsRef.current?.collected ?? 0,
+          newbsLabel: t('hive_frontend_universe.hud.newbs'),
+          newbs: visitedNewbsRef.current.size,
+          newbsTotal: newbieNodes.size,
           tokensLabel: t('hive_frontend_universe.hud.tokens'),
           carried: coinsRef.current?.carried ?? 0,
           banked: coinsRef.current?.banked ?? 0,

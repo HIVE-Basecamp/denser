@@ -47,6 +47,7 @@ export interface Route {
 
 export const POST_LINE_ID = 'post-line';
 export const DAPPS_LINE_ID = 'dapps-line';
+export const NEWB_TRAIL_ID = 'newb-trail';
 
 /**
  * The dApps line's calling points, west to east across the connected world.
@@ -66,6 +67,40 @@ const DAPPS_LINE_STOPS = [
 export function buildRoutes(world: GameWorld): Route[] {
   const ctx = routeContext(world);
   return [buildPostLine(world, ctx), buildDappsLine(world, ctx)];
+}
+
+/**
+ * THE NEWB TRAIL: a special line strung through the posts written by
+ * newcomers during this 30-minute window (the visit-them-all quest). Built
+ * separately from buildRoutes because only the caller knows which houses
+ * are newcomers; same rules as every line: sweep order, shortest paths
+ * over the weave, no invented geometry. With fewer than two stops there is
+ * no road to draw and the glow on the post itself carries the quest.
+ */
+export function buildNewbieTrail(world: GameWorld, stops: readonly number[]): Route {
+  if (stops.length < 2) {
+    return { id: NEWB_TRAIL_ID, edgeIds: [], stats: statsFrom([], 0, stops.length, 0) };
+  }
+  const ctx = routeContext(world);
+  let cx = 0;
+  let cy = 0;
+  for (const id of stops) {
+    cx += world.nodes[id].x;
+    cy += world.nodes[id].y;
+  }
+  cx /= stops.length;
+  cy /= stops.length;
+  const ordered = [...stops].sort(
+    (a, b) =>
+      Math.atan2(world.nodes[a].y - cy, world.nodes[a].x - cx) -
+      Math.atan2(world.nodes[b].y - cy, world.nodes[b].x - cx)
+  );
+  const walked = walkStops(ctx, ordered, false);
+  return {
+    id: NEWB_TRAIL_ID,
+    edgeIds: walked.edgeIds,
+    stats: statsFrom(walked.edgeIds, walked.lengthPx, walked.on, walked.off)
+  };
 }
 
 interface RouteContext {

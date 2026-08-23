@@ -813,7 +813,8 @@
       "tokens": "FICHAS",
       "helmets": "CASCOS",
       "places": "LUGARES",
-      "gems": "GEMAS"
+      "gems": "GEMAS",
+      "newbs": "NOVATOS"
     },
     "map": {
       "hint": "Toca un lugar para viajar allí",

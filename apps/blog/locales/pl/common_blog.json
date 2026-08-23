@@ -818,7 +818,8 @@
       "tokens": "ŻETONY",
       "helmets": "HEŁMY",
       "places": "MIEJSCA",
-      "gems": "KLEJNOTY"
+      "gems": "KLEJNOTY",
+      "newbs": "NOWI"
     },
     "map": {
       "hint": "Dotknij miejsca, aby tam podróżować",

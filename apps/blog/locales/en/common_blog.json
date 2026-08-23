@@ -915,7 +915,8 @@
       "tokens": "TOKENS",
       "helmets": "HELMETS",
       "places": "PLACES",
-      "gems": "GEMS"
+      "gems": "GEMS",
+      "newbs": "NEWBS"
     },
     "map": {
       "hint": "Tap a landmark to travel there",

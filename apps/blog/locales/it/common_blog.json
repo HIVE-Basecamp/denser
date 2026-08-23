@@ -813,7 +813,8 @@
       "tokens": "GETTONI",
       "helmets": "CASCHI",
       "places": "LUOGHI",
-      "gems": "GEMME"
+      "gems": "GEMME",
+      "newbs": "NOVIZI"
     },
     "map": {
       "hint": "Tocca un luogo per viaggiarci",
