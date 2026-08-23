@@ -2900,13 +2900,37 @@ export function drawRoseWindow(
   R: number,
   time: number
 ): void {
+  // HONEYCOMB REBUILD (Bryan's order): every pane is a comb cell now, and
+  // none of them is a perfect hexagon. Each cell's corners carry a fixed
+  // per-cell wobble plus a slow breathing undulation, so the whole window
+  // reads as living comb, not stamped geometry. The pane CENTRES stay on
+  // the exported ring (rosePaneCentre), so the click targets and the words
+  // in the panes keep lining up with the glass.
   const lw = Math.max(3, R * 0.05);
-  // One outer pane per REAL pane now (Bryan: each pane is a clickable item),
-  // so the glass a player clicks is the glass that leads somewhere.
-  const paneCount = ROSE_WINDOW_PANES.length;
   ctx.save();
   ctx.translate(x, y);
   ctx.lineJoin = 'round';
+  // Deterministic per-corner wobble, same for every player.
+  const wob = (i: number) => {
+    const v = Math.sin(i * 12.9898) * 43758.5453;
+    return (v - Math.floor(v)) - 0.5;
+  };
+  // One organic comb cell: six corners, each pushed off the perfect hex by
+  // its own fixed amount and slowly undulating on its own clock.
+  const combCell = (cx: number, cy: number, r: number, seed: number, spin: number) => {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = spin + (i / 6) * 6.283 + wob(seed * 7 + i) * 0.16;
+      const rr =
+        r *
+        (1 + wob(seed * 13 + i * 3) * 0.14 + Math.sin(time * 0.9 + seed * 1.7 + i * 2.1) * 0.035);
+      const px = cx + Math.cos(a) * rr;
+      const py = cy + Math.sin(a) * rr;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  };
   // A soft holy glow behind the whole window.
   const halo = ctx.createRadialGradient(0, 0, R * 0.3, 0, 0, R * 1.8);
   halo.addColorStop(0, 'rgba(255, 217, 160, 0.22)');
@@ -2915,28 +2939,29 @@ export function drawRoseWindow(
   ctx.beginPath();
   ctx.arc(0, 0, R * 1.8, 0, 6.283);
   ctx.fill();
-  // Stone backdrop disc.
+  // Stone backdrop: a wobbly organic disc, not a compass circle.
   ctx.beginPath();
-  ctx.arc(0, 0, R * 1.02, 0, 6.283);
+  for (let i = 0; i <= 18; i++) {
+    const a = (i / 18) * 6.283;
+    const rr = R * (1.04 + wob(i % 18) * 0.03 + Math.sin(time * 0.6 + i * 1.3) * 0.012);
+    const px = Math.cos(a) * rr;
+    const py = Math.sin(a) * rr;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
   ctx.fillStyle = '#191024';
   ctx.fill();
   ctx.strokeStyle = STICKER_OUTLINE;
   ctx.lineWidth = lw * 1.4;
   ctx.stroke();
-  // The outer panes: annular sectors of saturated glass, one per REAL pane,
-  // each breathing on its own slow clock so the window reads alive, never
-  // strobing.
-  const sector = (r0: number, r1: number, a0: number, a1: number) => {
-    ctx.beginPath();
-    ctx.arc(0, 0, r1, a0, a1);
-    ctx.arc(0, 0, r0, a1, a0, true);
-    ctx.closePath();
-  };
+  // The outer comb ring: one living cell per REAL pane, breathing on its
+  // own slow clock so the window never strobes.
+  const paneCount = ROSE_WINDOW_PANES.length;
   for (let k = 0; k < paneCount; k++) {
-    const a0 = (k / paneCount) * 6.283 - 1.5708;
-    const a1 = ((k + 1) / paneCount) * 6.283 - 1.5708;
+    const c = rosePaneCentre(k, paneCount, R);
     const lit = 0.68 + Math.sin(time * 0.6 + k * 1.9) * 0.24;
-    sector(R * ROSE_PANE_RING.inner, R * ROSE_PANE_RING.outer, a0, a1);
+    combCell(c.x, c.y, R * 0.215, k + 1, ((k + 0.5) / paneCount) * 6.283);
     ctx.fillStyle = ROSE_GLASS[k % 6];
     ctx.globalAlpha = lit;
     ctx.fill();
@@ -2945,12 +2970,13 @@ export function drawRoseWindow(
     ctx.lineWidth = lw;
     ctx.stroke();
   }
-  // Six inner petals, offset half a step, a shade brighter.
+  // Six inner comb cells, offset half a step, a shade brighter.
   for (let k = 0; k < 6; k++) {
-    const a0 = (k / 6) * 6.283 - 1.5708 + 0.26;
-    const a1 = ((k + 1) / 6) * 6.283 - 1.5708 + 0.26;
+    const a = (k / 6) * 6.283 - 1.5708 + 0.26;
+    const cx = Math.cos(a) * R * 0.38;
+    const cy = Math.sin(a) * R * 0.38;
     const lit = 0.74 + Math.sin(time * 0.5 + k * 2.4 + 2) * 0.22;
-    sector(R * 0.24, R * 0.54, a0 + 0.04, a1 - 0.04);
+    combCell(cx, cy, R * 0.15, k + 30, a);
     ctx.fillStyle = ROSE_GLASS[(k * 2 + 1) % 6];
     ctx.globalAlpha = lit;
     ctx.fill();
@@ -2959,13 +2985,12 @@ export function drawRoseWindow(
     ctx.lineWidth = lw;
     ctx.stroke();
   }
-  // The oculus: warm gold heart with the Hive diamond in glass.
+  // The oculus: a warm gold comb heart with the Hive diamond in glass.
   const beat = 0.7 + Math.sin(time * 1.1) * 0.3;
-  const oc = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.2);
+  const oc = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.21);
   oc.addColorStop(0, `rgba(255, 240, 200, ${(0.75 + beat * 0.25).toFixed(3)})`);
   oc.addColorStop(1, 'rgba(255, 194, 77, 0.35)');
-  ctx.beginPath();
-  ctx.arc(0, 0, R * 0.2, 0, 6.283);
+  combCell(0, 0, R * 0.2, 77, 0.52);
   ctx.fillStyle = oc;
   ctx.fill();
   ctx.strokeStyle = ROSE_LEAD;
@@ -2989,7 +3014,7 @@ export function drawRoseWindow(
   ctx.lineWidth = lw;
   for (const side of [-1, 1]) {
     ctx.beginPath();
-    ctx.moveTo(side * R * 0.55, R * 0.82);
+    ctx.moveTo(side * R * 0.55, R * 0.84);
     ctx.lineTo(side * R * 0.8, R * 1.28);
     ctx.lineTo(side * R * 0.32, R * 1.28);
     ctx.closePath();

@@ -178,7 +178,10 @@ export const BIG_SIZE: Partial<Record<IconKey, number>> = {
   // 180 since the two dApp ships merged into this one bigger craft.
   launchpad: 180,
   sockmount: 145,
-  rosewindow: 140,
+  // 185 with the pass-28 honeycomb rebuild: Bryan sized the increase "the
+  // outer circle of the map button", which is ~48 screen px; this adds
+  // about that much at play zoom.
+  rosewindow: 185,
   tent: 350
 };
 

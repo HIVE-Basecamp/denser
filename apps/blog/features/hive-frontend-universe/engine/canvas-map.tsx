@@ -619,7 +619,9 @@ const Stage = ({ board }: { board: Board }) => {
                 x: n.x + pc.x,
                 y: n.y + pc.y
               },
-              paneR * 0.17
+              // Matches the honeycomb cell radius (0.215R), so the whole
+              // comb cell is clickable, not just its heart.
+              paneR * 0.2
             );
           }
         }
