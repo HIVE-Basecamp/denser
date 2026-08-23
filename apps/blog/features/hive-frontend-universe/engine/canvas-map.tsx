@@ -61,7 +61,7 @@ import { createGems, updateGems, type GemState } from './gems';
 import { buildGround } from './ground';
 import { requestAvatar, avatarStats } from './avatars';
 import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
-import { FERRIS_SPIN } from './icons';
+import { FERRIS_SPIN, rosePaneCentre } from './icons';
 import {
   createPlayer,
   driftUpdate,
@@ -81,7 +81,8 @@ import {
   type LandmarkVisual,
   type RouteLayer,
   type TrafficMarker,
-  type WitnessVisual
+  type WitnessVisual,
+  BIG_SIZE
 } from './render';
 import { placeFactories, placeCubes, placeFormations } from './scenery';
 import { createFlows, updateFlows, flowConfig, type FlowState } from './particles';
@@ -198,6 +199,9 @@ const Stage = ({ board }: { board: Board }) => {
       })),
     [t]
   );
+  // The Rose Window's pane labels, translated once; the renderer letters
+  // each pane with its own words at play zoom.
+  const roseLabels = useMemo(() => ROSE_WINDOW_PANES.map((pane) => t(pane.labelKey)), [t]);
   const communityVisuals: (CommunityVisual | undefined)[] = useMemo(() => {
     const list: (CommunityVisual | undefined)[] = Array.from({ length: 10 }, () => undefined);
     if (!communities) return list;
@@ -266,19 +270,27 @@ const Stage = ({ board }: { board: Board }) => {
   }, [clickedWitness]);
 
   /**
-   * The witness stats rows for the beam-visit card. Real numbers from the
-   * same get_witnesses_by_vote call that ranks the citadel ring.
+   * The witness stats rows for the citadel cards (beam visits AND clicks).
+   * Real current numbers from the same get_witnesses_by_vote call that ranks
+   * the ring, including the chain parameters this witness actually votes for
+   * (Bryan: "more useful true and current info on those cards").
    */
   const witnessStats = (name: string): { label: string; value: string }[] => {
     const w = witnessDataRef.current?.find((x) => x.name === name);
     if (!w) return [];
     return [
+      { label: t('hive_frontend_universe.witness.votes'), value: w.votesHp },
+      { label: t('hive_frontend_universe.witness.hbd_apr'), value: w.hbdApr },
+      { label: t('hive_frontend_universe.witness.price_feed'), value: w.priceFeed },
+      { label: t('hive_frontend_universe.witness.creation_fee'), value: w.creationFee },
+      { label: t('hive_frontend_universe.witness.block_size'), value: w.blockSize },
       { label: t('hive_frontend_universe.witness.version'), value: w.version || '?' },
       {
         label: t('hive_frontend_universe.witness.last_block'),
         value: w.lastBlock ? `#${w.lastBlock.toLocaleString()}` : '?'
       },
-      { label: t('hive_frontend_universe.witness.missed'), value: String(w.missed) }
+      { label: t('hive_frontend_universe.witness.missed'), value: String(w.missed) },
+      { label: t('hive_frontend_universe.witness.since'), value: w.since }
     ];
   };
 
@@ -582,6 +594,35 @@ const Stage = ({ board }: { board: Board }) => {
           },
           reach
         );
+        // THE ROSE WINDOW'S PANES: each pane is its own clickable item at
+        // play zoom (Bryan's order). Pane centres come from the same
+        // exported geometry the drawing uses, so hit and glass agree. A pane
+        // is closer to the cursor than the window's centre whenever the
+        // cursor is on its glass, so panes win there and the oculus still
+        // opens the whole window's panel.
+        if (lm.id === 'rose_window' && z >= 0.3) {
+          const mapn = Math.max(
+            0,
+            Math.min(1, (playZ() - z) / Math.max(playZ() - fitZ(), 0.001))
+          );
+          const paneR = (BIG_SIZE.rosewindow ?? 140) * (1 + mapn * 0.9) * 2.2;
+          for (let k = 0; k < ROSE_WINDOW_PANES.length; k++) {
+            const pane = ROSE_WINDOW_PANES[k];
+            const pc = rosePaneCentre(k, ROSE_WINDOW_PANES.length, paneR);
+            consider(
+              {
+                kind: 'witness',
+                node: -1,
+                title: t(pane.labelKey),
+                href: landmarkHref(pane.kind, pane.path),
+                travelable: false,
+                x: n.x + pc.x,
+                y: n.y + pc.y
+              },
+              paneR * 0.17
+            );
+          }
+        }
       }
 
       // Community bubbles: the whole bubble is the target, plus a margin.
@@ -639,6 +680,7 @@ const Stage = ({ board }: { board: Board }) => {
             node: -1,
             title: `${wt.rank}. ${wt.name}`,
             href: profileHref(wt.name),
+            account: wt.name,
             travelable: false,
             x: wt.x,
             y: wt.y - towerH * 0.87
@@ -697,7 +739,14 @@ const Stage = ({ board }: { board: Board }) => {
         return; // named on hover, but not a destination
       }
       if (target.kind === 'witness') {
-        setClickedWitness({ title: target.title, href: target.href });
+        // A clicked citadel gets the same real chain stats as a beam visit
+        // (Bryan: more info on ALL the witness cards). Rose panes and the
+        // ruins ride this same path with no account, so no stats.
+        setClickedWitness({
+          title: target.title,
+          href: target.href,
+          stats: target.account ? witnessStats(target.account) : undefined
+        });
         setClickedNode(-1);
         if (fullMapRef.current && target.href) {
           window.open(target.href, '_blank', 'noopener,noreferrer');
@@ -1109,6 +1158,7 @@ const Stage = ({ board }: { board: Board }) => {
         edges,
         houses: houseVisuals,
         landmarks: landmarkVisuals,
+        roseLabels,
         communities: communityVisualsRef.current,
         factories,
         cubes,

@@ -48,7 +48,7 @@ import { drawCritters } from './critters';
 import { drawCoins, type CoinState } from './coins';
 import { drawHelmets, drawSuitBubble, type HelmetState } from './helmets';
 import type { HazardState } from './hazards';
-import { DAPP_WINDOWS } from './icons';
+import { DAPP_WINDOWS, rosePaneCentre } from './icons';
 import { DAPP_DIRECTORY } from '../lib/fixed-world';
 import { avatarImage } from './avatars';
 import { drawGround, GROUND_VOID, type Ground } from './ground';
@@ -167,7 +167,7 @@ const BIG_SPAN = 330;
  * they still tower over an ordinary marker, which is roughly 160 world px
  * across at map zoom, by about four times.
  */
-const BIG_SIZE: Partial<Record<IconKey, number>> = {
+export const BIG_SIZE: Partial<Record<IconKey, number>> = {
   ferris: 150,
   towers: 168,
   arcadebldg: 133,
@@ -292,6 +292,11 @@ export interface RenderScene {
   visitedCommunities?: ReadonlySet<string> | null;
   /** Trophies mounted on the ferris wheel this board, in mount order. */
   wheelTrophies?: readonly string[];
+  /**
+   * The Rose Window's pane labels, translated by the caller, in
+   * ROSE_WINDOW_PANES order. At play zoom each pane wears its own words.
+   */
+  roseLabels?: readonly string[];
   /**
    * THE PLANNING GRID: a toggleable overlay (G key) lettering the world
    * into 700px boxes, columns A-Z west to east, rows 1-26 north to south,
@@ -986,15 +991,21 @@ export function drawScene(scene: RenderScene): void {
     const baseW = kind === 'mesh' ? 3.9 : 3.5;
     const streetW = z < 0.12 ? Math.max(baseW * 0.55, 2.8) : baseW;
     ctx.lineWidth = streetW / Math.max(z, 0.05);
-    // SHIMMER, not pulse (Bryan): two incommensurate sines make a flicker
-    // that dims and brightens irregularly but never goes away; the lava
-    // glimmers like heat, it does not breathe like a lung.
-    const phase = kind === 'mesh' ? 0 : 1.1;
-    const shimmer =
-      0.05 * Math.sin(time * 6.3 + phase) + 0.035 * Math.sin(time * 11.7 + phase * 2.3);
-    ctx.globalAlpha = ((kind === 'mesh' ? 0.82 : 0.72) + shimmer) * (1 - mapness * 0.25);
+    // SHIMMER, take two (Bryan: "its like you changed nothing"). The first
+    // version shared one alpha per stroke FAMILY, so the entire network still
+    // dimmed and brightened in unison: a pulse with extra steps. Now every
+    // SEGMENT flickers on its own clock, dim-only from a steady base: the
+    // network as a whole never breathes, but sparkle runs across it like
+    // heat over coals. Two incommensurate sines multiplied keep each dip
+    // brief and shallow; the per-edge globalAlpha write costs nothing next
+    // to the stroke itself.
+    const baseA = (kind === 'mesh' ? 0.86 : 0.78) * (1 - mapness * 0.25);
     for (const e of edges) {
       if (e.kind !== kind || !edgeVis(e)) continue;
+      const ph = (e.id % 31) * 0.83;
+      const tw =
+        (0.5 + 0.5 * Math.sin(time * 8.3 + ph * 2.7)) * (0.5 + 0.5 * Math.sin(time * 13.1 + ph));
+      ctx.globalAlpha = baseA - 0.16 * tw;
       strokeEdge(e);
     }
   }
@@ -1041,12 +1052,11 @@ export function drawScene(scene: RenderScene): void {
   let layerPhase = 0;
   for (const layer of scene.routeLayers) {
     if (!layer.edges.size) continue;
-    // SHIMMER on the named lines too (Bryan: all colors): constant width
-    // now, with a flickery brightness that never drops out. The travelling
-    // electricity stays the big motion; this is the heat haze under it.
-    const routeBreathe = 1;
-    const routeShimmer =
-      0.06 * Math.sin(time * 7.1 + layerPhase) + 0.04 * Math.sin(time * 12.9 + layerPhase * 1.7);
+    // SHIMMER on the named lines too, per SEGMENT like the streets now: the
+    // whole-layer alpha of the first attempt made each line throb as one
+    // piece, which is the pulsing Bryan keeps vetoing. Constant width; the
+    // travelling electricity stays the big motion, this is the heat haze
+    // under it.
     layerPhase += 2.1;
     // At map zoom the line keeps its CASING: a dark edge is the one signal
     // that says "designed transit route" instead of "loose wire", and it is
@@ -1068,13 +1078,18 @@ export function drawScene(scene: RenderScene): void {
     if (layer.dash) ctx.setLineDash(layer.dash.map((d) => d / Math.max(z, 0.05)));
     for (const p of passes) {
       ctx.strokeStyle = p.col;
-      ctx.lineWidth = (p.w * routeBreathe) / Math.max(z, 0.05);
-      ctx.globalAlpha = Math.min(1, p.a + routeShimmer);
+      ctx.lineWidth = p.w / Math.max(z, 0.05);
       for (const e of edges) {
         if (!layer.edges.has(e.id) || !edgeVis(e)) continue;
+        const ph = (e.id % 29) * 0.91;
+        const tw =
+          (0.5 + 0.5 * Math.sin(time * 7.9 + ph * 2.3)) *
+          (0.5 + 0.5 * Math.sin(time * 12.3 + ph));
+        ctx.globalAlpha = Math.max(0.1, p.a - 0.14 * tw);
         strokeEdge(e);
       }
     }
+    ctx.globalAlpha = 1;
     if (layer.dash) ctx.setLineDash([]);
     // THE ELECTRICITY: bright charge packets running along the line, one
     // extra dashed pass with its offset animated. Subtle while riding, vivid
@@ -1428,6 +1443,41 @@ export function drawScene(scene: RenderScene): void {
         ctx.beginPath();
         ctx.arc(wx, wy, wr, 0, 6.283);
         ctx.stroke();
+      }
+    }
+    // THE ROSE WINDOW'S WORDS (Bryan: "some written words could be in the
+    // panes when in game play"): each pane wears its own translated label,
+    // shrunk to fit its glass, so the window reads as the link wheel it is
+    // without hovering. Play zoom only; on the pulled-out map the words
+    // would be finer than the lead lines.
+    if (lm.icon === 'rosewindow' && scene.roseLabels?.length && z >= 0.3) {
+      const R = s * 2.2;
+      const count = scene.roseLabels.length;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const maxW = R * 0.36;
+      for (let k = 0; k < count; k++) {
+        const pc = rosePaneCentre(k, count, R);
+        const words = scene.roseLabels[k].split(' ');
+        const mid = Math.ceil(words.length / 2);
+        const lines =
+          words.length === 1 ? words : [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+        let fs = R * 0.082;
+        ctx.font = `700 ${fs}px ${MONO}`;
+        const widest = Math.max(...lines.map((ln) => ctx.measureText(ln).width));
+        if (widest > maxW) {
+          fs *= maxW / widest;
+          ctx.font = `700 ${fs}px ${MONO}`;
+        }
+        for (let li = 0; li < lines.length; li++) {
+          const ly = n.y + pc.y + (li - (lines.length - 1) / 2) * fs * 1.15;
+          ctx.strokeStyle = '#141019';
+          ctx.lineWidth = fs * 0.28;
+          ctx.lineJoin = 'round';
+          ctx.strokeText(lines[li], n.x + pc.x, ly);
+          ctx.fillStyle = '#fdf6e6';
+          ctx.fillText(lines[li], n.x + pc.x, ly);
+        }
       }
     }
   }

@@ -833,7 +833,13 @@
     "witness": {
       "version": "版本",
       "last_block": "最新区块",
-      "missed": "错过区块"
+      "missed": "错过区块",
+      "votes": "支持票",
+      "hbd_apr": "HBD储蓄利率",
+      "price_feed": "价格喂价",
+      "creation_fee": "开户费用",
+      "block_size": "最大区块大小",
+      "since": "见证人自"
     }
   }
 }

@@ -833,7 +833,13 @@
     "witness": {
       "version": "Version",
       "last_block": "Ultimo bloque",
-      "missed": "Bloques perdidos"
+      "missed": "Bloques perdidos",
+      "votes": "Aprobacion",
+      "hbd_apr": "Interes ahorro HBD",
+      "price_feed": "Precio publicado",
+      "creation_fee": "Cuota de cuenta",
+      "block_size": "Tamano max de bloque",
+      "since": "Testigo desde"
     }
   }
 }

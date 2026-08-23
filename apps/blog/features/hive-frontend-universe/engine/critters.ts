@@ -204,7 +204,7 @@ export function drawCritters(
     const bob = Math.sin(time * 2 + c.swayPhase) * 2.5;
     switch (c.kind) {
       case 'sock':
-        drawSock(ctx, c.x, c.y + bob, c.face);
+        drawSock(ctx, c.x, c.y + bob, c.face, time);
         break;
       case 'blah':
         drawBlah(ctx, c.x, c.y + bob, c.face, time);
@@ -223,58 +223,106 @@ export function drawCritters(
 }
 
 /**
- * Socko: an actual SOCK, upright on its toe, leaning like it is up to
- * something. Slanty half-lidded eyes and a crooked smirk: this one is not
- * neutral any more. Touch it and it envelops the bug and posts it to
- * Mount Socko (hazards.ts owns that; this is just the look).
+ * Socko: a walking MINIATURE OF MOUNT SOCKO (Bryan: "make socko look like
+ * mount socko in game play"). Same recipe as the volcano in icons.ts, small:
+ * white sock standing TOE UP, red-and-blue zigzag stripes across the tube, a
+ * glowing toe crater with a steam wisp, wide hooded puppet eyes with darting
+ * pupils, and the crooked stitched grin. Touch it and it envelops the bug
+ * and posts it to the real mountain (hazards.ts owns that).
  */
-function drawSock(ctx: CanvasRenderingContext2D, x: number, y: number, face: number): void {
+function drawSock(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  face: number,
+  time: number
+): void {
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(1.35 * (face >= 0 ? 1 : -1), 1.35);
-  ctx.rotate(0.1);
+  ctx.scale(1.4 * (face >= 0 ? 1 : -1), 1.4);
+  ctx.rotate(0.06);
   sticker(ctx, 3.5);
-  // The sock: cuff up top, ankle, then the foot bending forward at the heel.
+  // The sock, toe up: cuff planted at the base, tube rising, the rounded TOE
+  // curling over at the summit. The same silhouette as the mountain.
   ctx.beginPath();
-  ctx.moveTo(-8, -22);
-  ctx.lineTo(8, -22);
-  ctx.lineTo(8, 2);
-  ctx.quadraticCurveTo(9, 12, 20, 13);
-  ctx.quadraticCurveTo(26, 13.5, 25, 19);
-  ctx.quadraticCurveTo(24, 24, 16, 24);
-  ctx.lineTo(-4, 24);
-  ctx.quadraticCurveTo(-9, 24, -8, 14);
+  ctx.moveTo(-11, 24); // cuff, left foot
+  ctx.lineTo(-7, -6); // tube, left slope
+  ctx.quadraticCurveTo(-6, -16, 0, -20); // shoulder toward the toe
+  ctx.quadraticCurveTo(7, -22.5, 8.5, -15.5); // the TOE, rounded summit
+  ctx.quadraticCurveTo(9.5, -10, 7, -5); // down the instep
+  ctx.quadraticCurveTo(11.5, -1, 12, 6); // the heel bulge
+  ctx.quadraticCurveTo(12.5, 15, 13.5, 24); // heel to base
   ctx.closePath();
-  ctx.fillStyle = '#f1ead8';
+  ctx.fillStyle = '#f2f5fb';
   ctx.fill();
   ctx.stroke();
-  // Cuff ribbing.
-  ctx.fillStyle = '#e3123a';
-  ctx.fillRect(-8, -22, 16, 6);
-  ctx.strokeRect(-8, -22, 16, 6);
-  // Heel patch.
-  ctx.fillStyle = '#d8c9a8';
+  // Zigzag stripes across the tube, red then blue, clipped to the sock.
+  ctx.save();
+  ctx.clip();
+  for (let s = 0; s < 2; s++) {
+    const sy = 14 - s * 9;
+    ctx.beginPath();
+    ctx.moveTo(-14, sy);
+    for (let k = 0; k <= 6; k++) {
+      ctx.lineTo(-14 + k * 5, sy + (k % 2 === 0 ? 0 : -2.6));
+    }
+    ctx.strokeStyle = s === 0 ? '#e3123a' : '#5CA8FF';
+    ctx.lineWidth = 2.6;
+    ctx.stroke();
+  }
+  // The toe crater: dark mouth with a breathing ember.
+  const glow = 0.5 + Math.sin(time * 1.7) * 0.5;
   ctx.beginPath();
-  ctx.arc(-2, 20, 5.5, 0, 6.283);
+  ctx.ellipse(3.5, -19, 4.4, 1.9, -0.2, 0, 6.283);
+  ctx.fillStyle = '#1a0a10';
   ctx.fill();
-  // SLANTY eyes: two lidded angles, mischief in fabric form.
-  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(-6, -10);
-  ctx.lineTo(1, -6.5);
-  ctx.moveTo(8, -12);
-  ctx.lineTo(1.5, -8);
+  ctx.ellipse(3.5, -18.8, 2.9, 1.2, -0.2, 0, 6.283);
+  ctx.fillStyle = `rgba(255, 90, 30, ${(0.45 + glow * 0.55).toFixed(3)})`;
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = OUTLINE;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(3.5, -19, 4.4, 1.9, -0.2, 0, 6.283);
   ctx.stroke();
-  ctx.fillStyle = OUTLINE;
+  // One steam wisp curling off the crater.
+  const drift = Math.sin(time * 0.9) * 1.3;
+  ctx.strokeStyle = 'rgba(220, 225, 240, 0.55)';
+  ctx.lineWidth = 1.6;
   ctx.beginPath();
-  ctx.arc(-2, -5.4, 1.7, 0, 6.283);
-  ctx.arc(4.6, -6.8, 1.7, 0, 6.283);
-  ctx.fill();
-  // The crooked smirk, one corner up.
-  ctx.lineWidth = 2.8;
+  ctx.moveTo(2.5, -21);
+  ctx.quadraticCurveTo(1 + drift, -26, 3 + drift, -29.5);
+  ctx.stroke();
+  // Mischievous puppet eyes: wide whites, slanted lids, darting pupils.
+  const dart = Math.sin(time * 0.8) * 0.8;
+  for (const [ex, ey] of [
+    [-3.3, -8],
+    [3.5, -8.8]
+  ] as const) {
+    ctx.beginPath();
+    ctx.arc(ex, ey, 2.2, 0, 6.283);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ex + dart, ey + 0.5, 1.1, 0, 6.283);
+    ctx.fillStyle = OUTLINE;
+    ctx.fill();
+    // The slanted lid, hooding half the eye.
+    ctx.beginPath();
+    ctx.moveTo(ex - 2.6, ey - 2);
+    ctx.lineTo(ex + 2.6, ey - 0.4);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  // The crooked stitched grin.
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(-4, 2);
-  ctx.quadraticCurveTo(2, 5, 7, 0);
+  ctx.moveTo(-2.8, -3.2);
+  ctx.quadraticCurveTo(1, -1.4, 4.6, -3.8);
   ctx.stroke();
   ctx.restore();
 }

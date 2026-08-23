@@ -838,7 +838,13 @@
     "witness": {
       "version": "Wersja",
       "last_block": "Ostatni blok",
-      "missed": "Pominiete bloki"
+      "missed": "Pominiete bloki",
+      "votes": "Poparcie",
+      "hbd_apr": "Odsetki oszczednosci HBD",
+      "price_feed": "Kurs ceny",
+      "creation_fee": "Oplata za konto",
+      "block_size": "Maks. rozmiar bloku",
+      "since": "Delegat od"
     }
   }
 }

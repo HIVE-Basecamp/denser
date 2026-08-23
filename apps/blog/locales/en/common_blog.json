@@ -935,7 +935,13 @@
     "witness": {
       "version": "Version",
       "last_block": "Last block",
-      "missed": "Missed blocks"
+      "missed": "Missed blocks",
+      "votes": "Approval",
+      "hbd_apr": "HBD savings APR",
+      "price_feed": "Price feed",
+      "creation_fee": "Account fee",
+      "block_size": "Max block size",
+      "since": "Witness since"
     }
   }
 }

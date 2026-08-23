@@ -42,6 +42,8 @@ export interface MapTarget {
   title: string;
   /** Real page this leads to, or null when there genuinely is none. */
   href: string | null;
+  /** The real Hive account behind this target (a witness), when there is one. */
+  account?: string;
   /** Whether the bug can be sent here from the travel map. */
   travelable: boolean;
   x: number;

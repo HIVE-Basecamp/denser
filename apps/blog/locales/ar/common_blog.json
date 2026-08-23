@@ -880,7 +880,13 @@
     "witness": {
       "version": "الإصدار",
       "last_block": "آخر كتلة",
-      "missed": "كتل مفقودة"
+      "missed": "كتل مفقودة",
+      "votes": "التأييد",
+      "hbd_apr": "فائدة مدخرات HBD",
+      "price_feed": "تغذية السعر",
+      "creation_fee": "رسوم الحساب",
+      "block_size": "الحد الاقصى لحجم الكتلة",
+      "since": "شاهد منذ"
     }
   }
 }

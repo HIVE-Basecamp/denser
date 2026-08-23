@@ -125,8 +125,9 @@ export const CLUSTERS: readonly Cluster[] = [
   { id: 'rose', x: -2450, y: 7050, link: 'trail', satellites: [[200, 450]] },
   { id: 'shipyard', x: 3850, y: 7050, link: 'trail', satellites: [[0, 430]] },
   // THE ARCADE BAY: the notch between the blades is void, so the arcade
-  // moors on its own short rail (Bryan's order: O-13 and O-14).
-  { id: 'arcade_bay', x: 1400, y: -100, link: 'trail', satellites: [] },
+  // moors on its own short rail. Hub lowered half a box (Bryan: "in map
+  // view, arcade needs to come down exactly half a quadrant lower").
+  { id: 'arcade_bay', x: 1400, y: 250, link: 'trail', satellites: [] },
   // Perches: tiny rail moorings that let a big landmark stand exactly where
   // Bryan's line calls for, even when that spot is a step off the coast.
   { id: 'ferris_perch', x: -1050, y: -5400, link: 'trail', satellites: [] },
