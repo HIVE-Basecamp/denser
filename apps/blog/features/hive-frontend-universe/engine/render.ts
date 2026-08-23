@@ -35,7 +35,7 @@ import { drawGems, type GemState } from './gems';
 import {
   drawIcon,
   drawFish,
-  drawBugMark,
+  drawHiveMark,
   drawFormation,
   drawCommunityEmblem,
   drawWitnessCitadel,
@@ -2020,11 +2020,11 @@ function drawBug(
   ctx.lineWidth = 1.6;
   ctx.stroke();
 
-  // The glassy Hive mark on the body: molten red glass, dark-outlined so it
-  // reads at play zoom. Drawn OUTSIDE any facing flip: the body faces
-  // left/right via `face` coordinate offsets only, never a flip transform,
-  // so the mark can never appear backwards.
-  drawBugMark(ctx, 0, 0.5, 29);
+  // BLACK Hive stripes on the body (Bryan's order): the real mark stamped
+  // dark, so the player IS the logo at a glance. Drawn OUTSIDE any facing
+  // flip: the body faces left/right via `face` coordinate offsets only,
+  // never a flip transform, so the mark can never appear backwards.
+  drawHiveMark(ctx, 0, 0.5, 24, '#141019');
 
   if (p.mode === 'drift') {
     const f = clamp(p.fuel / 2.4, 0, 1);
