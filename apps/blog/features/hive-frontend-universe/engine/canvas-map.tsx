@@ -31,6 +31,7 @@ import {
   DAPP_DIRECTORY,
   STEEM_RUINS,
   ROSE_WINDOW_PANES,
+  WITNESS_OVERRIDES,
   witnessPosts
 } from '../lib/fixed-world';
 import { mulberry32 } from '../lib/mesh';
@@ -216,8 +217,10 @@ const Stage = ({ board }: { board: Board }) => {
     if (!witnesses?.length) return [];
     const posts = witnessPosts(witnesses.length);
     return witnesses.map((w, i) => {
-      const x = posts[i].x;
-      const y = posts[i].y;
+      // Bryan's named placements beat the ring formula.
+      const override = WITNESS_OVERRIDES[w.name];
+      const x = override ? override.x : posts[i].x;
+      const y = override ? override.y : posts[i].y;
       // THE TRACTOR LANE. The first beam grabbed within 260px of the base,
       // which physics proved unreachable for 14 of the 21 citadels (the ring
       // stands 1000-2200px off the coast; a bare jump dies first). The lane

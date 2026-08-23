@@ -95,10 +95,8 @@ export const CLUSTERS: readonly Cluster[] = [
   // The library: hop-only, floats north of the centre blade's tip. Gap
   // measured at 0.5-0.8x the max hop, so a full drift ring clears it.
   { id: 'library', x: 600, y: -5500, link: 'hop', satellites: [[270, 440]] },
-  // Records: hop-only, off the east blade's southern arm. Pulled in from
-  // (4620, 4520), where the measured gap was 1.2-1.36x the max hop and the
-  // cluster was therefore stranded despite being labelled hoppable.
-  { id: 'records', x: 4130, y: 4030, link: 'hop', satellites: [] },
+  // (The 'records' cluster is gone: its paperwork landmarks moved into the
+  // Rose Window's panes, and an empty hub floating in the void was noise.)
   // Launch: pulled in again (6220 to 5850) when the two dApp ships moved to
   // the southern shipyard and took their gap-bridging spoke nodes with
   // them, which had silently stranded this cluster at 0.9-1.5x the max hop.
@@ -124,8 +122,11 @@ export const CLUSTERS: readonly Cluster[] = [
   { id: 'socko_isle', x: 5250, y: -4550, link: 'trail', satellites: [[330, 430]] },
   // THE SOUTH BAYS: new void moorings for Bryan's box orders. 'rose' holds
   // the Rose Window at I-23; 'shipyard' holds both dApp ships at Q-23/T-23.
-  { id: 'rose', x: -3150, y: 6350, link: 'trail', satellites: [[200, 450]] },
-  { id: 'shipyard', x: 3500, y: 6650, link: 'trail', satellites: [[270, 430]] },
+  { id: 'rose', x: -2450, y: 7050, link: 'trail', satellites: [[200, 450]] },
+  { id: 'shipyard', x: 3850, y: 7050, link: 'trail', satellites: [[0, 430]] },
+  // THE ARCADE BAY: the notch between the blades is void, so the arcade
+  // moors on its own short rail (Bryan's order: O-13 and O-14).
+  { id: 'arcade_bay', x: 1050, y: 250, link: 'trail', satellites: [] },
 
   /* ---- decentralised offshoots: little stars trailing off into space ---- */
   // These hold no landmarks. They exist so the world does not simply stop at
@@ -207,7 +208,7 @@ export const LANDMARKS: readonly Landmark[] = [
   // BIG FIVE. The Arcade now stands inland among the posts, on the way to
   // things, instead of hanging off the far eastern rim. Move it by editing
   // this one pair of coordinates.
-  { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'body', x: 2050, y: -100 }, big: true },
+  { id: 'arcade', kind: 'internal', path: '/basecamp', labelKey: 'hive_frontend_universe.landmarks.arcade', category: 'arcade', icon: 'arcadebldg', place: { in: 'cluster', cluster: 'arcade_bay', angleDeg: 90, dist: 250 }, big: true },
   { id: 'write_post', kind: 'internal', path: '/submit.html', labelKey: 'hive_frontend_universe.landmarks.write_post', category: 'tool', icon: 'quill', place: { in: 'body', x: -1150, y: -900 } },
   { id: 'search', kind: 'internal', path: '/search', labelKey: 'hive_frontend_universe.landmarks.search', category: 'tool', icon: 'magnifier', place: { in: 'body', x: -2900, y: -1300 } },
   { id: 'wallet', kind: 'wallet', path: '/', labelKey: 'hive_frontend_universe.landmarks.wallet', category: 'tool', icon: 'wallet', place: { in: 'body', x: -1500, y: 1500 } },
@@ -218,9 +219,9 @@ export const LANDMARKS: readonly Landmark[] = [
 
   /* ---- THE CENTRE BLADE: governance country ---- */
   // BIG FIVE. Move the ferris wheel by editing this one pair of coordinates.
-  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'body', x: -750, y: -4800 }, big: true },
+  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'body', x: -1050, y: -4950 }, big: true },
   // BIG FIVE. Move the witness towers by editing this one pair of coordinates.
-  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'body', x: 2400, y: -4800 }, big: true },
+  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'body', x: 2450, y: -5000 }, big: true },
   { id: 'healthchecker', kind: 'internal', path: '/healthchecker', labelKey: 'hive_frontend_universe.landmarks.healthchecker', category: 'tool', icon: 'pulse', place: { in: 'body', x: 1600, y: 1350 } },
 
   /* ---- THE EAST BLADE: the deep end ---- */
@@ -231,13 +232,9 @@ export const LANDMARKS: readonly Landmark[] = [
 
   /* ---- offshore clusters ---- */
   // The library (hop-only): what Hive is, in its own words.
-  { id: 'what_is_hive', kind: 'external', path: 'https://hive.io', labelKey: 'navigation.explore_nav.what_is_hive', category: 'info', icon: 'hivemark', place: { in: 'cluster', cluster: 'library', angleDeg: 27, dist: 500 } },
-  { id: 'whitepaper', kind: 'external', path: 'https://hive.io/whitepaper.pdf', labelKey: 'navigation.sidebar.hive_whitepaper', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'library', angleDeg: 145, dist: 470 } },
   // Records (hop-only): the minor paperwork, clearly minor.
-  { id: 'privacy', kind: 'internal', path: '/privacy.html', labelKey: 'navigation.sidebar.privacy_policy', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'records', angleDeg: 55, dist: 470 } },
-  { id: 'terms', kind: 'internal', path: '/tos.html', labelKey: 'navigation.sidebar.terms_of_service', category: 'info', icon: 'doc', place: { in: 'cluster', cluster: 'records', angleDeg: 235, dist: 470 } },
   // Launch (walled off for now).
-  { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 0, dist: 1050 }, big: true },
+  { id: 'our_dapps', kind: 'external', path: 'https://hive.io/eco/', labelKey: 'navigation.main_nav_bar.out_dapps', category: 'dapp', icon: 'launchpad', place: { in: 'cluster', cluster: 'shipyard', angleDeg: 270, dist: 300 }, big: true },
   // The gateway (walled off): a lone door in the dark.
   { id: 'sign_up', kind: 'external', path: 'https://signup.hive.io/', labelKey: 'navigation.main_nav_bar.sign_up', category: 'social', icon: 'door', place: { in: 'cluster', cluster: 'gateway', angleDeg: 180, dist: 500 } },
   // THE MIGHTY J SON himself, crouched on his keep at the edge of the world.
@@ -478,8 +475,28 @@ export const ROSE_WINDOW_PANES: readonly { labelKey: string; kind: LandmarkKind;
   { labelKey: 'navigation.main_nav_bar.sign_up', kind: 'external', path: 'https://signup.hive.io/' },
   { labelKey: 'hive_frontend_universe.landmarks.communities', kind: 'internal', path: '/communities' },
   { labelKey: 'hive_frontend_universe.landmarks.search', kind: 'internal', path: '/search' },
-  { labelKey: 'navigation.sidebar.faq', kind: 'internal', path: '/faq.html' }
+  { labelKey: 'navigation.sidebar.faq', kind: 'internal', path: '/faq.html' },
+  // The paperwork moved INTO the cathedral (Bryan's order): these four left
+  // the map as landmarks and live only as panes now.
+  { labelKey: 'navigation.explore_nav.what_is_hive', kind: 'external', path: 'https://hive.io' },
+  { labelKey: 'navigation.sidebar.hive_whitepaper', kind: 'external', path: 'https://hive.io/whitepaper.pdf' },
+  { labelKey: 'navigation.sidebar.privacy_policy', kind: 'internal', path: '/privacy.html' },
+  { labelKey: 'navigation.sidebar.terms_of_service', kind: 'internal', path: '/tos.html' }
 ];
+
+/**
+ * Bryan's named-citadel placements: these witnesses stand at his chosen grid
+ * boxes regardless of live vote order. Applied by name after witnessPosts;
+ * both spellings of ausbitbank are listed because the order sheet said
+ * "austinbank". Overridden posts skip the encroachment walk: an explicit
+ * placement is the boss's placement.
+ */
+export const WITNESS_OVERRIDES: Readonly<Record<string, { x: number; y: number }>> = {
+  therealwolf: { x: -2450, y: 6050 }, // J-22
+  arcange: { x: 5950, y: -2450 }, // V-10
+  ausbitbank: { x: 4550, y: 5350 }, // T-21
+  austinbank: { x: 4550, y: 5350 } // T-21 (order-sheet spelling)
+};
 
 export const STEEM_RUINS = {
   x: -6300,

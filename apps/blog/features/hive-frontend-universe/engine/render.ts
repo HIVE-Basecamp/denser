@@ -986,8 +986,13 @@ export function drawScene(scene: RenderScene): void {
     const baseW = kind === 'mesh' ? 3.9 : 3.5;
     const streetW = z < 0.12 ? Math.max(baseW * 0.55, 2.8) : baseW;
     ctx.lineWidth = streetW / Math.max(z, 0.05);
-    const breathe = 0.08 * Math.sin(time * 1.4 + (kind === 'mesh' ? 0 : 1.1));
-    ctx.globalAlpha = ((kind === 'mesh' ? 0.82 : 0.72) + breathe) * (1 - mapness * 0.25);
+    // SHIMMER, not pulse (Bryan): two incommensurate sines make a flicker
+    // that dims and brightens irregularly but never goes away; the lava
+    // glimmers like heat, it does not breathe like a lung.
+    const phase = kind === 'mesh' ? 0 : 1.1;
+    const shimmer =
+      0.05 * Math.sin(time * 6.3 + phase) + 0.035 * Math.sin(time * 11.7 + phase * 2.3);
+    ctx.globalAlpha = ((kind === 'mesh' ? 0.82 : 0.72) + shimmer) * (1 - mapness * 0.25);
     for (const e of edges) {
       if (e.kind !== kind || !edgeVis(e)) continue;
       strokeEdge(e);
@@ -1036,9 +1041,12 @@ export function drawScene(scene: RenderScene): void {
   let layerPhase = 0;
   for (const layer of scene.routeLayers) {
     if (!layer.edges.size) continue;
-    // The transit lines pulse gently out of phase with each other and the
-    // streets, so the whole network reads as circulating rather than static.
-    const routeBreathe = 1 + 0.09 * Math.sin(time * 1.8 + layerPhase);
+    // SHIMMER on the named lines too (Bryan: all colors): constant width
+    // now, with a flickery brightness that never drops out. The travelling
+    // electricity stays the big motion; this is the heat haze under it.
+    const routeBreathe = 1;
+    const routeShimmer =
+      0.06 * Math.sin(time * 7.1 + layerPhase) + 0.04 * Math.sin(time * 12.9 + layerPhase * 1.7);
     layerPhase += 2.1;
     // At map zoom the line keeps its CASING: a dark edge is the one signal
     // that says "designed transit route" instead of "loose wire", and it is
@@ -1061,7 +1069,7 @@ export function drawScene(scene: RenderScene): void {
     for (const p of passes) {
       ctx.strokeStyle = p.col;
       ctx.lineWidth = (p.w * routeBreathe) / Math.max(z, 0.05);
-      ctx.globalAlpha = p.a;
+      ctx.globalAlpha = Math.min(1, p.a + routeShimmer);
       for (const e of edges) {
         if (!layer.edges.has(e.id) || !edgeVis(e)) continue;
         strokeEdge(e);
