@@ -126,7 +126,11 @@ export const CLUSTERS: readonly Cluster[] = [
   { id: 'shipyard', x: 3850, y: 7050, link: 'trail', satellites: [[0, 430]] },
   // THE ARCADE BAY: the notch between the blades is void, so the arcade
   // moors on its own short rail (Bryan's order: O-13 and O-14).
-  { id: 'arcade_bay', x: 1050, y: 250, link: 'trail', satellites: [] },
+  { id: 'arcade_bay', x: 1400, y: -100, link: 'trail', satellites: [] },
+  // Perches: tiny rail moorings that let a big landmark stand exactly where
+  // Bryan's line calls for, even when that spot is a step off the coast.
+  { id: 'ferris_perch', x: -1050, y: -5050, link: 'trail', satellites: [] },
+  { id: 'witty_perch', x: 2450, y: -5150, link: 'trail', satellites: [] },
 
   /* ---- decentralised offshoots: little stars trailing off into space ---- */
   // These hold no landmarks. They exist so the world does not simply stop at
@@ -219,9 +223,9 @@ export const LANDMARKS: readonly Landmark[] = [
 
   /* ---- THE CENTRE BLADE: governance country ---- */
   // BIG FIVE. Move the ferris wheel by editing this one pair of coordinates.
-  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'body', x: -1050, y: -4950 }, big: true },
+  { id: 'proposals', kind: 'wallet', path: '/proposals', labelKey: 'hive_frontend_universe.worlds.dhf_fun_park', category: 'governance', icon: 'ferris', place: { in: 'cluster', cluster: 'ferris_perch', angleDeg: 90, dist: 200 }, big: true },
   // BIG FIVE. Move the witness towers by editing this one pair of coordinates.
-  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'body', x: 2450, y: -5000 }, big: true },
+  { id: 'witnesses', kind: 'wallet', path: '/~witnesses', labelKey: 'hive_frontend_universe.worlds.witty_world', category: 'governance', icon: 'towers', place: { in: 'cluster', cluster: 'witty_perch', angleDeg: 90, dist: 200 }, big: true },
   { id: 'healthchecker', kind: 'internal', path: '/healthchecker', labelKey: 'hive_frontend_universe.landmarks.healthchecker', category: 'tool', icon: 'pulse', place: { in: 'body', x: 1600, y: 1350 } },
 
   /* ---- THE EAST BLADE: the deep end ---- */
