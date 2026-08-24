@@ -528,6 +528,8 @@ Existing localStorage data without TTL structure is handled gracefully:
 
 ## Hive Basecamp — Integration Contract
 
+> Current-state snapshot for fresh sessions: see `docs/basecamp-context.md` (what is built vs stubbed, H.I.V.E.R., rough edges).
+
 Hive Basecamp is a **built** newcomer section of the blog app (not a proposal). Code lives in
 `apps/blog/features/basecamp/` with the route at `apps/blog/app/basecamp/`. This section is the
 stable contract that separate modules — especially game modules — build against. Anything that
