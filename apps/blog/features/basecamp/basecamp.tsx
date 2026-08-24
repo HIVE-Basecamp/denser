@@ -6,6 +6,7 @@ import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import NewHereView from './new-here-view';
 import HelpView from './help-view';
+import HiveFrontendUniverseGame from './games/hive-frontend-universe-game';
 import NewcomersList from './newcomers-list';
 import RingsLegend from './rings-legend';
 import {
@@ -50,12 +51,25 @@ const Basecamp = () => {
           >
             {t('basecamp.im_here_to_help')}
           </TabsTrigger>
+          {/* H.I.V.E.R. — the Hive Frontend Universe game, promoted to the
+              front page at Bryan's order (it moved out of the Puppet Patrol
+              games row; the game module itself is untouched). */}
+          <TabsTrigger
+            value="hiver"
+            className={cn(BASECAMP_TAB_TRIGGER, activeTab === 'hiver' && BASECAMP_TAB_TRIGGER_ACTIVE)}
+            data-testid="basecamp-tab-hiver"
+          >
+            {t('basecamp.hiver')}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="new">
           <NewHereView />
         </TabsContent>
         <TabsContent value="helper">
           <HelpView />
+        </TabsContent>
+        <TabsContent value="hiver">
+          <HiveFrontendUniverseGame />
         </TabsContent>
       </Tabs>
 
