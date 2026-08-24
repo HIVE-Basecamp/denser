@@ -206,10 +206,10 @@ export function drawSuitBubble(
   // whisper with the compiled count and bulges when spare air is aboard.
   // Bryan's first playtest could not SEE it, so it grew from 11 to 15 and
   // the glass and rim both came up in presence.
-  // 26 (was 15): the dome grew when the rider design landed, so the
-  // player's avatar and the taller eye stalks both fit inside the glass.
-  const r = 26 + Math.min(count, 21) * 0.14 + (state.spareAir > 0 ? 2.5 : 0);
-  const cy = y - 26;
+  // 42 (was 15, then 26): grew twice with the rider design, so the BIG
+  // profile circle and the long eye stalks fit inside the glass.
+  const r = 42 + Math.min(count, 21) * 0.14 + (state.spareAir > 0 ? 2.5 : 0);
+  const cy = y - 42;
   ctx.save();
   // Glass: visibly there now.
   ctx.globalAlpha = 0.2;

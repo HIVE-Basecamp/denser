@@ -2059,15 +2059,15 @@ function drawBug(
   // peek out over the rider.
   const eyeTips: [number, number][] = [];
   for (let e = -1; e <= 1; e += 2) {
-    const tx = e * 8 + p.face * 2.6;
-    const ty = -47 + Math.sin(time * 4 + e) * 1.8;
+    const tx = e * 12 + p.face * 3;
+    const ty = -82 + Math.sin(time * 4 + e) * 2.2;
     eyeTips.push([tx, ty]);
     ctx.strokeStyle = PALETTE.hiveLit;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.4;
     ctx.beginPath();
     ctx.moveTo(e * 6, -12);
-    ctx.quadraticCurveTo(e * 17, -22, e * 15, -33);
-    ctx.quadraticCurveTo(e * 13, -41, tx, ty);
+    ctx.quadraticCurveTo(e * 28, -26, e * 26, -48);
+    ctx.quadraticCurveTo(e * 22, -70, tx, ty);
     ctx.stroke();
   }
 
@@ -2092,12 +2092,16 @@ function drawBug(
   // THE RIDER: the signed-in player's own avatar, perched on the diamond's
   // top tip, riding the bug. Little boots dangle onto the shoulders first,
   // behind the circle.
-  const rr = 10;
-  const rcy = -BH - 6;
+  // BIG on purpose (Bryan: "minimum as big as the clear helmet circle...
+  // it can be absurd looking... dont worry about proportions"): the face
+  // is the point, so the circle matches the old helmet dome and the real
+  // profile image reads at a glance.
+  const rr = 28;
+  const rcy = -BH - 22;
   ctx.fillStyle = '#141019';
   for (const e of [-1, 1]) {
     ctx.beginPath();
-    ctx.ellipse(e * 5.4, -16.2, 3, 2, e * 0.5, 0, 6.283);
+    ctx.ellipse(e * 9, -17.5, 4.2, 2.8, e * 0.5, 0, 6.283);
     ctx.fill();
   }
   ctx.save();
@@ -2112,15 +2116,15 @@ function drawBug(
     ctx.fillRect(-rr, rcy - rr, rr * 2, rr * 2);
     ctx.fillStyle = '#8a5a00';
     ctx.beginPath();
-    ctx.arc(0, rcy - 2.5, 3.4, 0, 6.283);
+    ctx.arc(0, rcy - 7, 9.5, 0, 6.283);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(0, rcy + 6, 5.5, 4, 0, Math.PI, 0);
+    ctx.ellipse(0, rcy + 17, 15.5, 11, 0, Math.PI, 0);
     ctx.fill();
   }
   ctx.restore();
   ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 1.8;
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   ctx.arc(0, rcy, rr, 0, 6.283);
   ctx.stroke();
@@ -2128,16 +2132,16 @@ function drawBug(
   // Little arms out from the rider, hands gripping the reins where the
   // stalks pass beside the circle.
   ctx.strokeStyle = '#141019';
-  ctx.lineWidth = 2.2;
+  ctx.lineWidth = 3;
   ctx.lineCap = 'round';
   for (const e of [-1, 1]) {
     ctx.beginPath();
-    ctx.moveTo(e * 8, rcy - 2);
-    ctx.quadraticCurveTo(e * 12.5, rcy - 4, e * 14.2, rcy - 6);
+    ctx.moveTo(e * 22, rcy - 4);
+    ctx.quadraticCurveTo(e * 27, rcy - 6.5, e * 29.5, rcy - 9);
     ctx.stroke();
     ctx.fillStyle = '#141019';
     ctx.beginPath();
-    ctx.arc(e * 14.5, rcy - 6.4, 2.1, 0, 6.283);
+    ctx.arc(e * 30, rcy - 9.5, 3, 0, 6.283);
     ctx.fill();
   }
 
@@ -2145,19 +2149,19 @@ function drawBug(
   // the top of the rider like the bug is watching where it carries them.
   for (const [tx, ty] of eyeTips) {
     ctx.beginPath();
-    ctx.arc(tx, ty, 6.2, 0, 6.283);
+    ctx.arc(tx, ty, 7.5, 0, 6.283);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
     ctx.strokeStyle = '#5c0a16';
-    ctx.lineWidth = 1.3;
+    ctx.lineWidth = 1.4;
     ctx.stroke();
     ctx.fillStyle = PALETTE.hiveBlack;
     ctx.beginPath();
-    ctx.arc(tx + p.face * 2.2, ty + 0.6, 2.7, 0, 6.283);
+    ctx.arc(tx + p.face * 2.6, ty + 0.7, 3.2, 0, 6.283);
     ctx.fill();
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(tx - 1.6, ty - 1.9, 1, 0, 6.283);
+    ctx.arc(tx - 2, ty - 2.3, 1.2, 0, 6.283);
     ctx.fill();
   }
 
@@ -2167,7 +2171,8 @@ function drawBug(
     ctx.lineWidth = 2.5;
     ctx.globalAlpha = 0.5 + Math.sin(time * 18) * 0.3;
     ctx.beginPath();
-    ctx.arc(0, 0, 37, -1.57, -1.57 + 6.283 * f);
+    // 58 (was 37): rings the whole rider-and-reins rig now.
+    ctx.arc(0, -14, 58, -1.57, -1.57 + 6.283 * f);
     ctx.stroke();
     ctx.globalAlpha = 1;
   }
