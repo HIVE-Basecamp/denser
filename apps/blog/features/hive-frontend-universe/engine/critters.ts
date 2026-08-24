@@ -348,7 +348,8 @@ function drawBlah(
 ): void {
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(1.85, 1.85);
+  // 2.3 (was 1.85): Bryan wants him bigger.
+  ctx.scale(2.3, 2.3);
   const R = 16;
   // The puke clock: an 8-second cycle, offset per critter so the flock
   // never heaves in chorus. Long idle, a wind-up, then a SLOW spill.
@@ -366,27 +367,30 @@ function drawBlah(
     ctx.lineTo(lx + kick, R * 0.72 + 7);
     ctx.stroke();
   }
-  // The puddle collecting below while it spills.
+  // The splat zone out where the jet lands (it SHOOTS now, not pours).
   if (spill > 0) {
     const settle = Math.min(1, spill * 1.6);
+    const ix = face * 36;
+    const iy = R + 7;
     ctx.fillStyle = '#52f22e';
     ctx.globalAlpha = 0.85;
     ctx.beginPath();
-    ctx.ellipse(face * 6, R + 9, 4 + settle * 15, 2.5 + settle * 3, 0, 0, 6.283);
+    ctx.ellipse(ix, iy, 5 + settle * 13, 2.5 + settle * 3, 0, 0, 6.283);
     ctx.fill();
-    // Splash droplets hopping off the puddle's rim.
-    for (let k = 0; k < 3; k++) {
-      const hop = ((time * 1.6 + k / 3) % 1);
-      ctx.globalAlpha = 0.7 * (1 - hop);
+    // Spray bouncing off the impact.
+    for (let k = 0; k < 4; k++) {
+      const hop = (time * 1.9 + k / 4) % 1;
+      ctx.globalAlpha = 0.75 * (1 - hop);
       ctx.beginPath();
-      ctx.arc(face * 6 + (k - 1) * (8 + settle * 8), R + 7 - hop * 7, 1.4, 0, 6.283);
+      ctx.arc(ix + face * hop * 10 + (k - 1.5) * 5, iy - 4 - Math.sin(hop * Math.PI) * 9, 1.5, 0, 6.283);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
   }
   // Squash for the wind-up, a forward heave for the spill.
   ctx.save();
-  ctx.rotate(face * 0.09 * effort);
+  // Wind-up leans in; the JET kicks him back like a firehose.
+  ctx.rotate(face * (bulge * 0.09 - spill * 0.08));
   ctx.scale(1 + bulge * 0.12, 1 - bulge * 0.1);
   const ball = () => {
     ctx.beginPath();
@@ -405,9 +409,10 @@ function drawBlah(
   ctx.save();
   ball();
   ctx.clip();
-  ctx.fillStyle = '#ffffff';
+  // BLACK mouth cover with the word in white (Bryan's spec).
+  ctx.fillStyle = '#0b0b0d';
   ctx.fillRect(-R, 4, R * 2, 9);
-  ctx.fillStyle = OUTLINE;
+  ctx.fillStyle = '#ffffff';
   ctx.font = '900 8px ui-monospace, SFMono-Regular, Menlo, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -420,28 +425,30 @@ function drawBlah(
   ctx.beginPath();
   ctx.arc(0, 0, R * 0.72, -2.55, -1.95);
   ctx.stroke();
-  // THE STREAM, pouring slowly from under the band while it heaves.
+  // THE JET (Bryan: "it should shoot out rather than pour"): a straight
+  // pressurized line from the mouth cover out to the splat zone, nearly
+  // flat, wobbling under pressure, chunks racing along it.
   if (spill > 0) {
     const a = Math.min(1, spill * 5) * (spill > 0.88 ? (1 - spill) / 0.12 : 1);
-    const sx = face * 8;
-    const sy = 12;
-    const exx = face * 6;
-    const eyy = R + 9;
-    const wob = Math.sin(time * 10 + seed) * 1.2;
-    ctx.globalAlpha = 0.9 * a;
+    const sx = face * 12;
+    const sy = 8.5;
+    const exx = face * 36;
+    const eyy = R + 5;
+    const wob = Math.sin(time * 16 + seed) * 1.1;
+    ctx.globalAlpha = 0.92 * a;
     ctx.fillStyle = '#52f22e';
     ctx.beginPath();
-    ctx.moveTo(sx - 3.4, sy);
-    ctx.quadraticCurveTo(sx - 3 + wob, (sy + eyy) / 2, exx - 4.5, eyy);
-    ctx.lineTo(exx + 4.5, eyy);
-    ctx.quadraticCurveTo(sx + 3.6 + wob, (sy + eyy) / 2, sx + 3.8, sy);
+    ctx.moveTo(sx, sy - 2.4);
+    ctx.quadraticCurveTo((sx + exx) / 2, (sy + eyy) / 2 - 5 + wob, exx, eyy - 4.5);
+    ctx.lineTo(exx + face * 3, eyy + 2);
+    ctx.quadraticCurveTo((sx + exx) / 2, (sy + eyy) / 2 + 1 + wob, sx, sy + 2.6);
     ctx.closePath();
     ctx.fill();
-    // Chunks riding the stream down.
-    for (let k = 0; k < 2; k++) {
-      const t = (time * 1.1 + k / 2) % 1;
+    // Chunks racing down the jet, fast.
+    for (let k = 0; k < 3; k++) {
+      const t = (time * 3.2 + k / 3) % 1;
       ctx.beginPath();
-      ctx.arc(sx + (exx - sx) * t + wob * t, sy + (eyy - sy) * t, 1.8, 0, 6.283);
+      ctx.arc(sx + (exx - sx) * t, sy + (eyy - sy) * t - Math.sin(t * Math.PI) * 4 + wob * t, 2, 0, 6.283);
       ctx.fill();
     }
     ctx.globalAlpha = 1;

@@ -1916,13 +1916,13 @@ function drawHazardsOnBug(
   for (const s of hz.splats) {
     const f = Math.min(1, s.age / 0.95);
     const px = lerp(s.fromX, s.toX, f);
-    const py = lerp(s.fromY, s.toY, f) - Math.sin(f * Math.PI) * 70;
+    const py = lerp(s.fromY, s.toY, f) - Math.sin(f * Math.PI) * 22;
     ctx.fillStyle = '#52f22e';
     // The dribble trail: three shrinking blobs behind the lob.
     for (let k = 1; k <= 3; k++) {
       const tf = Math.max(0, f - k * 0.07);
       const tx = lerp(s.fromX, s.toX, tf);
-      const ty = lerp(s.fromY, s.toY, tf) - Math.sin(tf * Math.PI) * 70;
+      const ty = lerp(s.fromY, s.toY, tf) - Math.sin(tf * Math.PI) * 22;
       ctx.globalAlpha = (1 - s.age / 1.3) * (0.5 - k * 0.12);
       ctx.beginPath();
       ctx.arc(tx, ty, 5 - k, 0, 6.283);
