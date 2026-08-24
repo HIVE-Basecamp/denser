@@ -1910,15 +1910,27 @@ function drawHazardsOnBug(
   y: number,
   time: number
 ): void {
-  // Goo spits in flight: a fat green lob from Blahgart to where the bug was.
+  // Goo spits in flight: a fat green lob from Blahgart to where the bug
+  // was, SLOWED to a full watchable second (Bryan's order) with a dribble
+  // trail behind it. Visual only; the hit has always been instant.
   for (const s of hz.splats) {
-    const f = Math.min(1, s.age / 0.3);
+    const f = Math.min(1, s.age / 0.95);
     const px = lerp(s.fromX, s.toX, f);
-    const py = lerp(s.fromY, s.toY, f) - Math.sin(f * Math.PI) * 60;
+    const py = lerp(s.fromY, s.toY, f) - Math.sin(f * Math.PI) * 70;
     ctx.fillStyle = '#52f22e';
-    ctx.globalAlpha = 1 - s.age;
+    // The dribble trail: three shrinking blobs behind the lob.
+    for (let k = 1; k <= 3; k++) {
+      const tf = Math.max(0, f - k * 0.07);
+      const tx = lerp(s.fromX, s.toX, tf);
+      const ty = lerp(s.fromY, s.toY, tf) - Math.sin(tf * Math.PI) * 70;
+      ctx.globalAlpha = (1 - s.age / 1.3) * (0.5 - k * 0.12);
+      ctx.beginPath();
+      ctx.arc(tx, ty, 5 - k, 0, 6.283);
+      ctx.fill();
+    }
+    ctx.globalAlpha = Math.max(0, 1 - s.age / 1.3);
     ctx.beginPath();
-    ctx.ellipse(px, py, 9, 7, f * 2, 0, 6.283);
+    ctx.ellipse(px, py, 10, 8, f * 2, 0, 6.283);
     ctx.fill();
     ctx.globalAlpha = 1;
   }

@@ -207,7 +207,7 @@ export function drawCritters(
         drawSock(ctx, c.x, c.y + bob, c.face, time);
         break;
       case 'blah':
-        drawBlah(ctx, c.x, c.y + bob, c.face, time);
+        drawBlah(ctx, c.x, c.y + bob, c.face, time, c.swayPhase);
         break;
       case 'scammer':
         drawScammer(ctx, c.x, c.y + bob, c.face, time);
@@ -328,70 +328,157 @@ function drawSock(
 }
 
 /**
- * Blahgart: the word BLAH given legs, in loud blurt orange. The letters ARE
- * the creature (angry brows on the B, the H trailing). Get close and it
- * spits bright green slime that sticks the bug down (hazards.ts).
+ * Blahgart, fourth look (Bryan: "i want the blah creature to look exactly
+ * like the blurt logo. except it should say BLAH"): the round orange
+ * blurt-ball itself, drawn from the real logo - glossy orange sphere, two
+ * big innocent cartoon eyes with arched brows, and the white band across
+ * the lower face carrying the word - walking on little scurrying legs. And
+ * every few seconds it PUKES, slowly and visibly: the ball bulges, the
+ * eyes squeeze shut, and a thick green stream pours out from under the
+ * band into a spreading puddle. The slime hazard itself is unchanged
+ * (hazards.ts); this is the look.
  */
-function drawBlah(ctx: CanvasRenderingContext2D, x: number, y: number, face: number, time: number): void {
+function drawBlah(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  face: number,
+  time: number,
+  seed = 0
+): void {
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(1.35, 1.35);
-  // Noise ripples keep radiating: it never stops talking.
-  const rip = (time * 1.7) % 1;
-  ctx.strokeStyle = '#ff8c42';
-  ctx.lineWidth = 2.6;
-  ctx.lineCap = 'round';
-  for (let i = 0; i < 3; i++) {
-    const rr = 18 + ((rip + i / 3) % 1) * 16;
-    ctx.globalAlpha = 0.7 * (1 - ((rip + i / 3) % 1));
-    ctx.beginPath();
-    ctx.arc(face * 12, -2, rr, face > 0 ? -0.6 : Math.PI - 0.6, face > 0 ? 0.6 : Math.PI + 0.6);
-    ctx.stroke();
-  }
-  ctx.globalAlpha = 1;
-  // The word itself: fat rounded letters, blurt orange, dark outline. Text
-  // metrics are stable across canvases for a monospace stack, and the letters
-  // bounce out of phase so the word reads as walking.
-  ctx.font = '900 21px ui-monospace, SFMono-Regular, Menlo, monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const word = 'BLAH';
-  for (let i = 0; i < word.length; i++) {
-    const lx = (i - 1.5) * 13.5;
-    const ly = Math.sin(time * 6 + i * 1.3) * 2.4;
-    ctx.strokeStyle = OUTLINE;
-    ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.strokeText(word[i], lx, ly);
-    ctx.fillStyle = '#ff7a1a';
-    ctx.fillText(word[i], lx, ly);
-  }
-  // Angry brows over the B, so the word has a face after all.
-  sticker(ctx, 2.8);
-  ctx.beginPath();
-  ctx.moveTo(-26, -16);
-  ctx.lineTo(-19, -13);
-  ctx.moveTo(-11, -16.5);
-  ctx.lineTo(-17.5, -13.5);
-  ctx.stroke();
-  // Little legs under the letters, scurrying.
-  ctx.lineWidth = 2.6;
+  ctx.scale(1.85, 1.85);
+  const R = 16;
+  // The puke clock: an 8-second cycle, offset per critter so the flock
+  // never heaves in chorus. Long idle, a wind-up, then a SLOW spill.
+  const cyc = ((time + seed * 2.3) % 8) / 8;
+  const bulge = cyc > 0.6 && cyc <= 0.74 ? (cyc - 0.6) / 0.14 : 0;
+  const spill = cyc > 0.74 ? (cyc - 0.74) / 0.26 : 0;
+  const effort = Math.max(bulge, spill);
+  // Legs scurrying, under everything.
+  sticker(ctx, 2.4);
   for (let i = 0; i < 4; i++) {
-    const lx = (i - 1.5) * 13.5;
+    const lx = (i - 1.5) * 7.5;
     const kick = Math.sin(time * 9 + i * 2.1) * 3;
     ctx.beginPath();
-    ctx.moveTo(lx, 11);
-    ctx.lineTo(lx + kick, 17);
+    ctx.moveTo(lx, R * 0.72);
+    ctx.lineTo(lx + kick, R * 0.72 + 7);
     ctx.stroke();
   }
-  // A green drip at the mouth corner: the slime it spits is already brewing.
-  ctx.fillStyle = '#52f22e';
-  ctx.beginPath();
-  ctx.ellipse(face * 27, 6 + Math.sin(time * 3) * 1.5, 3, 4.2, 0, 0, 6.283);
+  // The puddle collecting below while it spills.
+  if (spill > 0) {
+    const settle = Math.min(1, spill * 1.6);
+    ctx.fillStyle = '#52f22e';
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.ellipse(face * 6, R + 9, 4 + settle * 15, 2.5 + settle * 3, 0, 0, 6.283);
+    ctx.fill();
+    // Splash droplets hopping off the puddle's rim.
+    for (let k = 0; k < 3; k++) {
+      const hop = ((time * 1.6 + k / 3) % 1);
+      ctx.globalAlpha = 0.7 * (1 - hop);
+      ctx.beginPath();
+      ctx.arc(face * 6 + (k - 1) * (8 + settle * 8), R + 7 - hop * 7, 1.4, 0, 6.283);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // Squash for the wind-up, a forward heave for the spill.
+  ctx.save();
+  ctx.rotate(face * 0.09 * effort);
+  ctx.scale(1 + bulge * 0.12, 1 - bulge * 0.1);
+  const ball = () => {
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, 6.283);
+  };
+  // The orange ball, logo-exact colour, fat outline.
+  ball();
+  ctx.fillStyle = '#f45d0d';
   ctx.fill();
   ctx.strokeStyle = OUTLINE;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.6;
+  ball();
   ctx.stroke();
+  // The white band across the lower face, with the word. Clipped to the
+  // ball exactly like the real mark.
+  ctx.save();
+  ball();
+  ctx.clip();
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-R, 4, R * 2, 9);
+  ctx.fillStyle = OUTLINE;
+  ctx.font = '900 8px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BLAH', 0, 8.7);
+  ctx.restore();
+  // The gloss streak, top left.
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 0.72, -2.55, -1.95);
+  ctx.stroke();
+  // THE STREAM, pouring slowly from under the band while it heaves.
+  if (spill > 0) {
+    const a = Math.min(1, spill * 5) * (spill > 0.88 ? (1 - spill) / 0.12 : 1);
+    const sx = face * 8;
+    const sy = 12;
+    const exx = face * 6;
+    const eyy = R + 9;
+    const wob = Math.sin(time * 10 + seed) * 1.2;
+    ctx.globalAlpha = 0.9 * a;
+    ctx.fillStyle = '#52f22e';
+    ctx.beginPath();
+    ctx.moveTo(sx - 3.4, sy);
+    ctx.quadraticCurveTo(sx - 3 + wob, (sy + eyy) / 2, exx - 4.5, eyy);
+    ctx.lineTo(exx + 4.5, eyy);
+    ctx.quadraticCurveTo(sx + 3.6 + wob, (sy + eyy) / 2, sx + 3.8, sy);
+    ctx.closePath();
+    ctx.fill();
+    // Chunks riding the stream down.
+    for (let k = 0; k < 2; k++) {
+      const t = (time * 1.1 + k / 2) % 1;
+      ctx.beginPath();
+      ctx.arc(sx + (exx - sx) * t + wob * t, sy + (eyy - sy) * t, 1.8, 0, 6.283);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // The eyes: big, round, innocent, exactly the logo's - squeezing shut
+  // with the effort of the heave.
+  const dart = Math.sin(time * 0.9) > 0 ? 1 : -1;
+  for (const e of [-1, 1]) {
+    const ex = e * 6 + face * 0.8;
+    const ey = -5;
+    const openness = 1 - effort * 0.8;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, 4.8, Math.max(0.9, 5.6 * openness), 0, 0, 6.283);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 1.7;
+    ctx.stroke();
+    if (openness > 0.4) {
+      ctx.fillStyle = OUTLINE;
+      ctx.beginPath();
+      ctx.arc(ex + dart * 1.6 + face * 0.6, ey + 1.2, 2.7, 0, 6.283);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(ex + dart * 1.6 + face * 0.6 - 1, ey + 0.2, 1, 0, 6.283);
+      ctx.fill();
+    }
+    // The arched comma brow riding above.
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(ex - 4, ey - 7 + effort * 2);
+    ctx.quadraticCurveTo(ex, ey - 9.5 + effort * 2, ex + 4.2, ey - 7.6 + effort * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
   ctx.restore();
 }
 

@@ -110,7 +110,10 @@ export function updateHazards(
   }
   for (let i = hz.splats.length - 1; i >= 0; i--) {
     hz.splats[i].age += dt;
-    if (hz.splats[i].age > 0.5) hz.splats.splice(i, 1);
+    // 1.3s (was 0.5): the lob flies slower now (Bryan: "i want to see the
+    // puke really spill out... slow that moment down"). Visual only; the
+    // goo hit itself has always landed instantly on contact.
+    if (hz.splats[i].age > 1.3) hz.splats.splice(i, 1);
   }
 
   // The envelop animation runs even while everything else is on hold.
