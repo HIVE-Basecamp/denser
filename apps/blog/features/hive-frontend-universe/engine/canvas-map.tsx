@@ -542,9 +542,32 @@ const Stage = ({ board }: { board: Board }) => {
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
 
+    // True when the key press belongs to something that legitimately wants
+    // typing (the site search box, a comment field). The game never steals
+    // keys from those.
+    const typingTarget = (e: KeyboardEvent): boolean => {
+      const el = e.target as HTMLElement | null;
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    };
+    const GAME_KEYS = new Set([
+      'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ',
+      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z'
+    ]);
     const onKeyDown = (e: KeyboardEvent) => {
+      if (typingTarget(e)) return;
       const k = e.key.toLowerCase();
-      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
+      // CLAIM the game keys outright (Bryan's son's playtest: the arrow
+      // keys were ALSO driving the Basecamp tab bar, because the focused
+      // H.I.V.E.R. tab treats arrows as tab navigation). These listeners
+      // run in the CAPTURE phase now, so stopping propagation here means
+      // the tabs, the page scroll and everything else never see them
+      // while the game is mounted.
+      if (GAME_KEYS.has(k) || k === 'escape') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       if (k === 'm' && !keysRef.current[k]) {
         mKeyDownAt.current = Date.now();
         mapHeldRef.current = true; // hold to peek…
@@ -568,7 +591,9 @@ const Stage = ({ board }: { board: Board }) => {
       }
     };
     const onKeyUp = (e: KeyboardEvent) => {
+      if (typingTarget(e)) return;
       const k = e.key.toLowerCase();
+      if (GAME_KEYS.has(k)) e.stopPropagation();
       keysRef.current[k] = false;
       if (k === 'm') {
         mapHeldRef.current = false;
@@ -579,8 +604,16 @@ const Stage = ({ board }: { board: Board }) => {
         }
       }
     };
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    // CAPTURE phase, so the game's keys are claimed before the tab bar's
+    // roving-focus handler (or anything else) can act on them.
+    window.addEventListener('keydown', onKeyDown, true);
+    window.addEventListener('keyup', onKeyUp, true);
+    // Seamless start: entering the game steals focus from the H.I.V.E.R.
+    // tab button immediately, so the first arrow press moves the bug, not
+    // the tab selection. Clicking back into the game re-arms it too.
+    wrap.focus({ preventScroll: true });
+    const refocus = () => wrap.focus({ preventScroll: true });
+    wrap.addEventListener('pointerdown', refocus);
 
     /**
      * What is under the cursor. Nothing on the map is lettered any more, so
@@ -1309,8 +1342,9 @@ const Stage = ({ board }: { board: Board }) => {
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('keydown', onKeyDown, true);
+      window.removeEventListener('keyup', onKeyUp, true);
+      wrap.removeEventListener('pointerdown', refocus);
       canvas.removeEventListener('click', onCanvasClick);
       canvas.removeEventListener('mousemove', onCanvasMove);
       canvas.removeEventListener('mouseleave', onCanvasLeave);
@@ -1346,7 +1380,12 @@ const Stage = ({ board }: { board: Board }) => {
   return (
     <div
       ref={wrapRef}
-      className="relative h-full w-full select-none overflow-hidden bg-[#04030a] touch-none"
+      // Focusable (but not in the tab order) so mounting the game can pull
+      // keyboard focus off the H.I.V.E.R. tab button and play starts
+      // seamlessly. outline-none because the focus ring on the whole stage
+      // read as a glitch.
+      tabIndex={-1}
+      className="relative h-full w-full select-none overflow-hidden bg-[#04030a] outline-none touch-none"
       data-testid="hfu-map"
     >
       <canvas ref={canvasRef} className="absolute inset-0 block" />
