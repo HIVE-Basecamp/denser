@@ -124,11 +124,17 @@ const Stage = ({ board }: { board: Board }) => {
   const { t } = useTranslation('common_blog');
   const { data: communities } = useCommunities();
   const { data: witnesses } = useWitnesses();
-  // The signed-in player's avatar RIDES the bug (Bryan's mount design).
-  // The page only mounts behind the login gate, so the username is stable
-  // for the life of the stage.
+  // The signed-in player's avatar RIDES the bug (Bryan's mount design):
+  // any signed-in account is detected here and its own profile image rides.
+  // Read through a REF inside the frame loop, never the hook state: the
+  // loop's closure is created before the auth state finishes hydrating, so
+  // a direct capture stays undefined forever and the rider never gets a
+  // face (the same trap that once made every community bubble unclickable,
+  // and it bit again in Bryan's first rider playtest).
   const { user } = useUserClient();
   const playerHandle = user?.isLoggedIn ? user.username : undefined;
+  const playerHandleRef = useRef(playerHandle);
+  playerHandleRef.current = playerHandle;
   useEffect(() => {
     if (playerHandle) requestAvatar(playerHandle);
   }, [playerHandle]);
@@ -1223,7 +1229,7 @@ const Stage = ({ board }: { board: Board }) => {
         landmarks: landmarkVisuals,
         roseLabels,
         newbieVisited: visitedNewbsRef.current,
-        playerHandle,
+        playerHandle: playerHandleRef.current,
         communities: communityVisualsRef.current,
         factories,
         cubes,
