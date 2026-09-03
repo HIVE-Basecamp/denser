@@ -732,8 +732,8 @@
       "items": {
         "profile_setup": "Set up your profile",
         "intro_post": "Write an introduction post",
-        "first_follow": "Follow someone",
-        "first_replies": "Reply to someone else's post",
+        "first_follow": "Follow five people",
+        "first_replies": "Reply to three of other people's posts",
         "first_vote": "Upvote a post",
         "community_post": "Post in a community",
         "conversation": "Have a conversation — someone replies to you, you reply back",

@@ -54,22 +54,26 @@ function hasIntroTag(jsonMetadata: unknown): boolean {
   }
 }
 
-/** True when this custom_json is a follow (not a mute or a reblog) by this account. */
-function isFollowByAccount(value: Record<string, unknown>, username: string): boolean {
+/**
+ * The account this custom_json follows, or null when it is not a follow by this
+ * account. Shape is ['follow', { follower, following, what: ['blog'] }]; an
+ * empty `what` is an unfollow and 'ignore' is a mute, so neither counts.
+ */
+function followedAccountName(value: Record<string, unknown>, username: string): string | null {
   try {
-    if (value.id !== FOLLOW_CUSTOM_JSON_ID) return false;
+    if (value.id !== FOLLOW_CUSTOM_JSON_ID) return null;
     const auths = value.required_posting_auths;
-    if (!Array.isArray(auths) || !auths.includes(username)) return false;
+    if (!Array.isArray(auths) || !auths.includes(username)) return null;
     const parsed: unknown = JSON.parse(String(value.json));
-    // Shape is ['follow', { follower, following, what: ['blog'] }]. An empty
-    // `what` is an unfollow, and 'ignore' is a mute — neither counts.
-    if (!Array.isArray(parsed) || parsed[0] !== 'follow') return false;
+    if (!Array.isArray(parsed) || parsed[0] !== 'follow') return null;
     const body = parsed[1];
-    if (typeof body !== 'object' || body === null) return false;
-    const what = (body as Record<string, unknown>).what;
-    return Array.isArray(what) && what.includes('blog');
+    if (typeof body !== 'object' || body === null) return null;
+    const record = body as Record<string, unknown>;
+    const what = record.what;
+    if (!Array.isArray(what) || !what.includes('blog')) return null;
+    return typeof record.following === 'string' ? record.following : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -115,6 +119,10 @@ export async function fetchChecklistFacts(username: string): Promise<ChecklistFa
   };
 
   let wasRepliedTo = false;
+  // Sets, not counters: following the same person twice, or replying three
+  // times in one thread, is one of each.
+  const followedAccounts = new Set<string>();
+  const repliedToPosts = new Set<string>();
 
   for (const operation of response.operations_result ?? []) {
     const value = operation.op?.value as Record<string, unknown> | undefined;
@@ -133,16 +141,18 @@ export async function fetchChecklistFacts(username: string): Promise<ChecklistFa
               facts.postedInCommunity = true;
             }
           } else if (parentAuthor !== username) {
-            facts.repliedToOthers = true;
+            repliedToPosts.add(`${parentAuthor}/${String(value.parent_permlink ?? '')}`);
           }
         } else if (parentAuthor === username) {
           wasRepliedTo = true;
         }
         break;
       }
-      case CUSTOM_JSON_OPERATION_NAME:
-        if (isFollowByAccount(value, username)) facts.followedSomeone = true;
+      case CUSTOM_JSON_OPERATION_NAME: {
+        const followed = followedAccountName(value, username);
+        if (followed) followedAccounts.add(followed);
         break;
+      }
       case POWER_UP_OPERATION_NAME:
         if (value.from === username) facts.poweredUp = true;
         break;
@@ -154,7 +164,9 @@ export async function fetchChecklistFacts(username: string): Promise<ChecklistFa
   // Two-sided: somebody came to them, and they go out to others. Approximate
   // by design — proving a specific back-and-forth thread would need walking
   // each conversation, and this is a checklist item, not a court exhibit.
-  facts.hadConversation = wasRepliedTo && facts.repliedToOthers;
+  facts.followCount = followedAccounts.size;
+  facts.replyToOthersCount = repliedToPosts.size;
+  facts.hadConversation = wasRepliedTo && facts.replyToOthersCount > 0;
 
   return facts;
 }

@@ -22,8 +22,10 @@ export interface ChecklistFacts {
   available: boolean;
   profileFilled: boolean;
   wroteIntroPost: boolean;
-  followedSomeone: boolean;
-  repliedToOthers: boolean;
+  /** How many different accounts they follow. */
+  followCount: number;
+  /** How many different posts of other people's they have replied to. */
+  replyToOthersCount: number;
   gaveUpvote: boolean;
   postedInCommunity: boolean;
   poweredUp: boolean;
@@ -34,13 +36,20 @@ export const EMPTY_CHECKLIST_FACTS: ChecklistFacts = {
   available: false,
   profileFilled: false,
   wroteIntroPost: false,
-  followedSomeone: false,
-  repliedToOthers: false,
+  followCount: 0,
+  replyToOthersCount: 0,
   gaveUpvote: false,
   postedInCommunity: false,
   poweredUp: false,
   hadConversation: false
 };
+
+/**
+ * Some items ask for more than one of a thing, because one of anything is a
+ * bump rather than a habit. Deliberate product numbers, not chain limits.
+ */
+export const FOLLOWS_REQUIRED = 5;
+export const REPLIES_REQUIRED = 3;
 
 export type ChecklistItemKind = 'derived' | 'declared';
 
@@ -71,14 +80,15 @@ export const DERIVED_CHECKLIST_ITEMS: readonly ChecklistItem[] = [
     id: 'first_follow',
     kind: 'derived',
     labelKey: 'basecamp.checklist.items.first_follow',
-    isDone: (facts) => facts.followedSomeone
+    isDone: (facts) => facts.followCount >= FOLLOWS_REQUIRED
   },
   {
-    // Outward, on someone else's post — not a reply on their own thread.
+    // Outward, on other people's posts — not replies on their own thread, and
+    // counted per post replied to, so three replies in one thread is one.
     id: 'first_replies',
     kind: 'derived',
     labelKey: 'basecamp.checklist.items.first_replies',
-    isDone: (facts) => facts.repliedToOthers
+    isDone: (facts) => facts.replyToOthersCount >= REPLIES_REQUIRED
   },
   {
     // The moment they become a curator too, which is not an OG-only role.
