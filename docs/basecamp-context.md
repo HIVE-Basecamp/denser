@@ -115,7 +115,8 @@ A canvas exploration game that doubles as a gamified hive.blog front end,
 (self-contained; also has a standalone route). Key facts a fresh session
 must not break:
 
-- **Age gate**: only logged-in accounts over a year old mount the game.
+- **Sign-in gate**: the game mounts for any signed-in account. There is no
+  account-age gate — new users play too, with no differentiation.
   Client-side UX only; the real gate is that on-chain actions are signed.
 - **The game broadcasts NOTHING.** Read-only against chain APIs.
 - **The world**: three landmasses forming the Hive logo, rebuilt

@@ -17,10 +17,7 @@ export const HFU_COPY = {
 
   gate: {
     title: HFU_DISPLAY_NAME,
-    tooNew: 'This area is for accounts more than a year old.',
-    tooNewDetail: (days: number) =>
-      `Your account is about ${days} ${days === 1 ? 'day' : 'days'} old. Come back once it passes a year.`,
-    loggedOut: 'Log in with an account more than a year old to enter.'
+    loggedOut: 'Sign in with your Hive account to play.'
   },
 
   hud: {

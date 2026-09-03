@@ -26,10 +26,10 @@ Two gotchas, both real:
    cd apps/blog && pnpm run copy:worker && pnpm run copy:assets
    ```
 
-2. The game is gated behind a logged-in Hive account **older than one year**
-   (`hooks/use-age-gate.ts`). That gate is going: new users are meant to play
-   too, with no differentiation and no barrier based on account age. Until it
-   is removed, see the note on the harness below to develop without one.
+2. The game needs a signed-in Hive account (`hooks/use-sign-in-gate.ts`) — the
+   player rides their own avatar. There is **no account-age gate**: new users
+   are meant to play, with no differentiation. To develop without an account,
+   see the note on the harness below.
 
 Then open `http://localhost:3000/basecamp` and pick the **H.I.V.E.R.** tab.
 There is also a standalone full-screen route at `/hive-frontend-universe`.
