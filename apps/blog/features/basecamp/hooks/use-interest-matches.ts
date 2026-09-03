@@ -8,18 +8,21 @@ import { foldBasecampState, type BasecampInterest } from '../lib/protocol';
 import type { Newcomer } from './use-newcomers';
 
 /**
- * For a set of candidate newcomers, looks up each author's declared `join`
- * interests (their Basecamp custom_json history, same read path as
- * useBasecampState) and returns the subset whose interests overlap with the
- * guide's picked interests.
+ * For a set of candidate new users, looks up each author's interests on record
+ * (their Basecamp custom_json history, same read path as useBasecampState) and
+ * returns the subset whose interests overlap with the guide's own.
+ *
+ * One history read per candidate: the chain answers "what did this named
+ * account declare", never "who declared photography", so there is no way to
+ * ask for the matches directly. Keep the candidate list short.
  */
-export function useSuggestedNewcomerMatches(candidates: Newcomer[], guideInterests: BasecampInterest[]) {
+export function useInterestMatches(candidates: Newcomer[], guideInterests: BasecampInterest[]) {
   const authors = useMemo(() => Array.from(new Set(candidates.map((candidate) => candidate.post.author))), [
     candidates
   ]);
 
   const { data, isFetching } = useQuery({
-    queryKey: ['basecampNewcomerInterests', authors],
+    queryKey: ['basecampInterestsOnRecord', authors],
     queryFn: async () => {
       const entries = await Promise.all(
         authors.map(async (author) => {

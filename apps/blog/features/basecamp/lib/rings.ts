@@ -3,7 +3,7 @@
  * concentric arcs drawn around each newcomer's reputation score.
  *
  * Ring order, outermost first:
- *   1. Checklist  — Basecamp newcomer tasks completed (1/6 per task).
+ *   1. Checklist  — Basecamp checklist items done, derived plus declared.
  *   2. Activity   — how much the account votes and comments, vs. daily targets.
  *   3. Age        — account age; always full, colour encodes the age band.
  *
@@ -11,7 +11,7 @@
  * and shared by every surface that draws rings.
  */
 
-import { BASECAMP_TASK_IDS } from './protocol';
+import { CHECKLIST_TOTAL } from './checklist';
 
 /** Age bands (in days) that decide the innermost ring's colour. */
 export const AGE_BAND_FRESH_MAX_DAYS = 90;
@@ -24,7 +24,7 @@ export const AGE_BAND_SETTLING_MAX_DAYS = 180;
 export const DAILY_VOTES_TARGET = 10;
 export const DAILY_COMMENTS_TARGET = 5;
 
-export const BASECAMP_TASK_COUNT = BASECAMP_TASK_IDS.length;
+export const BASECAMP_TASK_COUNT = CHECKLIST_TOTAL;
 
 /**
  * Ring colours. Kept as literal hex rather than Tailwind theme tokens on
@@ -68,7 +68,7 @@ export function activityRingFraction(votesPerDay: number, commentsPerDay: number
   return clampFraction((voteProgress + commentProgress) / 2);
 }
 
-/** Checklist ring fill: one sixth per completed Basecamp task. */
+/** Checklist ring fill: an equal share per completed checklist item. */
 export function checklistRingFraction(completedTaskCount: number): number {
   return clampFraction(completedTaskCount / BASECAMP_TASK_COUNT);
 }

@@ -5,6 +5,8 @@ import { accountReputation } from '@hive/ui';
 import { useTranslation } from '@/blog/i18n/client';
 import { useAccountActivity } from './hooks/use-account-activity';
 import { useBasecampState } from './hooks/use-basecamp-state';
+import { useChecklistFacts } from './hooks/use-checklist-facts';
+import { countCompletedChecklistItems } from './lib/checklist';
 import {
   ageRingColor,
   activityRingFraction,
@@ -90,8 +92,12 @@ const ActivityRings = ({
 
   const { activity, status } = useAccountActivity(username, inView);
   const { state: basecampState } = useBasecampState(inView ? username : '');
+  // Most of the checklist is derived from the chain rather than stored, so the
+  // ring needs the same facts the person's own checklist reads. Deferred to
+  // `inView` like everything else here.
+  const { facts } = useChecklistFacts(username, inView);
 
-  const completedTaskCount = basecampState.completedTasks.length;
+  const completedTaskCount = countCompletedChecklistItems(facts, basecampState.completedTasks);
   const activityFraction =
     status === 'ready' ? activityRingFraction(activity.votesPerDay, activity.commentsPerDay) : 0;
   const checklistFraction = checklistRingFraction(completedTaskCount);

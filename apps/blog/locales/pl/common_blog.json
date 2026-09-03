@@ -680,19 +680,30 @@
     "im_new_here": "I'm new here",
     "im_here_to_help": "I'm here to help",
     "hiver": "H.I.V.E.R.",
-    "newcomer_checklist": {
-      "profile_setup": "Set up your profile",
-      "first_follow": "Follow five people",
-      "intro_post": "Write an introduction post",
-      "first_replies": "Reply to three posts",
-      "key_backup": "Back up your keys",
-      "wallet_tour": "Learn the wallet",
-      "heading": "Twoja lista zadań"
+    "checklist": {
+      "heading": "Your checklist",
+      "done_on_hive": "Done on Hive",
+      "done_on_hive_note": "These tick themselves. The chain shows you did them, so nobody has to take your word for it.",
+      "said_so": "Said so",
+      "said_so_note": "Nothing on Hive can show these, so they are your word. Still worth doing — backing up your keys most of all.",
+      "not_measured": "Could not read your history just now, so these are not measured.",
+      "items": {
+        "profile_setup": "Set up your profile",
+        "intro_post": "Write an introduction post",
+        "first_follow": "Follow someone",
+        "first_replies": "Reply to someone else's post",
+        "first_vote": "Upvote a post",
+        "community_post": "Post in a community",
+        "conversation": "Have a conversation — someone replies to you, you reply back",
+        "power_up": "Power up some Hive",
+        "key_backup": "Back up your keys",
+        "wallet_tour": "Learn the wallet"
+      }
     },
     "newcomers_list": {
-      "no_results": "No newcomers found right now. Check back soon!",
+      "no_results": "No new users posting right now. Check back soon!",
       "days_old": "{{count}} days old",
-      "heading": "Ostatnio dołączyli"
+      "heading": "New users"
     },
     "toast": {
       "task_complete_title": "Task complete",
@@ -703,7 +714,7 @@
       "join_description": "Your interests have been recorded."
     },
     "new_here": {
-      "my_checklist_button": "Newcomer checklist"
+      "my_checklist_button": "My checklist"
     },
     "interest_picker": {
       "heading": "What are you interested in? Pick up to 5.",
@@ -733,9 +744,9 @@
       "heading": "Pick up to 5 interests you can guide newcomers on",
       "confirm": "Confirm"
     },
-    "suggested_newcomers": {
-      "heading": "Suggested newcomers for you",
-      "no_matches_fallback": "No interest matches yet — newest arrivals."
+    "interest_matches": {
+      "heading": "New users who share your interests",
+      "none_yet": "No matches yet. Nobody posting right now has interests on record that overlap with yours."
     },
     "support_flow": {
       "low_support": "Low support",
@@ -772,6 +783,7 @@
         "total_actions": "Posts + comments",
         "actions_per_day": "Actions/day",
         "days_since_last_action": "Days since last action",
+        "gap_before_post": "Gap before post",
         "replies_on_post": "Replies",
         "votes_on_post": "Votes",
         "received_delegation": "Started with delegated HP"

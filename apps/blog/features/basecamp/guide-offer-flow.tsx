@@ -9,7 +9,7 @@ import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBasecampState } from './hooks/use-basecamp-state';
 import { useBasecampGuideOfferMutation } from './hooks/use-basecamp-mutations';
 import InterestPicker from './interest-picker';
-import SuggestedNewcomers from './suggested-newcomers';
+import InterestMatches from './interest-matches';
 import { MAX_BASECAMP_INTERESTS, type BasecampInterest } from './lib/protocol';
 
 // Not shown to the user — guides don't set a capacity number, we just need
@@ -34,7 +34,7 @@ const GuideOfferFlow = () => {
   };
 
   if (state.isGuide) {
-    return <SuggestedNewcomers guideInterests={state.guideInterests as BasecampInterest[]} />;
+    return <InterestMatches guideInterests={state.guideInterests as BasecampInterest[]} />;
   }
 
   return (

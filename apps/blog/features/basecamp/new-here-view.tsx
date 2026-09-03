@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
-import NewcomerChecklist from './newcomer-checklist';
+import Checklist from './checklist';
 import JoinInterests from './join-interests';
 import { accentButton } from './lib/theme';
 
@@ -25,7 +25,7 @@ const NewHereView = () => {
           {t('basecamp.new_here.my_checklist_button')}
         </Button>
       </div>
-      {showChecklist ? <NewcomerChecklist /> : null}
+      {showChecklist ? <Checklist /> : null}
       <JoinInterests />
     </div>
   );

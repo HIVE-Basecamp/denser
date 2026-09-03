@@ -1,5 +1,12 @@
 # Denser Project Notes
 
+## Hive Basecamp
+
+Before doing any work on Basecamp or H.I.V.E.R., read
+`apps/blog/features/basecamp/ETHOS.md` (what the project is for and the
+commitments behind it) and `apps/blog/features/basecamp/CONTEXT.md` (the shared
+glossary — the agreed words, and the ones we have agreed not to use).
+
 ## GitLab Instance
 This project uses **gitlab.syncad.com**, NOT gitlab.com.
 - Repository: https://gitlab.syncad.com/hive/denser

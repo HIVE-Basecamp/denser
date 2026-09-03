@@ -43,6 +43,8 @@ export interface SignalAccountInput {
 export interface SignalPostInput {
   replyCount: number | null;
   voteCount: number | null;
+  /** When this post was published. Used to measure the gap before it. */
+  createdIso: string | null;
 }
 
 export interface SignalInput {
@@ -215,6 +217,41 @@ export const BASECAMP_SIGNALS: BasecampSignal[] = [
         if (createdMs !== null && chosen < createdMs) return unknown('days');
         const days = Math.floor((nowMs - chosen) / MS_PER_DAY);
         // A future timestamp (clock skew) just means "acted today", not unknown.
+        return knownValue(days < 0 ? 0 : days, 'days');
+      } catch {
+        return unknown('days');
+      }
+    }
+  },
+  {
+    id: 'gap_before_post',
+    labelKey: 'basecamp.signals.labels.gap_before_post',
+    group: 'activity',
+    contexts: ['feed', 'profile'],
+    // How long the account was quiet immediately before publishing this post.
+    // A large gap reads as a drive-by: someone surfacing after weeks of silence
+    // to drop a post. A small gap reads as someone who was already around.
+    //
+    // Measured from the latest of `last_post` (any post or comment) and
+    // `last_vote_time` that falls strictly BEFORE this post, because those are
+    // the only two timestamps the feed already fetches. Both can also be later
+    // than this post — the account kept acting after publishing — in which case
+    // the action before it is not visible from this data and the value is
+    // unknown rather than guessed. Seeing every action type would need a
+    // per-account history lookup, which the feed deliberately does not make.
+    compute: ({ account, post, nowMs: _nowMs }) => {
+      try {
+        const postMs = parseIsoMs(post.createdIso);
+        if (postMs === null) return unknown('days');
+        const createdMs = parseIsoMs(account.createdIso);
+        const candidates = [parseIsoMs(account.lastPostIso), parseIsoMs(account.lastVoteTimeIso)]
+          .filter(isFiniteNumber)
+          // "1970-01-01T00:00:00" is the chain's default for accounts that have
+          // never voted, and anything before the account existed is nonsense.
+          .filter((ms) => ms > 0 && (createdMs === null || ms >= createdMs))
+          .filter((ms) => ms < postMs);
+        if (candidates.length === 0) return unknown('days');
+        const days = Math.floor((postMs - Math.max(...candidates)) / MS_PER_DAY);
         return knownValue(days < 0 ? 0 : days, 'days');
       } catch {
         return unknown('days');

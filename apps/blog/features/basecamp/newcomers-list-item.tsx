@@ -7,6 +7,7 @@ import TimeAgo from '@ui/components/time-ago';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import PostCardCommentTooltip from '@/blog/features/list-of-posts/post-card-comment-tooltip';
+import FollowNewcomerButton from './follow-newcomer-button';
 import ActivityRings from './activity-rings';
 import { BASECAMP_CARD, BASECAMP_LINK, BASECAMP_MUTED } from './lib/theme';
 import { BASECAMP_SIGNALS, type SignalInput, type SignalValue } from './lib/signals';
@@ -43,14 +44,20 @@ function formatSignalValue(t: TranslateFn, signal: SignalValue): string {
   }
 }
 
-const NewcomersListItem = ({ post, accountAgeDays, account }: Newcomer) => {
+interface NewcomersListItemProps extends Newcomer {
+  /** Shows a follow button. On where the card is a call to act, off in the feed. */
+  showFollow?: boolean;
+}
+
+const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }: NewcomersListItemProps) => {
   const { t } = useTranslation('common_blog');
 
   const signalInput: SignalInput = {
     account,
     post: {
       replyCount: typeof post.children === 'number' ? post.children : null,
-      voteCount: typeof post.stats?.total_votes === 'number' ? post.stats.total_votes : null
+      voteCount: typeof post.stats?.total_votes === 'number' ? post.stats.total_votes : null,
+      createdIso: typeof post.created === 'string' ? post.created : null
     },
     nowMs: Date.now()
   };
@@ -106,6 +113,7 @@ const NewcomersListItem = ({ post, accountAgeDays, account }: Newcomer) => {
             })}
           </ul>
         </div>
+        {showFollow ? <FollowNewcomerButton username={post.author} /> : null}
         <div className={cn(BASECAMP_MUTED, 'shrink-0 text-sm')}>
           <PostCardCommentTooltip
             comments={post.children}
