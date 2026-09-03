@@ -183,6 +183,8 @@ export const getAccounts = async (usernames: string[]): Promise<FullAccount[]> =
       vesting_shares: x.vesting_shares,
       delegated_vesting_shares: x.delegated_vesting_shares,
       received_vesting_shares: x.received_vesting_shares,
+      posting_rewards: x.posting_rewards,
+      curation_rewards: x.curation_rewards,
       vesting_withdraw_rate: x.vesting_withdraw_rate,
       to_withdraw: x.to_withdraw,
       withdrawn: x.withdrawn,

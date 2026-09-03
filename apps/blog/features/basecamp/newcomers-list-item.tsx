@@ -1,5 +1,6 @@
 'use client';
 
+import { useInView } from 'react-intersection-observer';
 import { Card } from '@ui/components/card';
 import { Link } from '@hive/ui';
 import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
@@ -9,6 +10,10 @@ import { useTranslation } from '@/blog/i18n/client';
 import PostCardCommentTooltip from '@/blog/features/list-of-posts/post-card-comment-tooltip';
 import FollowNewcomerButton from './follow-newcomer-button';
 import ActivityRings from './activity-rings';
+import CardReadouts from './card-readouts';
+import { useAccountCreator } from './hooks/use-account-creator';
+import { useAccountHistory } from './hooks/use-account-history';
+import { useVestsToHivePowerRate } from './hooks/use-vests-rate';
 import { BASECAMP_CARD, BASECAMP_LINK, BASECAMP_MUTED } from './lib/theme';
 import { BASECAMP_SIGNALS, type SignalInput, type SignalValue } from './lib/signals';
 import type { Newcomer } from './hooks/use-newcomers';
@@ -38,6 +43,10 @@ function formatSignalValue(t: TranslateFn, signal: SignalValue): string {
         : t('basecamp.signals.units.boolean_false');
     case 'count':
       return t('basecamp.signals.units.count', { value: signal.value });
+    case 'hive_power':
+      return t('basecamp.signals.units.hive_power', { value: signal.value.toLocaleString() });
+    case 'ratio':
+      return t('basecamp.signals.units.ratio', { value: signal.value.toFixed(2) });
     case 'none':
     default:
       return t('basecamp.signals.units.none', { value: signal.value });
@@ -51,6 +60,14 @@ interface NewcomersListItemProps extends Newcomer {
 
 const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }: NewcomersListItemProps) => {
   const { t } = useTranslation('common_blog');
+  // Deferred until the card is near the viewport, so a long feed does not fire
+  // a lookup per row up front. ActivityRings asks for the same account under
+  // the same query key, so React Query still makes exactly one history request
+  // per card and both read from that one result.
+  const { ref, inView } = useInView({ triggerOnce: true, rootMargin: '200px' });
+  const { patterns, status } = useAccountHistory(post.author, inView);
+  const createdBy = useAccountCreator(post.author, inView);
+  const vestsToHivePowerRate = useVestsToHivePowerRate();
 
   const signalInput: SignalInput = {
     account,
@@ -59,12 +76,16 @@ const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }
       voteCount: typeof post.stats?.total_votes === 'number' ? post.stats.total_votes : null,
       createdIso: typeof post.created === 'string' ? post.created : null
     },
+    chain: { vestsToHivePowerRate },
     nowMs: Date.now()
   };
 
   return (
-    <li>
-      <Card className={cn(BASECAMP_CARD, 'my-3 flex items-center gap-4 p-4')} data-testid="newcomer-list-item">
+    <li ref={ref}>
+      {/* Top-aligned rather than centred: the card now carries a second row of
+          readouts, and centring would float the rings and avatar away from the
+          name they belong to. */}
+      <Card className={cn(BASECAMP_CARD, 'my-3 flex items-start gap-4 p-4')} data-testid="newcomer-list-item">
         <ActivityRings
           username={post.author}
           reputation={post.author_reputation}
@@ -112,6 +133,7 @@ const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }
               );
             })}
           </ul>
+          <CardReadouts patterns={patterns} createdBy={createdBy} status={status} />
         </div>
         {showFollow ? <FollowNewcomerButton username={post.author} /> : null}
         <div className={cn(BASECAMP_MUTED, 'shrink-0 text-sm')}>

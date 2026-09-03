@@ -828,7 +828,10 @@
         "gap_before_post": "Gap before post",
         "replies_on_post": "Replies",
         "votes_on_post": "Votes",
-        "received_delegation": "Started with delegated HP"
+        "received_delegation": "Started with delegated HP",
+        "active_hive_power": "Active HP",
+        "delegated_out_percent": "Lent out",
+        "ke_score": "KE"
       },
       "units": {
         "days": "{{value}}d",
@@ -837,7 +840,23 @@
         "percent": "{{value}}%",
         "boolean_true": "Yes",
         "boolean_false": "No",
-        "none": "{{value}}"
+        "none": "{{value}}",
+        "hive_power": "{{value}} HP",
+        "ratio": "{{value}}"
+      }
+    },
+    "patterns": {
+      "clock_summary": "Writes in {{hours}} of {{total}} hours of the day (UTC)",
+      "clock_unknown": "Hours of the day not read yet",
+      "labels": {
+        "reply_targets": "People replied to",
+        "replies_7d": "Replies 7d",
+        "posts_7d": "Posts 7d",
+        "repeated_text": "Repeated text",
+        "bot_commands": "Bot commands",
+        "self_replies": "Own threads",
+        "self_votes": "Self-votes",
+        "created_by": "Brought in by"
       }
     }
   },

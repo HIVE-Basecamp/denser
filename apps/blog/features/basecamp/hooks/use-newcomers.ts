@@ -58,7 +58,11 @@ async function getAccountSnapshots(authors: string[]): Promise<Map<string, Signa
         jsonMetadata: account.json_metadata ?? null,
         lastPostIso: account.last_post ?? null,
         lastVoteTimeIso: account.last_vote_time ?? null,
-        receivedVestingAmount: account.received_vesting_shares?.amount ?? null
+        receivedVestingAmount: account.received_vesting_shares?.amount ?? null,
+        vestingSharesAmount: account.vesting_shares?.amount ?? null,
+        delegatedVestingAmount: account.delegated_vesting_shares?.amount ?? null,
+        postingRewards: account.posting_rewards ?? null,
+        curationRewards: account.curation_rewards ?? null
       });
     }
   }

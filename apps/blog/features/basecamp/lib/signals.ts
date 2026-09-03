@@ -1,8 +1,9 @@
 /**
  * Pure Basecamp "signals" logic: small, deterministic read outs derived from
  * account and post data the feed already fetches. Zero dependency on Denser
- * internals (no imports), exactly like lib/protocol.ts, so this file can be
- * lifted into a standalone package as-is.
+ * internals, exactly like lib/protocol.ts, so this file can be lifted into a
+ * standalone package as-is. The only import is its sibling lib/stake.ts, which
+ * carries the same rules and travels with it.
  *
  * Design rules baked in here:
  *   - No network, no date library, no randomness, no Date.now(). Callers pass
@@ -14,7 +15,17 @@
  *     count that failed to load is known false, value null.
  */
 
-export type SignalUnit = 'days' | 'per_day' | 'count' | 'percent' | 'boolean' | 'none';
+import { activeHivePower, delegatedOutPercent, hivePowerFromAmount, keScore } from './stake';
+
+export type SignalUnit =
+  | 'days'
+  | 'per_day'
+  | 'count'
+  | 'percent'
+  | 'boolean'
+  | 'hive_power'
+  | 'ratio'
+  | 'none';
 
 export type SignalContext = 'feed' | 'profile';
 
@@ -38,6 +49,21 @@ export interface SignalAccountInput {
   lastPostIso: string | null;
   lastVoteTimeIso: string | null;
   receivedVestingAmount: string | number | null;
+  /** Raw chain amounts, six implied decimals. See lib/stake.ts. */
+  vestingSharesAmount: string | number | null;
+  delegatedVestingAmount: string | number | null;
+  /** Lifetime totals, three implied decimals. Feed the KE readout. */
+  postingRewards: number | string | null;
+  curationRewards: number | string | null;
+}
+
+/**
+ * Chain-wide figures that are identical for every card, so they are fetched
+ * once and passed in rather than looked up per account.
+ */
+export interface SignalChainInput {
+  /** HP per VEST. Null until the global properties have loaded. */
+  vestsToHivePowerRate: number | null;
 }
 
 export interface SignalPostInput {
@@ -50,6 +76,7 @@ export interface SignalPostInput {
 export interface SignalInput {
   account: SignalAccountInput;
   post: SignalPostInput;
+  chain: SignalChainInput;
   nowMs: number;
 }
 
@@ -301,6 +328,62 @@ export const BASECAMP_SIGNALS: BasecampSignal[] = [
         return knownValue(amount > 0 ? 1 : 0, 'boolean');
       } catch {
         return unknown('boolean');
+      }
+    }
+  },
+  {
+    id: 'active_hive_power',
+    labelKey: 'basecamp.signals.labels.active_hive_power',
+    group: 'wallet',
+    contexts: ['feed', 'profile'],
+    // The stake the account actually wields: owned, less lent out, plus lent in.
+    compute: ({ account, chain }) => {
+      try {
+        const hp = activeHivePower(
+          account.vestingSharesAmount,
+          account.delegatedVestingAmount,
+          account.receivedVestingAmount,
+          chain.vestsToHivePowerRate
+        );
+        if (hp === null) return unknown('hive_power');
+        return knownValue(Math.round(hp), 'hive_power');
+      } catch {
+        return unknown('hive_power');
+      }
+    }
+  },
+  {
+    id: 'delegated_out_percent',
+    labelKey: 'basecamp.signals.labels.delegated_out_percent',
+    group: 'wallet',
+    contexts: ['feed', 'profile'],
+    // How much of their own stake is currently lent to somebody else.
+    compute: ({ account }) => {
+      try {
+        const percent = delegatedOutPercent(account.vestingSharesAmount, account.delegatedVestingAmount);
+        if (percent === null) return unknown('percent');
+        return knownValue(Math.round(percent * 10) / 10, 'percent');
+      } catch {
+        return unknown('percent');
+      }
+    }
+  },
+  {
+    id: 'ke_score',
+    labelKey: 'basecamp.signals.labels.ke_score',
+    group: 'wallet',
+    contexts: ['feed', 'profile'],
+    // Lifetime rewards over owned stake. A number, not a judgement: earning on
+    // Hive and taking the earnings out is what people are paid for. The reader
+    // decides what the ratio means.
+    compute: ({ account, chain }) => {
+      try {
+        const ownHp = hivePowerFromAmount(account.vestingSharesAmount, chain.vestsToHivePowerRate);
+        const score = keScore(account.postingRewards, account.curationRewards, ownHp);
+        if (score === null) return unknown('ratio');
+        return knownValue(Math.round(score * 100) / 100, 'ratio');
+      } catch {
+        return unknown('ratio');
       }
     }
   }

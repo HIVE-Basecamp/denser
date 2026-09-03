@@ -43,6 +43,16 @@ export const RING_COLORS = {
 export const RING_TRACK_COLOR = 'rgba(255, 255, 255, 0.10)';
 
 /**
+ * The twenty-four hour dial. Deliberately a different hue from every ring
+ * colour above, because it measures a shape rather than progress toward
+ * anything and should not read as a fourth ring.
+ */
+export const CLOCK_COLORS = {
+  active: '#5EE9D5',
+  track: 'rgba(255, 255, 255, 0.14)'
+} as const;
+
+/**
  * Colour for the account-age ring. Newer accounts read as bright green,
  * mid-life accounts aqua, and the oldest band a bright, light grey.
  */

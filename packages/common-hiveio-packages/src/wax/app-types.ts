@@ -59,6 +59,10 @@ export interface FullAccount {
   proxied_vsf_votes: (number | string)[];
   voting_manabar: ApiManabar;
   downvote_manabar: ApiManabar;
+  // Lifetime reward totals, in the same units as HP once divided by 1000.
+  // Optional because not every caller maps them.
+  posting_rewards?: number | string;
+  curation_rewards?: number | string;
   // Fields that need to be fetched from separate APIs (not available in database_api.find_accounts)
   witness_votes?: string[];
   reputation?: number;

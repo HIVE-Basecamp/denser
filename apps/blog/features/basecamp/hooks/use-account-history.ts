@@ -5,6 +5,13 @@ import { getChain } from '@transaction/lib/chain';
 import { getAccounts } from '@transaction/lib/hive-api';
 import { StaleTime } from '@/blog/lib/react-query';
 import { EMPTY_CHECKLIST_FACTS, type ChecklistFacts } from '../lib/checklist';
+import {
+  EMPTY_COMMENT_PATTERNS,
+  summarizePatterns,
+  type CommentPatterns,
+  type CommentRecord,
+  type VoteRecord
+} from '../lib/patterns';
 
 const VOTE_OPERATION_NAME = 'vote_operation';
 const COMMENT_OPERATION_NAME = 'comment_operation';
@@ -47,10 +54,15 @@ export interface AccountActivity {
 export interface AccountHistory {
   activity: AccountActivity;
   facts: ChecklistFacts;
+  patterns: CommentPatterns;
 }
 
 const EMPTY_ACTIVITY: AccountActivity = { votesPerDay: 0, commentsPerDay: 0, observedDays: 0 };
-const EMPTY_HISTORY: AccountHistory = { activity: EMPTY_ACTIVITY, facts: EMPTY_CHECKLIST_FACTS };
+const EMPTY_HISTORY: AccountHistory = {
+  activity: EMPTY_ACTIVITY,
+  facts: EMPTY_CHECKLIST_FACTS,
+  patterns: EMPTY_COMMENT_PATTERNS
+};
 
 /**
  * Hive history timestamps are UTC but arrive as strings with no timezone
@@ -165,6 +177,13 @@ export async function fetchAccountHistory(username: string): Promise<AccountHist
   let commentsWritten = 0;
   let oldestInWindow = Number.POSITIVE_INFINITY;
 
+  // Everything this account wrote and every vote it cast, kept as records so
+  // the pattern maths stays a pure function over them. Only the account's own
+  // actions are collected: the endpoint also returns operations it was merely
+  // involved in, and counting those would measure popularity, not behaviour.
+  const writtenComments: CommentRecord[] = [];
+  const castVotes: VoteRecord[] = [];
+
   for (const operation of response.operations_result ?? []) {
     const value = operation.op?.value as Record<string, unknown> | undefined;
     if (!value) continue;
@@ -177,6 +196,10 @@ export async function fetchAccountHistory(username: string): Promise<AccountHist
         if (value.voter === username) {
           actedInWindow = inWindow;
           if (actedInWindow) votesCast++;
+          castVotes.push({
+            author: typeof value.author === 'string' ? value.author : '',
+            weight: Number(value.weight)
+          });
           // A downvote is not "your first upvote".
           if (Number(value.weight) > 0) facts.gaveUpvote = true;
         }
@@ -186,6 +209,11 @@ export async function fetchAccountHistory(username: string): Promise<AccountHist
         if (value.author === username) {
           actedInWindow = inWindow;
           if (actedInWindow) commentsWritten++;
+          writtenComments.push({
+            body: typeof value.body === 'string' ? value.body : '',
+            timestampMs: time,
+            parentAuthor
+          });
           if (parentAuthor === '') {
             if (hasIntroTag(value.json_metadata)) facts.wroteIntroPost = true;
             if (String(value.parent_permlink ?? '').startsWith(COMMUNITY_PERMLINK_PREFIX)) {
@@ -233,7 +261,8 @@ export async function fetchAccountHistory(username: string): Promise<AccountHist
       commentsPerDay: commentsWritten / observedDays,
       observedDays
     },
-    facts
+    facts,
+    patterns: summarizePatterns(writtenComments, castVotes, username, Date.now())
   };
 }
 
