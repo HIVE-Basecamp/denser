@@ -751,9 +751,9 @@
       "task_complete_title": "Task complete",
       "task_complete_description": "Nice work — your progress has been recorded.",
       "guide_offer_title": "Guide offer sent",
-      "guide_offer_description": "Thanks for offering to help — we'll pair you with a newcomer soon.",
-      "join_title": "Joined Basecamp",
-      "join_description": "Your interests have been recorded."
+      "guide_offer_description": "Thanks for offering to help — we'll pair you with a new user soon.",
+      "interests_title": "Interests recorded",
+      "interests_description": "Your interests are now on public record, so a guide can find a match."
     },
     "new_here": {
       "my_checklist_button": "My checklist"
@@ -761,7 +761,7 @@
     "interest_picker": {
       "heading": "What are you interested in? Pick up to 5.",
       "confirm": "Confirm interests",
-      "already_joined": "You are in! Your interests: {{interests}}",
+      "on_record": "Your interests are on record: {{interests}}",
       "interests": {
         "photography": "Photography",
         "gaming": "Gaming",

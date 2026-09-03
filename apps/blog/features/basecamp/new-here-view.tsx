@@ -5,7 +5,7 @@ import { Button } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import Checklist from './checklist';
-import JoinInterests from './join-interests';
+import InterestsOnRecord from './interests-on-record';
 import { accentButton } from './lib/theme';
 
 const NewHereView = () => {
@@ -26,7 +26,7 @@ const NewHereView = () => {
         </Button>
       </div>
       {showChecklist ? <Checklist /> : null}
-      <JoinInterests />
+      <InterestsOnRecord />
     </div>
   );
 };

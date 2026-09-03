@@ -28,8 +28,10 @@ export function isBasecampTaskId(value: unknown): value is BasecampTaskId {
   return typeof value === 'string' && (BASECAMP_TASK_IDS as readonly string[]).includes(value);
 }
 
-// Fixed interest vocabulary used by both `join` (newcomer) and `guide_offer` (guide)
-// records — no broader interest taxonomy exists elsewhere in this codebase to reuse.
+// Fixed interest vocabulary, shared by the `interests` record a new user puts on
+// public record and the `guide_offer` record a guide makes. One list, one
+// meaning: a topic someone is interested in. It says nothing about what either
+// side is offering.
 export type BasecampInterest =
   | 'photography'
   | 'gaming'
@@ -65,11 +67,16 @@ export function isBasecampInterest(value: unknown): value is BasecampInterest {
   return typeof value === 'string' && (BASECAMP_INTERESTS as readonly string[]).includes(value);
 }
 
-export type BasecampAction = 'join' | 'leave' | 'task' | 'guide_offer' | 'guide_pair' | 'verify';
+/**
+ * There is deliberately no join or leave. Nobody joins Basecamp — you have a
+ * Hive account and you either come here or you don't. Putting interests on
+ * public record is the only thing a new user records, and it is named for what
+ * it is.
+ */
+export type BasecampAction = 'interests' | 'task' | 'guide_offer' | 'guide_pair' | 'verify';
 
 const BASECAMP_ACTIONS: readonly BasecampAction[] = [
-  'join',
-  'leave',
+  'interests',
   'task',
   'guide_offer',
   'guide_pair',
@@ -123,7 +130,7 @@ export function decodeBasecampRecord(raw: RawCustomJsonRecord): BasecampRecord |
 }
 
 export interface BasecampState {
-  joined: boolean;
+  /** The topics this account has put on public record. Empty is not "absent". */
   interests: string[];
   completedTasks: BasecampTaskId[];
   isGuide: boolean;
@@ -133,7 +140,6 @@ export interface BasecampState {
 }
 
 const EMPTY_STATE: BasecampState = {
-  joined: false,
   interests: [],
   completedTasks: [],
   isGuide: false,
@@ -149,18 +155,16 @@ function asStringArray(value: unknown): string[] {
 /**
  * Folds a list of basecamp records (any order) for a single account into its
  * current Basecamp state. Records are applied in chronological order; `task`
- * completions accumulate (there is no "uncomplete" action), while `join`,
- * `leave`, `guide_offer`, and `guide_pair` each overwrite prior state.
+ * completions accumulate (there is no "uncomplete" action), while `interests`,
+ * `guide_offer` and `guide_pair` each overwrite prior state.
  * `verify` records are recognized but not yet interpreted into state.
  */
 export function foldBasecampState(records: BasecampRecord[]): BasecampState {
   const sorted = [...records].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
   return sorted.reduce<BasecampState>((state, record) => {
     switch (record.action) {
-      case 'join':
-        return { ...state, joined: true, interests: asStringArray(record.payload.interests) };
-      case 'leave':
-        return { ...state, joined: false };
+      case 'interests':
+        return { ...state, interests: asStringArray(record.payload.interests) };
       case 'task': {
         const task = record.payload.task;
         if (!isBasecampTaskId(task) || state.completedTasks.includes(task)) return state;

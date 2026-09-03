@@ -27,12 +27,12 @@ Two gotchas, both real:
    ```
 
 2. The game is gated behind a logged-in Hive account **older than one year**
-   (`hooks/use-age-gate.ts`). This is a deliberate design decision: the game is
-   built for people who already know Hive, not onboarding. If you want to
-   develop against it without an account, see the note on the harness below.
+   (`hooks/use-age-gate.ts`). That gate is going: new users are meant to play
+   too, with no differentiation and no barrier based on account age. Until it
+   is removed, see the note on the harness below to develop without one.
 
-Then open `http://localhost:3000/basecamp`, pick the **I'm here to help** tab,
-then **Puppet Patrol Games**, then **Hive Frontend Universe**.
+Then open `http://localhost:3000/basecamp` and pick the **H.I.V.E.R.** tab.
+There is also a standalone full-screen route at `/hive-frontend-universe`.
 
 Controls: arrows/WASD ride the rails, Space/Z jumps into open space (drift),
 M held peeks at the whole map, M tapped opens the travel map where clicking

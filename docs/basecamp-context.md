@@ -1,6 +1,6 @@
 ## Hive Basecamp — Integration Contract
 
-Hive Basecamp is a **built** newcomer section of the blog app (not a proposal). Code lives in
+Hive Basecamp is a **built** new-user section of this fork's blog app (not a proposal, and not part of Denser as shipped). Code lives in
 `apps/blog/features/basecamp/` with the route at `apps/blog/app/basecamp/`. This section is the
 stable contract that separate modules — especially game modules — build against. Anything that
 connects to Basecamp MUST go through the interfaces below; do not invent parallel state.
@@ -14,14 +14,17 @@ Denser-only table.
 - Auth: posting-only — `required_auths: []`, `required_posting_auths: [username]`
 - Payload wire shape: `[action, { v: 1, ...fields }]` (JSON tuple; version key is `v`,
   `BASECAMP_SCHEMA_VERSION = 1`)
-- Actions: `join {interests}` · `leave {}` · `task {task}` · `guide_offer {interests, capacity}` ·
+- Actions: `interests {interests}` · `task {task}` · `guide_offer {interests, capacity}` ·
   `guide_pair {account}` · `verify {account, method}`
-- Task ids: `profile_setup, first_follow, intro_post, first_replies, key_backup, wallet_tour`
+  (There is no join or leave. Nobody joins Basecamp — see `features/basecamp/CONTEXT.md`.)
+- Task ids: `key_backup, wallet_tour` — the only two the checklist still writes. Everything else on
+  the checklist is derived from the account's own chain history and stored nowhere; see
+  `features/basecamp/lib/checklist.ts`.
 - Interest vocab (max 5): photography, gaming, food, art, music, travel, writing, nature, crypto,
   diy, fitness, books
 
 **Write** (broadcast): only via `transactionService.basecamp*` in `packages/transaction/index.ts`
-(`basecampJoin`, `basecampLeave`, `basecampTaskComplete`, `basecampGuideOffer`, `basecampGuidePair`,
+(`basecampSetInterests`, `basecampTaskComplete`, `basecampGuideOffer`, `basecampGuidePair`,
 `basecampVerify`). Never call a signer/wallet lib directly — signing is resolved from the active login
 method automatically.
 
@@ -42,7 +45,7 @@ Games are registry-driven — adding one touches only these spots:
 2. Add one entry to `BASECAMP_GAMES` in `features/basecamp/games/registry.ts`:
    `{ id, titleKey, accent, Component }` — `titleKey` resolves under `basecamp.games.titles.<key>`;
    `accent` must be unique so the game reads as its own colour.
-3. Add the title key to all 10 `apps/blog/locales/*/common_blog.json`.
+3. Add the title key to all 9 `apps/blog/locales/*/common_blog.json`.
 
 The section renders buttons/panels straight from the registry, so selection logic never changes.
 If a game should **award Basecamp progress**, do it through the `task` action
@@ -65,14 +68,14 @@ If a game should **award Basecamp progress**, do it through the `task` action
 Written 2026-08-24 from the actual code on `feat/basecamp-activity-rings-and-games`.
 This is the state of the world, honest about what is real and what is not.
 Deeper docs: `apps/blog/features/hive-frontend-universe/HANDOFF.md` (the game,
-code truth + design history), `ART-DIRECTION.md` (the game's visual rules),
+code truth + design history), `apps/blog/features/hive-frontend-universe/ART-DIRECTION.md` (the game's visual rules),
 and `apps/blog/features/basecamp/FUTURE-NOTES.md` (parked ideas). The
 Integration Contract at the top of this file is the on-chain protocol
 reference — read it first.
 
 ## What Basecamp is
 
-A BUILT newcomer section of the blog app (not a proposal). Code in
+A BUILT new-user section of this fork's blog app (not a proposal, and not part of Denser as shipped). Code in
 `apps/blog/features/basecamp/`, route at `apps/blog/app/basecamp/`. The front
 page has three tabs: **I'm new here**, **I'm here to help**, and **H.I.V.E.R.**
 (the Hive Frontend Universe game, promoted from the games row to the front
@@ -169,18 +172,15 @@ must not break:
 
 ## Rough edges a new session should know
 
-- The cross-locale checker reports ~725 missing keys across the 9 locales —
-  long-standing drift that predates this work, unchanged by it. The usage
-  checker (keys referenced in code exist) passes clean.
-- `features/basecamp/suggested-newcomers.tsx` has a pre-existing type error
-  (`Newcomer.account` missing) that surfaces in a full `tsc --noEmit`.
+- The cross-locale checker reports long-standing missing keys across the 9
+  locales — drift that predates this work. The usage checker (keys referenced
+  in code exist) passes clean, and `tsc --noEmit` on apps/blog is clean.
 - Witness data caches hourly in localStorage (key versioned `hfu-witnesses-v3`);
   bump the version when the shape changes or stale data hides new fields.
 - The comb panel lists 15 link chips in one stack — acceptable, but tall.
 - Trophy mounts on the ferris wheel are session-only; Rose-pane earned-light
   and several M/L design ideas are parked in ART-DIRECTION.md's backlog.
-- Local-only files that are never committed: `.claude/launch.json` and a
-  local modification to `.claude/skills/blog-smoke-tests/scripts/test-utils.mjs`.
+- `.claude/launch.json` is never committed. Do not create or edit it.
 
 ## House rules that keep biting people
 

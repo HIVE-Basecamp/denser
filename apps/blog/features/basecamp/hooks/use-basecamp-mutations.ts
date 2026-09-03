@@ -10,11 +10,11 @@ import { basecampRecordsQueryKey } from './use-basecamp-state';
 import { BASECAMP_SCHEMA_VERSION, type BasecampRecord, type BasecampTaskId } from '../lib/protocol';
 
 /**
- * Joins Basecamp with the given interests. Optimistically appends the record
- * to the cached history so the "joined" state updates immediately, then
+ * Puts this account's interests on public record. Optimistically appends the
+ * record to the cached history so the picker updates immediately, then
  * invalidates to reconcile with the real on-chain record.
  */
-export function useBasecampJoinMutation() {
+export function useBasecampInterestsMutation() {
   const { user } = useUserClient();
   const { t } = useTranslation('common_blog');
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ export function useBasecampJoinMutation() {
 
   return useMutation({
     mutationFn: async (params: { interests: string[] }) => {
-      const broadcastResult = await transactionService.basecampJoin(params.interests, { observe: true });
+      const broadcastResult = await transactionService.basecampSetInterests(params.interests, { observe: true });
       return { ...params, broadcastResult };
     },
     onMutate: async (params) => {
@@ -31,7 +31,7 @@ export function useBasecampJoinMutation() {
       const optimisticRecord: BasecampRecord = {
         timestamp: new Date().toISOString(),
         account: user.username,
-        action: 'join',
+        action: 'interests',
         payload: { v: BASECAMP_SCHEMA_VERSION, interests: params.interests }
       };
       queryClient.setQueryData<BasecampRecord[]>(queryKey, [...(prevRecords ?? []), optimisticRecord]);
@@ -39,12 +39,12 @@ export function useBasecampJoinMutation() {
     },
     onError: (error, variables, context) => {
       queryClient.setQueryData(queryKey, context?.prevRecords ?? []);
-      handleError(error, { method: 'useBasecampJoinMutation', params: variables });
+      handleError(error, { method: 'useBasecampInterestsMutation', params: variables });
     },
     onSuccess: () => {
       toast({
-        title: t('basecamp.toast.join_title'),
-        description: t('basecamp.toast.join_description'),
+        title: t('basecamp.toast.interests_title'),
+        description: t('basecamp.toast.interests_description'),
         variant: 'success'
       });
     },

@@ -1183,25 +1183,12 @@ export class TransactionService {
     }, transactionOptions);
   }
 
-  async basecampJoin(interests: string[], transactionOptions: TransactionOptions = {}) {
+  async basecampSetInterests(interests: string[], transactionOptions: TransactionOptions = {}) {
     return await this.processHiveAppOperation((builder) => {
       builder.pushOperation({
         custom_json_operation: {
           id: 'basecamp',
-          json: JSON.stringify(['join', { v: 1, interests }]),
-          required_auths: [],
-          required_posting_auths: [this.signerOptions.username]
-        }
-      });
-    }, transactionOptions);
-  }
-
-  async basecampLeave(transactionOptions: TransactionOptions = {}) {
-    return await this.processHiveAppOperation((builder) => {
-      builder.pushOperation({
-        custom_json_operation: {
-          id: 'basecamp',
-          json: JSON.stringify(['leave', { v: 1 }]),
+          json: JSON.stringify(['interests', { v: 1, interests }]),
           required_auths: [],
           required_posting_auths: [this.signerOptions.username]
         }
