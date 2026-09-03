@@ -7,7 +7,7 @@ import { useTranslation } from '@/blog/i18n/client';
 import { BASECAMP_PANEL, BASECAMP_MUTED } from './lib/theme';
 import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBasecampState } from './hooks/use-basecamp-state';
-import { useChecklistFacts } from './hooks/use-checklist-facts';
+import { useAccountHistory } from './hooks/use-account-history';
 import { useBasecampTaskMutation } from './hooks/use-basecamp-mutations';
 import {
   DERIVED_CHECKLIST_ITEMS,
@@ -44,10 +44,10 @@ const Checklist = () => {
   const { t } = useTranslation('common_blog');
   const { user } = useUserClient();
   const { state } = useBasecampState(user.username);
-  const { facts, isFetching, isUnavailable } = useChecklistFacts(user.username);
+  const { facts, status } = useAccountHistory(user.username);
   const taskMutation = useBasecampTaskMutation();
 
-  const completed = countCompletedChecklistItems(facts, state.completedTasks);
+  const completed = countCompletedChecklistItems(facts);
 
   return (
     <div className={cn(BASECAMP_PANEL, 'my-4')} data-testid="basecamp-checklist">
@@ -64,7 +64,7 @@ const Checklist = () => {
       <p className={cn(BASECAMP_MUTED, 'mb-2 mt-0.5 text-xs')}>
         {t('basecamp.checklist.done_on_hive_note')}
       </p>
-      {isUnavailable ? (
+      {status === 'unavailable' ? (
         <p className={cn(BASECAMP_MUTED, 'text-sm')} data-testid="checklist-facts-unavailable">
           {t('basecamp.checklist.not_measured')}
         </p>
@@ -74,7 +74,7 @@ const Checklist = () => {
             <DerivedRow
               key={item.id}
               label={t(item.labelKey)}
-              done={!isFetching && facts.available && Boolean(item.isDone?.(facts))}
+              done={status === 'ready' && Boolean(item.isDone?.(facts))}
             />
           ))}
         </ul>

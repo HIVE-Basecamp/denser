@@ -133,20 +133,18 @@ export const DECLARED_CHECKLIST_ITEMS: readonly ChecklistItem[] = DECLARED_CHECK
   labelKey: `basecamp.checklist.items.${id}`
 }));
 
-export const CHECKLIST_TOTAL = DERIVED_CHECKLIST_ITEMS.length + DECLARED_CHECKLIST_ITEMS.length;
+/**
+ * Progress is measured over the derived items only. A self-tick is a claim, and
+ * a claim must never fill a ring a curator is reading as evidence.
+ */
+export const CHECKLIST_TOTAL = DERIVED_CHECKLIST_ITEMS.length;
 
 /**
- * How many items are done. An unavailable lookup contributes no derived
- * completions rather than counting them all as undone — the caller is expected
- * to say "not measured" instead of drawing a confident empty ring.
+ * How many derived items are done. An unavailable lookup counts nothing rather
+ * than counting everything as undone — the caller is expected to say "not
+ * measured" instead of drawing a confident empty ring.
  */
-export function countCompletedChecklistItems(
-  facts: ChecklistFacts,
-  declaredCompleted: readonly string[]
-): number {
-  const derived = facts.available
-    ? DERIVED_CHECKLIST_ITEMS.filter((item) => item.isDone?.(facts)).length
-    : 0;
-  const declared = DECLARED_CHECKLIST_ITEMS.filter((item) => declaredCompleted.includes(item.id)).length;
-  return derived + declared;
+export function countCompletedChecklistItems(facts: ChecklistFacts): number {
+  if (!facts.available) return 0;
+  return DERIVED_CHECKLIST_ITEMS.filter((item) => item.isDone?.(facts)).length;
 }
