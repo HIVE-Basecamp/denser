@@ -18,6 +18,14 @@ import { posAt, tangentAt, type Vec2 } from './movement';
 
 export type CritterKind = 'sock' | 'blah' | 'scammer' | 'extractor' | 'spammer';
 
+/** Hits a critter can take from player fire before it goes down. Same for
+ *  every kind, on purpose: the combat pass, not the population, decides
+ *  difficulty. See engine/projectiles.ts. */
+export const KNOCKOUT_HITS = 3;
+/** Seconds a knocked-out critter stays invisible before it drifts back in.
+ *  It never leaves the population; the world's enemy count never changes. */
+export const KNOCKOUT_SECONDS = 6;
+
 /** Modest counts: inhabited, not infested. All seeded, same for everyone. */
 const KIND_COUNTS: readonly [CritterKind, number][] = [
   ['sock', 14],
@@ -52,6 +60,10 @@ export interface Critter {
   /** Spammer only: the fading trail of identical little papers. */
   papers: Paper[];
   dropIn: number;
+  /** Player-fire hits left before a knockout. Refilled on knockout. */
+  hp: number;
+  /** The `time` (seconds) until which it is knocked out; 0 = awake. */
+  koUntil: number;
 }
 
 export interface CritterState {
@@ -119,7 +131,9 @@ export function createCritters(world: GameWorld, seed: number): CritterState {
         y: 0,
         face: 1,
         papers: [],
-        dropIn: rng()
+        dropIn: rng(),
+        hp: KNOCKOUT_HITS,
+        koUntil: 0
       });
       counts[kind]++;
     }
@@ -193,6 +207,8 @@ export function drawCritters(
   vis: (x: number, y: number) => boolean
 ): void {
   for (const c of state.critters) {
+    // Knocked out: invisible until it drifts back in. Never removed.
+    if (c.koUntil > time) continue;
     if (c.kind === 'spammer') {
       // The paper trail fades even when its spammer is just off screen.
       for (const p of c.papers) {

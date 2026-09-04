@@ -59,6 +59,8 @@ import {
   type HazardState
 } from './hazards';
 import { createGems, updateGems, type GemState } from './gems';
+import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
+import { createCombat, tickCombat, type CombatState } from './combat';
 import { buildGround } from './ground';
 import { requestAvatar, avatarStats } from './avatars';
 import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
@@ -399,6 +401,10 @@ const Stage = ({ board }: { board: Board }) => {
   const hazardsRef = useRef<HazardState | null>(null);
   /** Colorful collectible gems, reseeded every board. */
   const gemsRef = useRef<GemState | null>(null);
+  /** Enemy and player shots in flight. */
+  const projectilesRef = useRef<ProjectileState | null>(null);
+  /** The bug's hit points; three hits sends it home. */
+  const combatRef = useRef<CombatState | null>(null);
   /** Mirrors the clickedWitness React state for the frame loop: while the
    *  card is open the beam HOLDS the bug at the crown; Skip sends it home. */
   const witnessCardOpenRef = useRef(false);
@@ -480,6 +486,12 @@ const Stage = ({ board }: { board: Board }) => {
     }
   };
 
+  /** The bug fires in its travel direction, one carried token per shot. */
+  const firePlayerShot = () => {
+    if (!projectilesRef.current || !coinsRef.current) return;
+    playerFire(projectilesRef.current, playerRef.current, coinsRef.current);
+  };
+
   const toggleFullMap = () => {
     fullMapRef.current = !fullMapRef.current;
     setFullMap(fullMapRef.current);
@@ -501,6 +513,8 @@ const Stage = ({ board }: { board: Board }) => {
     helmetsRef.current = createHelmets();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
     gemsRef.current = createGems(world, board.windowStart);
+    projectilesRef.current = createProjectiles();
+    combatRef.current = createCombat();
     // The newb trail resets with the board: new window, new posts, new quest.
     visitedNewbsRef.current = new Set();
     newbAwardedRef.current = false;
@@ -553,7 +567,7 @@ const Stage = ({ board }: { board: Board }) => {
     };
     const GAME_KEYS = new Set([
       'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ',
-      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z'
+      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z', 'f'
     ]);
     const onKeyDown = (e: KeyboardEvent) => {
       if (typingTarget(e)) return;
@@ -577,6 +591,8 @@ const Stage = ({ board }: { board: Board }) => {
       if (k === 'g' && !keysRef.current[k]) {
         gridRef.current = !gridRef.current;
       }
+      // FIRE: once per press, not on key-repeat; a held F is not a machine gun.
+      if (k === 'f' && !keysRef.current[k] && !fullMapRef.current) firePlayerShot();
       keysRef.current[k] = true;
       if ((k === ' ' || k === 'z') && !fullMapRef.current) hopWithO2();
       if (k === 'escape' && fullMapRef.current) {
@@ -1027,6 +1043,25 @@ const Stage = ({ board }: { board: Board }) => {
           }
         }
       }
+      // COMBAT: timers first, then shots fly and hits land. The third hit
+      // sends the bug home to Basecamp, carried tokens dropped: not a death,
+      // a setback, priced the same way the thieves already price risk.
+      if (combatRef.current) tickCombat(combatRef.current, dt);
+      if (projectilesRef.current && combatRef.current) {
+        updateProjectiles(projectilesRef.current, p, crittersRef.current, combatRef.current, dt, ts / 1000);
+        if (combatRef.current.respawned) {
+          combatRef.current.respawned = false;
+          if (coinsRef.current) coinsRef.current.carried = 0;
+          const homeIdx = LANDMARKS.findIndex((lm) => lm.id === 'basecamp');
+          const homeNode = world.landmarkNodeByIndex[homeIdx] ?? -1;
+          if (homeNode >= 0) {
+            placeAt(p, edges, incident, homeNode);
+            warpFxRef.current = 1;
+            p.stuck = 1.4;
+            shake = 12;
+          }
+        }
+      }
       // The HUD is painted on the canvas every frame, so the token counts
       // need no React state to stay current.
       if (coinsRef.current) updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
@@ -1276,6 +1311,8 @@ const Stage = ({ board }: { board: Board }) => {
         helmetState: helmetsRef.current,
         rideOverlay: overlayPos,
         hazards: hazardsRef.current,
+        projectiles: projectilesRef.current,
+        combat: combatRef.current,
         gems: gemsRef.current,
         visitedCommunities: visitedCommunitiesRef.current,
         wheelTrophies: wheelTrophiesRef.current,
@@ -1505,6 +1542,7 @@ const Stage = ({ board }: { board: Board }) => {
         onGridTap={() => {
           gridRef.current = !gridRef.current;
         }}
+        onFire={firePlayerShot}
       />
     </div>
   );

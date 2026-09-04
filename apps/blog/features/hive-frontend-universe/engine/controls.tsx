@@ -27,6 +27,8 @@ export interface ControlsProps {
   /** Toggle the planning grid overlay (mirrors the G key, which proved
    *  unreliable when page focus wandered). */
   onGridTap: () => void;
+  /** Spend a carried token on a shot. Mirrors the F key. */
+  onFire: () => void;
 }
 
 const RING = 116;
@@ -34,7 +36,7 @@ const KNOB = 46;
 /** Presses shorter than this are taps; longer are holds. */
 const TAP_MS = 250;
 
-export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap, onGridTap }: ControlsProps) => {
+export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap, onGridTap, onFire }: ControlsProps) => {
   const ringRef = useRef<HTMLDivElement>(null);
   const mapDownAt = useRef(0);
   const [knob, setKnob] = useState({ x: 0, y: 0, active: false });
@@ -122,6 +124,18 @@ export const Controls = ({ labels, onVector, onHop, onMapHold, onMapTap, onGridT
         onContextMenu={(e) => e.preventDefault()}
       >
         {labels.map}
+      </button>
+
+      {/* FIRE, left of HOP: one carried token per shot */}
+      <button
+        type="button"
+        data-testid="hfu-fire-button"
+        className="pointer-events-auto absolute bottom-6 right-[100px] h-14 w-14 select-none rounded-full border-2 border-[#ff6a4d]/50 bg-white/[0.03] font-mono text-sm font-bold text-[#ff6a4d] active:bg-[#ff6a4d]/20 touch-none"
+        onPointerDown={onFire}
+        onContextMenu={(e) => e.preventDefault()}
+        aria-label="fire"
+      >
+        •
       </button>
 
       {/* HOP, bottom right */}

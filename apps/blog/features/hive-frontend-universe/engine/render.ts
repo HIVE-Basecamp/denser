@@ -48,6 +48,8 @@ import { drawCritters } from './critters';
 import { drawCoins, type CoinState } from './coins';
 import { drawHelmets, drawSuitBubble, type HelmetState } from './helmets';
 import type { HazardState } from './hazards';
+import { drawProjectiles, type ProjectileState } from './projectiles';
+import { MAX_HITS, type CombatState } from './combat';
 import { DAPP_WINDOWS, rosePaneCentre } from './icons';
 import { DAPP_DIRECTORY } from '../lib/fixed-world';
 import { avatarImage } from './avatars';
@@ -293,6 +295,10 @@ export interface RenderScene {
   helmetState: HelmetState | null;
   /** The nuisance hazards on the bug (goo, wrap, sock envelop). */
   hazards: HazardState | null;
+  /** In-flight enemy and player shots. */
+  projectiles?: ProjectileState | null;
+  /** The bug's hit count and invincibility, for the pips and the flash. */
+  combat?: CombatState | null;
   /** Colorful collectible gems: eye candy with no economy yet, by design. */
   gems?: GemState | null;
   /** Community handles the player has visited; unvisited bubbles rest dim. */
@@ -1230,6 +1236,11 @@ export function drawScene(scene: RenderScene): void {
     drawCritters(ctx, scene.critters, time, vis);
   }
 
+  // Shots in flight, over the critter that fired them, under the tokens.
+  if (scene.projectiles && mapness < 0.6) {
+    drawProjectiles(ctx, scene.projectiles, vis);
+  }
+
   // JSON tokens, the trunk of whatever is stealing them, and what the bug is
   // carrying. Skipped on the pulled-out map, where a token is sub-pixel.
   if (scene.coins && mapness < 0.6) {
@@ -1660,7 +1671,15 @@ export function drawScene(scene: RenderScene): void {
 
   const bugX = scene.rideOverlay ? scene.rideOverlay.x : player.x;
   const bugY = scene.rideOverlay ? scene.rideOverlay.y : player.y;
-  drawBug(ctx, player, time, bugX, bugY, scene.playerHandle ? avatarImage(scene.playerHandle) : null);
+  drawBug(
+    ctx,
+    player,
+    time,
+    bugX,
+    bugY,
+    scene.playerHandle ? avatarImage(scene.playerHandle) : null,
+    scene.projectiles ? { x: scene.projectiles.aimX, y: scene.projectiles.aimY } : undefined
+  );
   // The worn helmet resolves at play zoom only; below that the dome would
   // be sub-2px mush (LOD rule: identity survives, detail does not).
   if (scene.helmetState && z >= 0.22) {
@@ -1668,6 +1687,9 @@ export function drawScene(scene: RenderScene): void {
   }
   if (scene.hazards) {
     drawHazardsOnBug(ctx, scene.hazards, bugX, bugY, time);
+  }
+  if (scene.combat) {
+    drawCombatOnBug(ctx, scene.combat, bugX, bugY, time);
   }
 
   // Warp effect: the SPIRAL, from the bike-wheel art brief. Three rotating
@@ -1897,6 +1919,48 @@ function drawHud(scene: RenderScene): void {
  * The bug, kept exactly as before: red diamond body, antennae with googly
  * eyes, the cyan surfboard, and the drift countdown ring.
  */
+/** Hit pips over the bug's head, a red flash on each hit, and a faint
+ *  pulse while invincible. Graphical only: no text, no locale keys. */
+function drawCombatOnBug(
+  ctx: CanvasRenderingContext2D,
+  combat: CombatState,
+  x: number,
+  y: number,
+  time: number
+): void {
+  for (let i = 0; i < MAX_HITS; i++) {
+    const px = x + (i - (MAX_HITS - 1) / 2) * 14;
+    const py = y - 58;
+    ctx.beginPath();
+    ctx.arc(px, py, 4.5, 0, 6.283);
+    ctx.fillStyle = i < combat.hits ? '#ff4d6d' : '#ffffff';
+    ctx.globalAlpha = i < combat.hits ? 0.95 : 0.35;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#141019';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+  }
+  if (combat.hitFlash > 0) {
+    ctx.globalAlpha = (combat.hitFlash / 0.4) * 0.8;
+    ctx.strokeStyle = '#ff4d6d';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.arc(x, y, 48 + (0.4 - combat.hitFlash) * 120, 0, 6.283);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  if (combat.invincible > 0) {
+    ctx.globalAlpha = 0.25 + Math.sin(time * 18) * 0.15;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(x, y, 40, 0, 6.283);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+}
+
 /**
  * What the nuisances look like ON the bug: green slime while gooed, waving
  * pasta arms while wrapped, and the sock-envelop trip (a giant sock drops
@@ -2041,28 +2105,68 @@ function drawBug(
   time: number,
   atX: number,
   atY: number,
-  rider: HTMLImageElement | null
+  rider: HTMLImageElement | null,
+  aim?: { x: number; y: number }
 ): void {
   const BW = 19;
   const BH = 21;
   ctx.save();
   ctx.translate(atX, atY);
 
+  // THE BOARD IS THE GUN SIGHT (Bryan: "make it clear what direction the
+  // shot will fire... built into the surf board"). It turns to the aim,
+  // wears a bright nose on the leading end, and a dotted sight line runs
+  // out from the nose to where the shot will go. Without an aim (no
+  // combat state) it lies flat with the old idle tilt.
+  const boardY = BH + 4;
+  const ang = aim ? Math.atan2(aim.y, aim.x) : p.face >= 0 ? 0.18 : -0.18;
   ctx.save();
-  ctx.rotate(p.face >= 0 ? 0.18 : -0.18);
+  ctx.translate(0, boardY);
+  ctx.rotate(ang);
   ctx.fillStyle = PALETTE.board;
   ctx.strokeStyle = PALETTE.boardLit;
   ctx.lineWidth = 1.4;
   ctx.beginPath();
-  ctx.ellipse(0, BH + 4, 27, 7.5, 0, 0, 6.283);
+  ctx.ellipse(0, 0, 27, 7.5, 0, 0, 6.283);
   ctx.fill();
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(-24, BH + 4);
-  ctx.lineTo(24, BH + 4);
+  ctx.moveTo(-24, 0);
+  ctx.lineTo(24, 0);
   ctx.globalAlpha = 0.5;
   ctx.stroke();
   ctx.globalAlpha = 1;
+  if (aim) {
+    // The nose: a bright fin at the leading tip, pulsing so it reads.
+    const pulse = 0.75 + Math.sin(time * 6) * 0.25;
+    ctx.fillStyle = PALETTE.boardLit;
+    ctx.globalAlpha = pulse;
+    ctx.beginPath();
+    ctx.moveTo(24, -6);
+    ctx.lineTo(42, 0);
+    ctx.lineTo(24, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    // The sight line: dotted, out to where the shot will fly, arrowhead.
+    ctx.strokeStyle = PALETTE.boardLit;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.setLineDash([5, 9]);
+    ctx.lineDashOffset = -time * 60;
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    ctx.moveTo(46, 0);
+    ctx.lineTo(150, 0);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(150, -7);
+    ctx.lineTo(162, 0);
+    ctx.lineTo(150, 7);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
   ctx.restore();
 
   // THE REINS (Bryan's mount design): the two eye tentacles grew LONGER,
