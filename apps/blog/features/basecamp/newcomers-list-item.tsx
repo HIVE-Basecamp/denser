@@ -1,65 +1,61 @@
 'use client';
 
 import { useInView } from 'react-intersection-observer';
-import { Card } from '@ui/components/card';
-import { Link } from '@hive/ui';
-import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
-import TimeAgo from '@ui/components/time-ago';
 import { cn } from '@ui/lib/utils';
-import { useTranslation } from '@/blog/i18n/client';
-import PostCardCommentTooltip from '@/blog/features/list-of-posts/post-card-comment-tooltip';
-import FollowNewcomerButton from './follow-newcomer-button';
-import ActivityRings from './activity-rings';
-import CardReadouts from './card-readouts';
+import CircleReadout from './postcard/circle-readout';
+import FlowerReadout from './postcard/flower-readout';
+import IdentityStrip from './postcard/identity-strip';
+import PostCard from './postcard/post-card';
 import { useAccountCreator } from './hooks/use-account-creator';
 import { useAccountHistory } from './hooks/use-account-history';
 import { useVestsToHivePowerRate } from './hooks/use-vests-rate';
-import { BASECAMP_CARD, BASECAMP_LINK, BASECAMP_MUTED } from './lib/theme';
+import { buildReadouts, type ReadoutDisplay, type StakeInput } from './lib/readouts';
+import {
+  DEFAULT_DRAWING_SIZE,
+  POST_FLOOR_WIDTH,
+  POST_MAX_WIDTH,
+  POSTCARD_TIERS,
+  type PostcardTier
+} from './lib/postcard-sizes';
 import { BASECAMP_SIGNALS, type SignalInput, type SignalValue } from './lib/signals';
+import { hivePowerFromAmount } from './lib/stake';
+import { BASECAMP_POSTCARD_STYLE } from './lib/theme';
 import type { Newcomer } from './hooks/use-newcomers';
 
-// The signals meaningful on the feed surface. Computed once at module scope so
-// the card never names or filters individual signals itself.
-const FEED_SIGNALS = BASECAMP_SIGNALS.filter((signal) => signal.contexts.includes('feed'));
-
-type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
-
 /**
- * Turns a computed SignalValue into a display string via t(), driven only by
- * the unit token. An unknown value renders a muted placeholder, never a zero.
+ * Between the two anchors — the rings flush left, the flower flush right —
+ * the post is the one thing that stretches or gives, so a wider feed gives
+ * the title more room rather than leaving a gap, and a narrower one takes
+ * room from the title rather than folding the row. The row only wraps on a
+ * phone, where nothing fits on one line anyway; on a desktop a card that
+ * folds its right half onto a second line is a card with a hole in it.
  */
-function formatSignalValue(t: TranslateFn, signal: SignalValue): string {
-  if (!signal.known || signal.value === null) return t('basecamp.signals.value_unknown');
-  switch (signal.unit) {
-    case 'days':
-      return t('basecamp.signals.units.days', { value: signal.value });
-    case 'per_day':
-      return t('basecamp.signals.units.per_day', { value: signal.value });
-    case 'percent':
-      return t('basecamp.signals.units.percent', { value: signal.value });
-    case 'boolean':
-      return signal.value > 0
-        ? t('basecamp.signals.units.boolean_true')
-        : t('basecamp.signals.units.boolean_false');
-    case 'count':
-      return t('basecamp.signals.units.count', { value: signal.value });
-    case 'hive_power':
-      return t('basecamp.signals.units.hive_power', { value: signal.value.toLocaleString() });
-    case 'ratio':
-      return t('basecamp.signals.units.ratio', { value: signal.value.toFixed(2) });
-    case 'none':
-    default:
-      return t('basecamp.signals.units.none', { value: signal.value });
-  }
-}
+export const POSTCARD_CLASS =
+  'my-2 flex flex-wrap items-center justify-between gap-y-2 rounded-2xl border border-white/10 px-3 py-[10px] text-[#E8EDF5] shadow-[0_18px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm transition-colors duration-200 hover:border-[#B79CFF]/40 sm:flex-nowrap';
 
 interface NewcomersListItemProps extends Newcomer {
   /** Shows a follow button. On where the card is a call to act, off in the feed. */
   showFollow?: boolean;
+  /** Sizes for the feed's width; the feed measures itself and picks one. */
+  tier?: PostcardTier;
 }
 
-const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }: NewcomersListItemProps) => {
-  const { t } = useTranslation('common_blog');
+/**
+ * One postcard: a person, the post they wrote, and every reading the card
+ * takes of them, in a single band. Three zones — who and what they posted,
+ * five drawings, one flower — grouped by proximity and colour rather than by
+ * borders, because borders cost height and a feed of these has to scroll.
+ *
+ * The card does not know what any readout means: lib/readouts.ts decides what
+ * is drawn and what is printed.
+ */
+const NewcomersListItem = ({
+  post,
+  accountAgeDays,
+  account,
+  showFollow = false,
+  tier = POSTCARD_TIERS.regular
+}: NewcomersListItemProps) => {
   // Deferred until the card is near the viewport, so a long feed does not fire
   // a lookup per row up front. ActivityRings asks for the same account under
   // the same query key, so React Query still makes exactly one history request
@@ -80,69 +76,69 @@ const NewcomersListItem = ({ post, accountAgeDays, account, showFollow = false }
     nowMs: Date.now()
   };
 
+  const signalValues: Record<string, SignalValue> = {};
+  for (const signal of BASECAMP_SIGNALS) {
+    signalValues[signal.id] = signal.compute(signalInput);
+  }
+
+  // The stake pie wants the three pieces in Hive Power, not the ratios the
+  // signals report.
+  const own = hivePowerFromAmount(account.vestingSharesAmount, vestsToHivePowerRate);
+  const lentOut = hivePowerFromAmount(account.delegatedVestingAmount, vestsToHivePowerRate);
+  const stake: StakeInput = {
+    kept: own !== null && lentOut !== null ? Math.max(own - lentOut, 0) : null,
+    lentOut,
+    lentIn: hivePowerFromAmount(account.receivedVestingAmount, vestsToHivePowerRate)
+  };
+
+  // An empty history read must not print as a card full of zeroes, so the
+  // patterns are only trusted once the read has actually finished.
+  const readouts = buildReadouts(
+    signalValues,
+    status === 'ready' ? patterns : { ...patterns, known: false },
+    createdBy,
+    stake
+  );
+  const shown = (display: ReadoutDisplay) => readouts.filter((readout) => readout.display === display);
+
   return (
     <li ref={ref}>
-      {/* Top-aligned rather than centred: the card now carries a second row of
-          readouts, and centring would float the rings and avatar away from the
-          name they belong to. */}
-      <Card className={cn(BASECAMP_CARD, 'my-3 flex items-start gap-4 p-4')} data-testid="newcomer-list-item">
-        <ActivityRings
-          username={post.author}
-          reputation={post.author_reputation}
-          accountAgeDays={accountAgeDays}
-        />
-        <Link href={`/@${post.author}`} data-testid="newcomer-avatar" className="shrink-0">
-          <div
-            className="h-11 w-11 rounded-full bg-cover bg-no-repeat ring-1 ring-white/15 transition-shadow hover:ring-2 hover:ring-[#B79CFF]/60"
-            style={{ backgroundImage: `url(${getUserAvatarUrl(post.author, 'small')})` }}
+      <div
+        className={cn(POSTCARD_CLASS)}
+        style={{ ...BASECAMP_POSTCARD_STYLE, columnGap: tier.zoneGap }}
+        data-testid="newcomer-list-item"
+        data-postcard-tier={tier.name}
+      >
+        <div
+          className="min-w-0 flex-auto"
+          style={{ flexBasis: tier.postMinWidth, minWidth: POST_FLOOR_WIDTH, maxWidth: POST_MAX_WIDTH }}
+        >
+          <IdentityStrip
+            username={post.author}
+            reputation={post.author_reputation}
+            accountAgeDays={accountAgeDays}
+            createdIso={post.created}
+            showFollow={showFollow}
+            profile={shown('pips')[0]}
           />
-        </Link>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 text-xs">
-            <Link
-              href={`/@${post.author}`}
-              className={cn(BASECAMP_LINK, 'text-sm font-semibold')}
-              data-testid="newcomer-username"
-            >
-              {post.author}
-            </Link>
-            <span className={BASECAMP_MUTED}>
-              <TimeAgo date={post.created} />
-            </span>
+          <div className="mt-1.5">
+            <PostCard post={post} />
           </div>
-          <Link
-            href={`/${post.category}/@${post.author}/${post.permlink}`}
-            className={cn(BASECAMP_LINK, 'mt-1 line-clamp-2 block text-[15px] font-medium leading-snug')}
-            data-testid="newcomer-post-title"
-          >
-            {post.title}
-          </Link>
-          <ul className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" data-testid="newcomer-signals">
-            {FEED_SIGNALS.map((signal) => {
-              const computed = signal.compute(signalInput);
-              return (
-                <li key={signal.id} className="flex items-center gap-1" data-testid={`signal-${signal.id}`}>
-                  <span className={BASECAMP_MUTED}>{t(signal.labelKey)}</span>
-                  <span
-                    className={computed.known ? 'font-medium' : cn(BASECAMP_MUTED, 'opacity-70')}
-                    data-testid={`signal-value-${signal.id}`}
-                  >
-                    {formatSignalValue(t, computed)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-          <CardReadouts patterns={patterns} createdBy={createdBy} status={status} />
         </div>
-        {showFollow ? <FollowNewcomerButton username={post.author} /> : null}
-        <div className={cn(BASECAMP_MUTED, 'shrink-0 text-sm')}>
-          <PostCardCommentTooltip
-            comments={post.children}
-            url={`/${post.category}/@${post.author}/${post.permlink}/#comments`}
-          />
+
+        <div className="flex shrink-0 items-center" style={{ columnGap: tier.drawingGap }}>
+          {shown('circle').map((readout) => (
+            <CircleReadout
+              key={readout.id}
+              readout={readout}
+              size={tier.drawings[readout.id] ?? DEFAULT_DRAWING_SIZE}
+              boxHeight={tier.hero}
+            />
+          ))}
         </div>
-      </Card>
+
+        <FlowerReadout petals={shown('petal')} core={shown('core')[0]} size={tier.flower} />
+      </div>
     </li>
   );
 };

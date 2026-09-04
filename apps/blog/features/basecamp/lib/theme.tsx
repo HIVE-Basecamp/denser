@@ -125,5 +125,56 @@ export const BASECAMP_TAB_TRIGGER =
 export const BASECAMP_TAB_TRIGGER_ACTIVE =
   'bg-[#B79CFF] text-[#0B0F17] shadow-[0_0_20px_-4px_rgba(183,156,255,0.7)] hover:text-[#0B0F17]';
 
+/**
+ * The postcard's palette. Saturated on purpose: the card is a small dashboard
+ * on a dark ground and every drawing on it should read as its own colour from
+ * across the room. Each key is a name a readout can ask for; nothing outside
+ * the postcard needs these.
+ */
+export type BasecampVividKey = 'violet' | 'orange' | 'cyan' | 'lime' | 'pink' | 'yellow' | 'blue' | 'red';
+
+export const BASECAMP_VIVID: Record<BasecampVividKey, string> = {
+  violet: '#B79CFF',
+  orange: '#FF8A3D',
+  cyan: '#5EE9D5',
+  lime: '#B6F36B',
+  pink: '#FF6FB1',
+  yellow: '#FFD24D',
+  blue: '#5B9DFF',
+  red: '#FF4D6D'
+};
+
+/**
+ * The postcard surface. An iridescent wash rather than a flat tint, so the
+ * card itself has some life before anything is drawn on it. Inline because
+ * two `bg-*` utilities would collide in tailwind-merge (see BASECAMP_SHELL).
+ */
+export const BASECAMP_POSTCARD_STYLE: CSSProperties = {
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  backgroundImage:
+    'radial-gradient(90% 140% at 0% 0%, rgba(183, 156, 255, 0.16) 0%, rgba(183, 156, 255, 0) 55%),' +
+    ' radial-gradient(70% 120% at 100% 100%, rgba(255, 138, 61, 0.10) 0%, rgba(255, 138, 61, 0) 55%)'
+};
+
+/**
+ * The post's own small card inside the postcard: a wash one step up from the
+ * card and a hairline inside it, never a drawn border — the row, the post and
+ * a border would be three rectangles.
+ */
+export const BASECAMP_POST_CARD =
+  'rounded-[10px] bg-[#B79CFF]/[0.09] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-colors duration-200 hover:bg-[#B79CFF]/[0.14]';
+
+/**
+ * The name under every readout: ten pixels, capitals, spaced out. Ten is the
+ * floor a label can sit at and still be read; the line box is the type size,
+ * so the label costs the card nothing it does not use.
+ */
+export const BASECAMP_MICRO_LABEL =
+  'text-[10px] font-semibold uppercase leading-none tracking-[0.06em] text-[#8A93A6]';
+
+/** Dark popover for the readout explanations. */
+export const BASECAMP_HINT =
+  'max-w-[240px] rounded-lg border border-[#B79CFF]/30 bg-[#12172A] px-3 py-2 text-[11px] leading-snug text-[#E8EDF5] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.9)]';
+
 /** Skeleton placeholder tuned for the dark shell. */
 export const BASECAMP_SKELETON = 'bg-white/10';

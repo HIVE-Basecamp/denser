@@ -5,9 +5,11 @@ import { Skeleton } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { BASECAMP_MUTED, BASECAMP_SKELETON } from './lib/theme';
+import { useElementWidth } from './hooks/use-element-width';
 import { useNewcomers } from './hooks/use-newcomers';
 import { useInterestMatches } from './hooks/use-interest-matches';
 import NewcomersListItem from './newcomers-list-item';
+import { postcardTierFor } from './lib/postcard-sizes';
 import type { BasecampInterest } from './lib/protocol';
 
 // How many of the already-loaded new users to check for shared interests, and
@@ -27,6 +29,8 @@ const DISPLAY_LIMIT = 5;
  */
 const InterestMatches = ({ guideInterests }: { guideInterests: BasecampInterest[] }) => {
   const { t } = useTranslation('common_blog');
+  // Same sizing rule as the feed: the list measures itself so a row never wraps.
+  const { ref: listRef, width: listWidth } = useElementWidth<HTMLUListElement>();
   const { newcomers } = useNewcomers();
   const candidates = useMemo(() => newcomers.slice(0, CANDIDATE_LIMIT), [newcomers]);
   const { matches, isFetching } = useInterestMatches(candidates, guideInterests);
@@ -49,12 +53,13 @@ const InterestMatches = ({ guideInterests }: { guideInterests: BasecampInterest[
           {t('basecamp.interest_matches.none_yet')}
         </p>
       ) : (
-        <ul>
+        <ul ref={listRef}>
           {matches.slice(0, DISPLAY_LIMIT).map((newcomer) => (
             <NewcomersListItem
               key={`${newcomer.post.author}/${newcomer.post.permlink}`}
               {...newcomer}
               showFollow
+              tier={postcardTierFor(listWidth)}
             />
           ))}
         </ul>

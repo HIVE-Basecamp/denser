@@ -94,6 +94,10 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 const PROFILE_FIELDS = ['profile_image', 'cover_image', 'about', 'location', 'website', 'name'] as const;
 
+/** How many profile fields a complete profile has. Exported so the card can
+ * draw one pip per field instead of re-deriving the number. */
+export const PROFILE_FIELD_COUNT = PROFILE_FIELDS.length;
+
 function unknown(unit: SignalUnit): SignalValue {
   return { known: false, value: null, unit };
 }

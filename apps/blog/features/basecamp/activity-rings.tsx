@@ -134,7 +134,8 @@ const ActivityRings = ({
       </svg>
       <span
         className="pointer-events-none absolute inset-0 flex items-center justify-center font-semibold tabular-nums text-[#E8EDF5]"
-        style={{ fontSize: Math.round(size * 0.172) }}
+        // Never below ten pixels, whatever the rings shrink to.
+        style={{ fontSize: Math.max(10, Math.round(size * 0.172)) }}
         data-testid={reputationTestId}
       >
         {accountReputation(reputation)}
