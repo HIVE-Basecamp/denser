@@ -888,7 +888,9 @@
       "real_games": "Hive 上的真实游戏",
       "dapps": "Hive 宇宙的应用",
       "buzzing": "今日嗡嗡: 这里的代币加倍",
-      "rose_window": "Hive Comb Home"
+      "rose_window": "Hive Comb Home",
+      "ruins_back": "You are on the back of the board: Steem, the chain Hive left in March 2020. Nothing lives here. Leave and park here again to flip back.",
+      "ruins_front": "Back on the living side. Park here again to flip the board."
     },
     "landmarks": {
       "search": "搜索",
@@ -911,7 +913,8 @@
       "helmets": "头盔",
       "places": "地点",
       "gems": "宝石",
-      "newbs": "新人"
+      "newbs": "新人",
+      "side": "SIDE"
     },
     "map": {
       "hint": "点按地标即可前往",
@@ -956,6 +959,38 @@
       "creation_fee": "开户费用",
       "block_size": "最大区块大小",
       "since": "见证人自"
+    },
+    "sides": {
+      "hive": "Hive",
+      "steem": "STEEM, the old chain"
+    },
+    "dashboard": {
+      "title": "Your bug",
+      "open": "STATS",
+      "close": "Close",
+      "mode": "Mode",
+      "round": "Next round",
+      "side": "Side",
+      "where": "Where",
+      "lives": "Hits left",
+      "helmets": "Helmets",
+      "air": "Spare air",
+      "ammo": "Tokens carried",
+      "banked": "Tokens banked",
+      "stolen": "Tokens stolen",
+      "recovered": "Tokens won back",
+      "gems": "Gems",
+      "votes": "Votes carried",
+      "funded": "Funded",
+      "trophies": "Trophies on the wheel",
+      "places": "Places found",
+      "communities": "Communities visited",
+      "newbs": "New posts visited",
+      "yes": "yes",
+      "no": "not yet",
+      "none": "none",
+      "front": "front",
+      "back": "back"
     }
   }
 }

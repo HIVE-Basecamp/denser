@@ -1,7 +1,7 @@
 # The pop-up dashboard
 
 Type: prototype
-Status: open
+Status: claimed
 Blocked by: none
 
 ## Question

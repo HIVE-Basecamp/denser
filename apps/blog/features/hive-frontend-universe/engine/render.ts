@@ -17,6 +17,7 @@
  */
 
 import type { GameMode } from '../lib/modes';
+import type { BoardSide } from '../lib/board-side';
 import type { WorldEdge, WorldNode } from './world';
 import type { PlayerState, Vec2 } from './movement';
 import { posAt } from './movement';
@@ -281,6 +282,15 @@ export interface RenderScene {
   /** Spiky rock formations standing on the terrain. Inert scenery. */
   formations: Formation[];
   /**
+   * WHICH SIDE OF THE BOARD is up. The Steem side is the back: the same
+   * board seen from behind (mirrored), drained of colour, nothing alive.
+   */
+  side?: BoardSide;
+  /** Horizontal view scale: 1 front, -1 back, passing through 0 mid-flip. */
+  flipX?: number;
+  /** A little vertical shear while flipping, so the turn reads as 3D. */
+  flipSkew?: number;
+  /**
    * The top 21 witnesses, ringing the world in rank order. Scenery: no mesh
    * node, nothing to collide with, nothing to travel to.
    */
@@ -394,6 +404,8 @@ export interface RenderScene {
     votesLine?: number;
     fundedLabel?: string;
     funded?: boolean;
+    /** Which side of the board, named only on the back. */
+    sideLabel?: string;
   };
 }
 
@@ -722,14 +734,20 @@ export function drawScene(scene: RenderScene): void {
   const sy = scene.shake ? (Math.random() - 0.5) * scene.shake : 0;
   const z = cam.z;
 
+  // THE FLIP: the board turns on its vertical axis. flipX runs 1 to -1
+  // (cosine), so past the midpoint the world is mirrored: you are looking
+  // at the back. The skew fakes perspective on the way round.
+  const flipX = scene.flipX ?? 1;
   ctx.save();
   ctx.translate(W / 2 + sx, H / 2 + sy);
+  ctx.transform(flipX, 0, scene.flipSkew ?? 0, 1, 0, 0);
   ctx.scale(z, z);
   ctx.translate(-cam.x, -cam.y);
 
   const pad = 320 / z;
-  const vx0 = cam.x - W / 2 / z - pad;
-  const vx1 = cam.x + W / 2 / z + pad;
+  const zx = z * Math.max(Math.abs(flipX), 0.25);
+  const vx0 = cam.x - W / 2 / zx - pad;
+  const vx1 = cam.x + W / 2 / zx + pad;
   const vy0 = cam.y - H / 2 / z - pad;
   const vy1 = cam.y + H / 2 / z + pad;
   const vis = (x: number, y: number) => x > vx0 && x < vx1 && y > vy0 && y < vy1;
@@ -1456,6 +1474,8 @@ export function drawScene(scene: RenderScene): void {
     if (n.kind !== 'landmark' || !vis(n.x, n.y)) continue;
     const lm = scene.landmarks[n.ref];
     if (!lm) continue;
+    // The ruins are their own district, drawn above by drawSteemRuins.
+    if (lm.icon === 'ruins') continue;
     const col = CATEGORY_HEX[lm.category];
     const minor = lm.icon === 'doc' || lm.icon === 'docq';
     // The big five are drawn at a fixed WORLD size, several times any other
@@ -1870,7 +1890,30 @@ export function drawScene(scene: RenderScene): void {
     ctx.textBaseline = 'middle';
   }
 
+  // THE BACK OF THE BOARD is the dead chain: everything drained of its
+  // saturation, then pulled cold. Two blend fills over the whole view; the
+  // world underneath is drawn exactly as on the front.
+  if (scene.side === 'steem') {
+    ctx.globalCompositeOperation = 'saturation';
+    ctx.fillStyle = '#4a5560';
+    ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
+    ctx.globalCompositeOperation = 'color';
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = '#5c7590';
+    ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
   ctx.restore();
+
+  // Mid-flip the board is edge-on: darken so the turn has weight.
+  if (Math.abs(flipX) < 1) {
+    ctx.globalAlpha = (1 - Math.abs(flipX)) * 0.7;
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
+  }
 
   // VIGNETTE, screen space, map zoom only: darkened corners pull the eye
   // into the world and hide the dead frame edges the citadel ring cannot
@@ -1995,6 +2038,12 @@ function drawHud(scene: RenderScene): void {
     ctx.fillStyle = '#ffd24a';
     const modePart = hud.modeLabel ? `  ${hud.modeLabel}` : '';
     ctx.fillText(`${hud.roundLabel} ${hud.roundLeft}${modePart}`, 16, hudY);
+    hudY += 19;
+  }
+  // THE BACK OF THE BOARD says so, in the cold colour of the ruins.
+  if (hud.sideLabel !== undefined) {
+    ctx.fillStyle = '#9fb4c8';
+    ctx.fillText(hud.sideLabel, 16, hudY);
     hudY += 19;
   }
   // THE DHF RACE line, adventure mode only: votes carried against the return

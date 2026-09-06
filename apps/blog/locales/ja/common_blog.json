@@ -888,7 +888,9 @@
       "real_games": "Hiveの実際のゲーム",
       "dapps": "Hiveユニバースのアプリ",
       "buzzing": "本日ブンブン: ここのトークンは2倍",
-      "rose_window": "Hive Comb Home"
+      "rose_window": "Hive Comb Home",
+      "ruins_back": "You are on the back of the board: Steem, the chain Hive left in March 2020. Nothing lives here. Leave and park here again to flip back.",
+      "ruins_front": "Back on the living side. Park here again to flip the board."
     },
     "landmarks": {
       "search": "検索",
@@ -911,7 +913,8 @@
       "helmets": "ヘルメット",
       "places": "場所",
       "gems": "ジェム",
-      "newbs": "新入り"
+      "newbs": "新入り",
+      "side": "SIDE"
     },
     "map": {
       "hint": "ランドマークをタップして移動",
@@ -956,6 +959,38 @@
       "creation_fee": "アカウント作成料",
       "block_size": "最大ブロックサイズ",
       "since": "ウィットネス開始"
+    },
+    "sides": {
+      "hive": "Hive",
+      "steem": "STEEM, the old chain"
+    },
+    "dashboard": {
+      "title": "Your bug",
+      "open": "STATS",
+      "close": "Close",
+      "mode": "Mode",
+      "round": "Next round",
+      "side": "Side",
+      "where": "Where",
+      "lives": "Hits left",
+      "helmets": "Helmets",
+      "air": "Spare air",
+      "ammo": "Tokens carried",
+      "banked": "Tokens banked",
+      "stolen": "Tokens stolen",
+      "recovered": "Tokens won back",
+      "gems": "Gems",
+      "votes": "Votes carried",
+      "funded": "Funded",
+      "trophies": "Trophies on the wheel",
+      "places": "Places found",
+      "communities": "Communities visited",
+      "newbs": "New posts visited",
+      "yes": "yes",
+      "no": "not yet",
+      "none": "none",
+      "front": "front",
+      "back": "back"
     }
   }
 }

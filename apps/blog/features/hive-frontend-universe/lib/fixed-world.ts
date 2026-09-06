@@ -91,7 +91,10 @@ export interface Cluster {
  */
 export const CLUSTERS: readonly Cluster[] = [
   // A village on the road: rail trail out from the diamond's south-west coast.
-  { id: 'anchorage', x: -6900, y: 2400, link: 'trail', satellites: [[35, 470], [300, 450]] },
+  // Its 35-degree satellite is gone: the Steem Ruins landmark hangs off
+  // this hub at 45 degrees now, and two spokes 10 degrees apart would fail
+  // the junction angle rule.
+  { id: 'anchorage', x: -6900, y: 2400, link: 'trail', satellites: [[300, 450]] },
   // The library: hop-only, floats north of the centre blade's tip. Gap
   // measured at 0.5-0.8x the max hop, so a full drift ring clears it.
   { id: 'library', x: 600, y: -5500, link: 'hop', satellites: [[270, 440]] },
@@ -174,7 +177,8 @@ export type IconKey =
   | 'sockmount'
   | 'rosewindow'
   | 'pulse'
-  | 'gate';
+  | 'gate'
+  | 'ruins';
 
 /** Where a landmark sits: woven into a landmass, or on a cluster spoke. */
 export type LandmarkPlace =
@@ -245,7 +249,11 @@ export const LANDMARKS: readonly Landmark[] = [
   // stained-glass wheel that rounds up the headline hive.blog actions in
   // one place; its panel lists them, its oculus opens the home page. The
   // ferris wheel's twin: one hot wheel for play, one cool wheel for use.
-  { id: 'rose_window', kind: 'internal', path: '/', labelKey: 'hive_frontend_universe.landmarks.rose_window', category: 'social', icon: 'rosewindow', place: { in: 'cluster', cluster: 'rose', angleDeg: 270, dist: 300 }, big: true }
+  { id: 'rose_window', kind: 'internal', path: '/', labelKey: 'hive_frontend_universe.landmarks.rose_window', category: 'social', icon: 'rosewindow', place: { in: 'cluster', cluster: 'rose', angleDeg: 270, dist: 300 }, big: true },
+  // THE STEEM RUINS, reachable at last (Bryan: "would be cool"). A spoke off
+  // the anchorage hub lands exactly on STEEM_RUINS below; parking here FLIPS
+  // THE BOARD to its back side. The art is drawSteemRuins, not an icon.
+  { id: 'steem_ruins', kind: 'external', path: 'https://hive.blog/communityfork/@hiveio/announcing-the-launch-of-hive-blockchain', labelKey: 'hive_frontend_universe.landmarks.steem_ruins', category: 'info', icon: 'ruins', place: { in: 'cluster', cluster: 'anchorage', angleDeg: 45, dist: 848.5 } }
 ];
 
 /**
@@ -503,6 +511,7 @@ export const WITNESS_OVERRIDES: Readonly<Record<string, { x: number; y: number }
   austinbank: { x: 4550, y: 5350 } // T-21 (order-sheet spelling)
 };
 
+/** Where the ruins art stands: the steem_ruins landmark's spoke end. */
 export const STEEM_RUINS = {
   x: -6300,
   y: 1800,

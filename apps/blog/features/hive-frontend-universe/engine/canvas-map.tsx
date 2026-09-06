@@ -24,6 +24,17 @@ import { useWitnesses } from '../hooks/use-witnesses';
 import { GAME_MODES, formatCountdown, modeHasConsequences, msToNextRound, type GameMode } from '../lib/modes';
 import { WelcomeRoom } from '../card/welcome-room';
 import { ModeChip } from '../card/mode-chip';
+import { PlayerDashboard, type DashboardRow } from '../card/player-dashboard';
+import {
+  FLIP_LANDMARK_ID,
+  FLIP_SECONDS,
+  flipView,
+  otherSide,
+  sideAt,
+  sideFlipX,
+  type BoardSide,
+  type FlipState
+} from '../lib/board-side';
 import { HFU_COPY } from '../lib/strings';
 import { TIERS, windowStartFor, type Board } from '../lib/board';
 import {
@@ -33,7 +44,6 @@ import {
   TROLL_HOLES,
   ARCADE_GAMES,
   DAPP_DIRECTORY,
-  STEEM_RUINS,
   ROSE_WINDOW_PANES,
   WITNESS_OVERRIDES,
   witnessPosts
@@ -63,8 +73,9 @@ import {
 } from './hazards';
 import { createGems, updateGems, type GemState } from './gems';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from './dhf-race';
+import { gridCellName } from './render';
 import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
-import { createCombat, tickCombat, type CombatState } from './combat';
+import { createCombat, tickCombat, MAX_HITS, type CombatState } from './combat';
 import { buildGround } from './ground';
 import { requestAvatar, avatarStats } from './avatars';
 import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
@@ -164,6 +175,15 @@ const Stage = ({ board }: { board: Board }) => {
   // The frame loop reads the ref. Explore has no consequences; the others
   // keep the setback. What each mode holds grows in later tickets.
   const [mode, setMode] = useState<GameMode | null>(null);
+  /** Which side of the board is up. The ref drives the frame loop, the
+   *  state drives the panels. */
+  const sideRef = useRef<BoardSide>('hive');
+  const [side, setSide] = useState<BoardSide>('hive');
+  /** The turn in progress, or null when the board is at rest. */
+  const flipRef = useRef<FlipState | null>(null);
+  /** The pop-up dashboard's rows while it is open; null when closed. */
+  const [dashRows, setDashRows] = useState<DashboardRow[] | null>(null);
+  const dashOpenRef = useRef(false);
   const modeRef = useRef<GameMode | null>(null);
   modeRef.current = mode;
   const pickMode = (m: GameMode) => {
@@ -382,6 +402,17 @@ const Stage = ({ board }: { board: Board }) => {
   const camRef = useRef<Camera>({ x: 0, y: 0, z: 0.6 });
   const inputRef = useRef<Vec2>({ x: 0, y: 0 });
   const stickRef = useRef<Vec2>({ x: 0, y: 0 });
+  /** On the back of the board the view is mirrored, so left is right: the
+   *  steering is mirrored to match. Movement itself never knows. */
+  const mirroredInputRef = useRef<Vec2>({ x: 0, y: 0 });
+  const steer = (): Vec2 => {
+    if (sideRef.current !== 'steem') return inputRef.current;
+    mirroredInputRef.current.x = -inputRef.current.x;
+    mirroredInputRef.current.y = inputRef.current.y;
+    return mirroredInputRef.current;
+  };
+  /** The resting view mirror for pointer maths: 1 front, -1 back. */
+  const viewFlipX = () => sideFlipX(sideRef.current);
   const keysRef = useRef<Record<string, boolean>>({});
   const mapHeldRef = useRef(false);
   const fullMapRef = useRef(false);
@@ -504,7 +535,7 @@ const Stage = ({ board }: { board: Board }) => {
     }
     // A jump while pasta-wrapped tears at the noodles instead of jumping.
     if (hazardsRef.current && fightWrap(hazardsRef.current)) return;
-    jump(p, world.edges, inputRef.current);
+    jump(p, world.edges, steer());
     if (p.mode === 'drift') {
       const suit = helmetsRef.current;
       let rings = o2Multiplier(suit?.count ?? 0);
@@ -600,7 +631,7 @@ const Stage = ({ board }: { board: Board }) => {
     };
     const GAME_KEYS = new Set([
       'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ',
-      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z', 'f'
+      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z', 'f', 'i'
     ]);
     const onKeyDown = (e: KeyboardEvent) => {
       if (typingTarget(e)) return;
@@ -626,6 +657,8 @@ const Stage = ({ board }: { board: Board }) => {
       }
       // FIRE: once per press, not on key-repeat; a held F is not a machine gun.
       if (k === 'f' && !keysRef.current[k] && !fullMapRef.current) firePlayerShot();
+      // THE DASHBOARD: one key to open, the same key to close.
+      if (k === 'i' && !keysRef.current[k]) toggleDashboard();
       keysRef.current[k] = true;
       if ((k === ' ' || k === 'z') && !fullMapRef.current) hopWithO2();
       if (k === 'escape' && fullMapRef.current) {
@@ -673,7 +706,7 @@ const Stage = ({ board }: { board: Board }) => {
     const targetAt = (clientX: number, clientY: number): MapTarget | null => {
       const rect = canvas.getBoundingClientRect();
       const cam = camRef.current;
-      const wx = (clientX - rect.left - W / 2) / cam.z + cam.x;
+      const wx = (clientX - rect.left - W / 2) / (cam.z * viewFlipX()) + cam.x;
       const wy = (clientY - rect.top - H / 2) / cam.z + cam.y;
       const z = cam.z;
       let best: MapTarget | null = null;
@@ -825,20 +858,6 @@ const Stage = ({ board }: { board: Board }) => {
         );
       }
 
-      // The Steem Ruins: scenery like the citadels, with exactly one link
-      // out of them: the real 2020 announcement of the fork that left them.
-      consider(
-        {
-          kind: 'witness',
-          node: -1,
-          title: t('hive_frontend_universe.landmarks.steem_ruins'),
-          href: STEEM_RUINS.url,
-          travelable: false,
-          x: STEEM_RUINS.x,
-          y: STEEM_RUINS.y
-        },
-        700
-      );
       return best;
     };
 
@@ -903,7 +922,7 @@ const Stage = ({ board }: { board: Board }) => {
       // Which grid box the cursor is over, for the big hover label.
       if (gridRef.current) {
         const cam = camRef.current;
-        const gwx = (e.clientX - rect.left - W / 2) / cam.z + cam.x;
+        const gwx = (e.clientX - rect.left - W / 2) / (cam.z * viewFlipX()) + cam.x;
         const gwy = (e.clientY - rect.top - H / 2) / cam.z + cam.y;
         const ci = Math.floor((gwx + 9100) / 700);
         const ri = Math.floor((gwy + 9100) / 700);
@@ -1046,9 +1065,9 @@ const Stage = ({ board }: { board: Board }) => {
       if (!fullMapRef.current && !riding && !hazardHeld) {
         const pdt = hz && hz.gooT > 0 ? dt * GOO_SLOW : dt;
         if (p.mode === 'rail') {
-          railUpdate(p, edges, incident, inputRef.current, pdt);
+          railUpdate(p, edges, incident, steer(), pdt);
         } else {
-          const res = driftUpdate(p, edges, inputRef.current, pdt);
+          const res = driftUpdate(p, edges, steer(), pdt);
           if (res.signalLost) {
             placeAt(p, edges, incident, p.lastNode);
             p.stuck = 1.4;
@@ -1058,11 +1077,34 @@ const Stage = ({ board }: { board: Board }) => {
       }
       if (shake > 0) shake = Math.max(0, shake - dt * 40);
       if (warpFxRef.current > 0) warpFxRef.current = Math.max(0, warpFxRef.current - dt * 1.6);
+      // THE FLIP: the board turns over; at the midpoint the side changes.
+      let flipX = sideFlipX(sideRef.current);
+      let flipSkew = 0;
+      const flip = flipRef.current;
+      if (flip) {
+        flip.t = Math.min(1, flip.t + dt / FLIP_SECONDS);
+        const view = flipView(flip);
+        flipX = view.flipX;
+        flipSkew = view.flipSkew;
+        const showing = sideAt(flip);
+        if (showing !== sideRef.current) {
+          sideRef.current = showing;
+          setSide(showing);
+        }
+        if (flip.t >= 1) {
+          flipRef.current = null;
+          flipX = sideFlipX(sideRef.current);
+          flipSkew = 0;
+        }
+      }
 
       updateTraffic(dt);
       if (flowsRef.current) updateFlows(flowsRef.current, world, flowCfg, p.x, p.y, dt);
-      if (crittersRef.current) updateCritters(crittersRef.current, world, dt);
-      if (hz) {
+      // THE BACK OF THE BOARD is dead: no critters move, no shots fly, no
+      // tokens or gems change hands. The bug alone still rides.
+      const alive = sideRef.current === 'hive';
+      if (alive && crittersRef.current) updateCritters(crittersRef.current, world, dt);
+      if (alive && hz) {
         updateHazards(hz, p, crittersRef.current, dt);
         // The sock has closed around the bug: flash-post it to Mount Socko.
         // Not a death, a DELIVERY; the toll is the walk back.
@@ -1079,8 +1121,8 @@ const Stage = ({ board }: { board: Board }) => {
       // COMBAT: timers first, then shots fly and hits land. The third hit
       // sends the bug home to Basecamp, carried tokens dropped: not a death,
       // a setback, priced the same way the thieves already price risk.
-      if (combatRef.current) tickCombat(combatRef.current, dt);
-      if (projectilesRef.current && combatRef.current) {
+      if (alive && combatRef.current) tickCombat(combatRef.current, dt);
+      if (alive && projectilesRef.current && combatRef.current) {
         updateProjectiles(projectilesRef.current, p, crittersRef.current, combatRef.current, dt, ts / 1000);
         if (combatRef.current.respawned) {
           combatRef.current.respawned = false;
@@ -1104,9 +1146,9 @@ const Stage = ({ board }: { board: Board }) => {
       }
       // The HUD is painted on the canvas every frame, so the token counts
       // need no React state to stay current.
-      if (coinsRef.current) updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
-      if (helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
-      if (gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
+      if (alive && coinsRef.current) updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
+      if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
+      if (alive && gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
       requestNearbyAvatars(dt);
       camUpdate(dt);
 
@@ -1138,6 +1180,11 @@ const Stage = ({ board }: { board: Board }) => {
           } else if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === 'proposals') {
             if (deliverVotes(raceRef.current)) warpFxRef.current = 1;
           }
+        }
+        // THE RUINS ARE THE DOOR: park there and the board turns over, from
+        // either side. Not while a turn is already under way.
+        if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === FLIP_LANDMARK_ID && !flipRef.current) {
+          flipRef.current = { t: 0, to: otherSide(sideRef.current) };
         }
         if (vn?.kind === 'landmark' && visitedRef.current) {
           const id = LANDMARKS[vn.ref]?.id;
@@ -1352,17 +1399,20 @@ const Stage = ({ board }: { board: Board }) => {
         cubes,
         formations,
         witnesses: witnessVisualsRef.current,
-        flows: flowsRef.current?.particles ?? [],
-        traffic: trafficRef.current,
+        flows: alive ? flowsRef.current?.particles ?? [] : [],
+        traffic: alive ? trafficRef.current : [],
         routeLayers,
-        critters: crittersRef.current,
-        coins: coinsRef.current,
-        helmetState: helmetsRef.current,
+        critters: alive ? crittersRef.current : null,
+        coins: alive ? coinsRef.current : null,
+        helmetState: alive ? helmetsRef.current : null,
         rideOverlay: overlayPos,
-        hazards: hazardsRef.current,
-        projectiles: projectilesRef.current,
+        hazards: alive ? hazardsRef.current : null,
+        projectiles: alive ? projectilesRef.current : null,
         combat: combatRef.current,
-        gems: gemsRef.current,
+        gems: alive ? gemsRef.current : null,
+        side: sideRef.current,
+        flipX,
+        flipSkew,
         visitedCommunities: visitedCommunitiesRef.current,
         wheelTrophies: wheelTrophiesRef.current,
         debugGrid: gridRef.current,
@@ -1405,7 +1455,11 @@ const Stage = ({ board }: { board: Board }) => {
           votes: raceRef.current?.carried ?? 0,
           votesLine: raceRef.current?.line ?? 0,
           fundedLabel: t('hive_frontend_universe.race.funded'),
-          funded: raceRef.current?.funded ?? false
+          funded: raceRef.current?.funded ?? false,
+          sideLabel:
+            sideRef.current === 'steem'
+              ? `${t('hive_frontend_universe.hud.side')} ${t('hive_frontend_universe.sides.steem')}`
+              : undefined
         }
       });
       // Rolling frame-time meter, exposed on the debug handle (measured).
@@ -1421,6 +1475,7 @@ const Stage = ({ board }: { board: Board }) => {
           dbg.mode = modeRef.current;
           dbg.race = raceRef.current;
           dbg.atNode = p.atNode;
+        dbg.side = sideRef.current;
         }
         frameAcc = 0;
         frameN = 0;
@@ -1456,6 +1511,58 @@ const Stage = ({ board }: { board: Board }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world, board, factories, cubes, formations, flowCfg, ground]);
 
+  /**
+   * THE DASHBOARD SNAPSHOT: every fact about the player the engine holds
+   * today, as plain rows. Rough on purpose; which rows belong is the
+   * question this pop-up exists to settle.
+   */
+  const snapshotDashboard = (): DashboardRow[] => {
+    const k = 'hive_frontend_universe.dashboard';
+    const p = playerRef.current;
+    const modeDef = GAME_MODES.find((gm) => gm.id === modeRef.current);
+    const race = raceRef.current;
+    const rows: DashboardRow[] = [
+      { label: t(`${k}.mode`), value: modeDef ? t(modeDef.labelKey) : '', accent: modeDef?.accent },
+      { label: t(`${k}.round`), value: formatCountdown(msToNextRound(Date.now())) },
+      { label: t(`${k}.side`), value: t(`${k}.${sideRef.current === 'steem' ? 'back' : 'front'}`) },
+      { label: t(`${k}.where`), value: gridCellName(p.x, p.y) },
+      { label: t(`${k}.lives`), value: `${Math.max(0, MAX_HITS - (combatRef.current?.hits ?? 0))} / ${MAX_HITS}` },
+      { label: t(`${k}.helmets`), value: `${helmetsRef.current?.count ?? 0} / ${HELMET_TOTAL}` },
+      { label: t(`${k}.air`), value: String(helmetsRef.current?.spareAir ?? 0) },
+      { label: t(`${k}.ammo`), value: String(coinsRef.current?.carried ?? 0) },
+      { label: t(`${k}.banked`), value: String(coinsRef.current?.banked ?? 0) },
+      { label: t(`${k}.stolen`), value: String(coinsRef.current?.drained ?? 0) },
+      { label: t(`${k}.recovered`), value: String(coinsRef.current?.recovered ?? 0) },
+      { label: t(`${k}.gems`), value: `${gemsRef.current?.collected ?? 0} / ${gemsRef.current?.gems.length ?? 0}` }
+    ];
+    if (modeRef.current === 'adventure' && race) {
+      rows.push({ label: t(`${k}.votes`), value: `${race.carried} / ${race.line}`, accent: '#ffd24a' });
+      rows.push({ label: t(`${k}.funded`), value: t(`${k}.${race.funded ? 'yes' : 'no'}`), accent: '#ffd24a' });
+    }
+    rows.push({
+      label: t(`${k}.trophies`),
+      value: wheelTrophiesRef.current.length ? wheelTrophiesRef.current.join(', ') : t(`${k}.none`)
+    });
+    rows.push({ label: t(`${k}.places`), value: `${visitedRef.current?.size ?? 0} / ${LANDMARKS.length}` });
+    rows.push({
+      label: t(`${k}.communities`),
+      value: `${visitedCommunitiesRef.current?.size ?? 0} / ${communities?.length ?? 0}`
+    });
+    rows.push({ label: t(`${k}.newbs`), value: `${visitedNewbsRef.current.size} / ${newbieNodes.size}` });
+    return rows;
+  };
+  const toggleDashboard = () => {
+    dashOpenRef.current = !dashOpenRef.current;
+    setDashRows(dashOpenRef.current ? snapshotDashboard() : null);
+  };
+  // While the dashboard is open its numbers keep up with the game.
+  useEffect(() => {
+    if (!dashRows) return;
+    const id = window.setInterval(() => setDashRows(snapshotDashboard()), 500);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dashRows !== null]);
+
   const skip = () => {
     const p = playerRef.current;
     if (p.atNode >= 0) {
@@ -1483,6 +1590,9 @@ const Stage = ({ board }: { board: Board }) => {
   // adventure mode, else the day's buzzing station.
   const landmarkNote = (id: string): string | undefined => {
     const race = raceRef.current;
+    if (id === FLIP_LANDMARK_ID) {
+      return t(side === 'steem' ? 'hive_frontend_universe.panel.ruins_back' : 'hive_frontend_universe.panel.ruins_front');
+    }
     if (id === 'proposals' && mode === 'adventure' && race) {
       if (race.funded) return t('hive_frontend_universe.panel.race_funded');
       return t('hive_frontend_universe.panel.race_short', { count: Math.max(0, race.line - race.carried) });
@@ -1601,6 +1711,19 @@ const Stage = ({ board }: { board: Board }) => {
 
       {/* THE MODE CHIP, top right: mode name + round clock; tap to change. */}
       {mode ? <ModeChip mode={mode} onChange={reopenWelcome} /> : null}
+      {mode ? (
+        <button
+          type="button"
+          data-testid="hfu-dashboard-open"
+          onClick={toggleDashboard}
+          className="pointer-events-auto absolute right-3 top-12 z-20 rounded-full border border-[#5df0ff]/50 bg-black/60 px-3 py-1 font-mono text-[11px] font-bold text-[#5df0ff]"
+        >
+          {t('hive_frontend_universe.dashboard.open')}
+        </button>
+      ) : null}
+      {dashRows ? (
+        <PlayerDashboard title={t('hive_frontend_universe.dashboard.title')} rows={dashRows} onClose={toggleDashboard} />
+      ) : null}
 
       {/* THE WELCOME AT BASECAMP: every round starts here (Bryan). */}
       {mode === null ? <WelcomeRoom onPick={pickMode} /> : null}
