@@ -25,6 +25,31 @@ On the road, in order:
 - This file is the **overview chart** when we talk (Bryan, 2026-09-06). "The map" means the game world. See CONTEXT.md.
 - Frontier order is by ticket number. Bryan may name any ticket instead.
 
+## Order (Bryan's two lists, 2026-09-06)
+
+Frontier by number still applies when nobody names a ticket. When Bryan is fresh and has 3 to 5 hours, take the foundational list in order. When he wants movement, take the fast list.
+
+Foundational (talk, needs him fresh):
+1. [The match table](issues/33-the-match-table.md): the spine; every later ticket points at its cells.
+2. [What each mode holds, and the welcome at Basecamp](issues/16-what-each-mode-holds.md): unblocks 20, 24, 25, 32.
+3. [The trust conversation](issues/15-the-trust-conversation.md): unblocks anything that says something about a real account.
+4. [Cemented phases in adventure mode](issues/24-cemented-phases-in-adventure-mode.md): after 16.
+5. [Which relay for live players, and when](issues/22-which-relay-for-live-players.md): after Meno answers (23).
+
+Fast, actionable (build or rough, small):
+1. [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md)
+2. [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): after 34.
+3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md)
+4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md)
+5. [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md)
+6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md)
+7. [H.I.V.E.R. in the glossary](issues/29-hiver-in-the-glossary.md): five minutes once Bryan gives the letters.
+8. [Confirm 3speak space with Meno](issues/23-confirm-3speak-space-with-meno.md): Bryan's, one message.
+
+Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md), [Build footprints](issues/30-build-footprints.md), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md).
+
+Blocked until the foundational talks land: 20, 25, 31, 32.
+
 ## Decisions so far
 
 - [Adventure-game return loops](issues/01-adventure-game-return-loops.md): twelve return mechanisms; the game lacks a record of what you learned, a calendar past one day, and people
