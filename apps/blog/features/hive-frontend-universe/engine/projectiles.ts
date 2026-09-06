@@ -300,6 +300,82 @@ function drawBurst(ctx: CanvasRenderingContext2D, b: Burst): void {
   ctx.restore();
 }
 
+/**
+ * ENEMY SHOTS ARE BLATANT. Bryan: "very hard to distinguish the bullets...
+ * often im getting struck but i couldnt even tell a shot was coming at me."
+ * So every enemy shot is the same vibrant blue whatever fired it, big, with
+ * a white core, a soft halo, a long bright tail, and a size that pulses as
+ * it flies. Nothing else on the board is this blue or this big and moving.
+ * The critter's own colour stays on the hit bursts, where it says who.
+ */
+const ENEMY_SHOT = '#1f6bff';
+const ENEMY_SHOT_CORE = '#dff0ff';
+/** Radius of the ball, at rest and at the top of the pulse. */
+const ENEMY_SHOT_RADIUS = 24;
+const ENEMY_SHOT_PULSE = 8;
+/** Pulses per second. Fast enough to read as alive, not a blink. */
+const ENEMY_SHOT_PULSE_HZ = 4;
+const ENEMY_SHOT_TAIL = 90;
+const PLAYER_SHOT_RADIUS = 9;
+
+function drawEnemyShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number): void {
+  const pulse = Math.sin(s.age * ENEMY_SHOT_PULSE_HZ * 6.283);
+  const r = ENEMY_SHOT_RADIUS + pulse * ENEMY_SHOT_PULSE;
+
+  // Halo: twice the ball, faint, so the shot is seen before it is read.
+  ctx.globalAlpha = 0.28 + pulse * 0.08;
+  ctx.fillStyle = ENEMY_SHOT;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, r * 2, 0, 6.283);
+  ctx.fill();
+
+  // Tail: a thick blue streak back along the flight line, fading.
+  const grad = ctx.createLinearGradient(s.x - nx * ENEMY_SHOT_TAIL, s.y - ny * ENEMY_SHOT_TAIL, s.x, s.y);
+  grad.addColorStop(0, 'rgba(31,107,255,0)');
+  grad.addColorStop(1, 'rgba(31,107,255,0.9)');
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = grad;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = r * 1.1;
+  ctx.beginPath();
+  ctx.moveTo(s.x - nx * ENEMY_SHOT_TAIL, s.y - ny * ENEMY_SHOT_TAIL);
+  ctx.lineTo(s.x, s.y);
+  ctx.stroke();
+
+  // The ball: blue, dark outline, white-hot core.
+  ctx.fillStyle = ENEMY_SHOT;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, r, 0, 6.283);
+  ctx.fill();
+  ctx.strokeStyle = OUTLINE;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = ENEMY_SHOT_CORE;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, r * 0.45, 0, 6.283);
+  ctx.fill();
+}
+
+function drawPlayerShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number): void {
+  const color = SHOT_COLORS.player;
+  ctx.strokeStyle = color;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.55;
+  ctx.beginPath();
+  ctx.moveTo(s.x - nx * 30, s.y - ny * 30);
+  ctx.lineTo(s.x, s.y);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, PLAYER_SHOT_RADIUS, 0, 6.283);
+  ctx.fill();
+  ctx.strokeStyle = OUTLINE;
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+}
+
 export function drawProjectiles(
   ctx: CanvasRenderingContext2D,
   state: ProjectileState,
@@ -310,24 +386,10 @@ export function drawProjectiles(
     const speed = Math.hypot(s.vx, s.vy) || 1;
     const nx = s.vx / speed;
     const ny = s.vy / speed;
-    const color = SHOT_COLORS[s.kind] ?? '#ffffff';
-    ctx.strokeStyle = color;
-    ctx.lineCap = 'round';
-    ctx.lineWidth = 4;
-    ctx.globalAlpha = 0.55;
-    ctx.beginPath();
-    ctx.moveTo(s.x - nx * 22, s.y - ny * 22);
-    ctx.lineTo(s.x, s.y);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, 6, 0, 6.283);
-    ctx.fill();
-    ctx.strokeStyle = OUTLINE;
-    ctx.lineWidth = 1.6;
-    ctx.stroke();
+    if (s.owner === 'critter') drawEnemyShot(ctx, s, nx, ny);
+    else drawPlayerShot(ctx, s, nx, ny);
   }
+  ctx.globalAlpha = 1;
   for (const b of state.bursts) {
     if (!vis(b.x, b.y)) continue;
     drawBurst(ctx, b);
