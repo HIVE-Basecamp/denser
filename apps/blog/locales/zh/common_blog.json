@@ -880,6 +880,8 @@
       "map": "地图"
     },
     "panel": {
+      "race_funded": "高于回报线。你的提案本回合获得资助。",
+      "race_short": "低于回报线。还差 {{count}} 票。",
       "open": "打开",
       "skip": "跳过",
       "nothing_here": "这里还没有内容,稍后开放。",
@@ -928,6 +930,10 @@
       "frontend": "前端",
       "frontend_blurb": "hive.blog 的工具会突出显示。把地图当网站用。",
       "change": "切换模式"
+    },
+    "race": {
+      "votes": "票数",
+      "funded": "已资助"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

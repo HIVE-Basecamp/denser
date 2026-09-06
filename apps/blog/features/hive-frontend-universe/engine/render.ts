@@ -219,6 +219,8 @@ export interface LandmarkVisual {
   handle?: string;
   /** A hive.blog page (internal route or wallet): front end mode beacons these. */
   site?: boolean;
+  /** The DHF Fun Park: the race's finish line in adventure mode. */
+  raceGoal?: boolean;
 }
 
 export interface CommunityVisual {
@@ -358,6 +360,8 @@ export interface RenderScene {
   buzz?: { x: number; y: number; r: number } | null;
   /** The picked mode; null before the welcome is answered. */
   mode?: GameMode | null;
+  /** The DHF race (adventure mode): which houses' votes are taken, and whether funded. */
+  race?: { taken: ReadonlySet<number>; funded: boolean } | null;
   hud: {
     housesLabel: string;
     windowLabel: string;
@@ -384,6 +388,12 @@ export interface RenderScene {
     newbsLabel?: string;
     newbs?: number;
     newbsTotal?: number;
+    /** The DHF race line: carried / return line, or FUNDED. Adventure mode only. */
+    votesLabel?: string;
+    votes?: number;
+    votesLine?: number;
+    fundedLabel?: string;
+    funded?: boolean;
   };
 }
 
@@ -1313,6 +1323,19 @@ export function drawScene(scene: RenderScene): void {
         ctx.stroke();
         ctx.globalAlpha = 1;
       }
+      // ADVENTURE MODE, the DHF race: a house whose vote is still there
+      // wears a gold ring; take it and the ring goes. Whales ring wider,
+      // because their vote weighs more.
+      if (scene.mode === 'adventure' && scene.race && !scene.race.taken.has(n.id) && !scene.race.funded) {
+        const vb = 0.5 + Math.sin(time * 2.4 + n.id * 1.3) * 0.5;
+        ctx.strokeStyle = '#ffd24a';
+        ctx.globalAlpha = 0.35 + vb * 0.5;
+        ctx.lineWidth = (2 + h.tier * 0.6) / Math.max(z, 0.1);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, rNode * (2 + h.tier * 0.25) + vb * 5, 0, 6.283);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
       if (h.isNewcomer) {
         const beat = 0.5 + Math.sin(time * 1.9 + n.id) * 0.5;
         // THE NEWB TRAIL QUEST GLOW: an unvisited newcomer post burns in
@@ -1451,28 +1474,12 @@ export function drawScene(scene: RenderScene): void {
     const s = lm.big
       ? (BIG_SIZE[lm.icon] ?? 300) * bigScale
       : (minor ? 34 : 52) / Math.max(z, 0.45);
-    // FRONT END MODE: the places that are hive.blog pages (internal routes
-    // and the wallet) wear a cyan beacon sized from the art itself, so it
-    // shows around the tent as well as around a small marker. Drawn before
-    // the pad and the icon, so the art sits inside the ring.
-    if (scene.mode === 'frontend' && lm.site) {
-      const fb = 0.5 + Math.sin(time * 2.2 + n.id) * 0.5;
-      const br = s * 1.7;
-      const bg = ctx.createRadialGradient(n.x, n.y, s * 0.6, n.x, n.y, br);
-      bg.addColorStop(0, `rgba(93, 240, 255, ${(0.2 + fb * 0.14).toFixed(3)})`);
-      bg.addColorStop(1, 'rgba(93, 240, 255, 0)');
-      ctx.fillStyle = bg;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, br, 0, 6.283);
-      ctx.fill();
-      ctx.strokeStyle = '#5df0ff';
-      ctx.globalAlpha = 0.35 + fb * 0.5;
-      ctx.lineWidth = 3 / Math.max(z, 0.1);
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, s * 1.25 + fb * s * 0.08, 0, 6.283);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    }
+    // MODE BEACONS, sized from the art so they ring the tent as well as a
+    // small marker, drawn before the pad and the icon so the art sits inside.
+    // Front end: every hive.blog page, cyan. Adventure: the DHF Fun Park,
+    // gold, the race's finish line.
+    if (scene.mode === 'frontend' && lm.site) drawBeacon(ctx, n.x, n.y, s, z, time + n.id, '93, 240, 255', '#5df0ff');
+    if (scene.mode === 'adventure' && lm.raceGoal) drawBeacon(ctx, n.x, n.y, s, z, time + n.id, '255, 210, 74', '#ffd24a');
     // GROUND PAD: a dark clearing under each big place, fading in with the
     // map. Anchors the attraction to the land (park maps sit rides in
     // plazas) and buys silhouette contrast against the busy red.
@@ -1914,6 +1921,39 @@ function drawCube(ctx: CanvasRenderingContext2D, c: Cube): void {
   ctx.globalAlpha = 1;
 }
 
+/**
+ * A breathing beacon around a landmark: soft radial glow plus one pulsing
+ * ring, both sized from the landmark's drawn size `s`. `rgb` is the glow
+ * as "r, g, b"; `hex` the ring.
+ */
+function drawBeacon(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  s: number,
+  z: number,
+  phase: number,
+  rgb: string,
+  hex: string
+): void {
+  const fb = 0.5 + Math.sin(phase * 2.2) * 0.5;
+  const br = s * 1.7;
+  const bg = ctx.createRadialGradient(x, y, s * 0.6, x, y, br);
+  bg.addColorStop(0, `rgba(${rgb}, ${(0.2 + fb * 0.14).toFixed(3)})`);
+  bg.addColorStop(1, `rgba(${rgb}, 0)`);
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  ctx.arc(x, y, br, 0, 6.283);
+  ctx.fill();
+  ctx.strokeStyle = hex;
+  ctx.globalAlpha = 0.35 + fb * 0.5;
+  ctx.lineWidth = 3 / Math.max(z, 0.1);
+  ctx.beginPath();
+  ctx.arc(x, y, s * 1.25 + fb * s * 0.08, 0, 6.283);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
 function drawHud(scene: RenderScene): void {
   const { ctx, hud } = scene;
   // No scrim box any more (Bryan: "the score card stuff is bright enough
@@ -1955,6 +1995,14 @@ function drawHud(scene: RenderScene): void {
     ctx.fillStyle = '#ffd24a';
     const modePart = hud.modeLabel ? `  ${hud.modeLabel}` : '';
     ctx.fillText(`${hud.roundLabel} ${hud.roundLeft}${modePart}`, 16, hudY);
+    hudY += 19;
+  }
+  // THE DHF RACE line, adventure mode only: votes carried against the return
+  // line, then FUNDED once delivered.
+  if (hud.votesLabel !== undefined && hud.votes !== undefined) {
+    ctx.fillStyle = '#ffd24a';
+    const text = hud.funded ? `${hud.votesLabel} ${hud.fundedLabel ?? ''}` : `${hud.votesLabel} ${hud.votes} / ${hud.votesLine ?? 0}`;
+    ctx.fillText(text, 16, hudY);
     hudY += 19;
   }
   // With the planning grid on, the HUD names the box the bug stands in, so

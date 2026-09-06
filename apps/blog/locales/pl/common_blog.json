@@ -885,6 +885,8 @@
       "map": "MAPA"
     },
     "panel": {
+      "race_funded": "Powyżej linii zwrotu. Twoja propozycja dostaje fundusze w tej rundzie.",
+      "race_short": "Poniżej linii zwrotu. Brakuje {{count}} głosów.",
       "open": "Otwórz",
       "skip": "Pomiń",
       "nothing_here": "Tu jeszcze nic nie ma. To miejsce otworzy się później.",
@@ -933,6 +935,10 @@
       "frontend": "Front end",
       "frontend_blurb": "Narzędzia hive.blog się wyróżniają. Używaj mapy jak strony.",
       "change": "Zmień tryb"
+    },
+    "race": {
+      "votes": "GŁOSY",
+      "funded": "SFINANSOWANO"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

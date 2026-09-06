@@ -880,6 +880,8 @@
       "map": "マップ"
     },
     "panel": {
+      "race_funded": "リターンラインの上。今ラウンドの提案は資金を得た。",
+      "race_short": "リターンラインの下。あと {{count}} 票。",
       "open": "開く",
       "skip": "スキップ",
       "nothing_here": "ここにはまだ何もありません。後で開きます。",
@@ -928,6 +930,10 @@
       "frontend": "フロントエンド",
       "frontend_blurb": "hive.blogのツールが目立つ。地図をサイトのように使おう。",
       "change": "モード変更"
+    },
+    "race": {
+      "votes": "票",
+      "funded": "資金獲得"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

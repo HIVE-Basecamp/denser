@@ -67,6 +67,7 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [The trust conversation comes early](issues/13-the-trust-conversation-comes-early.md): yes, ticket 15
 - [How far a loss can go](issues/14-how-far-a-loss-can-go.md): soft outside adventure mode; adventure mode has cemented phases
 - [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): built; welcome, four modes, round clock, live rollover; explore has no consequences
+- [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): built; stake-weighted votes from houses, return line, deliver at the Fun Park, votes drop on the setback
 
 ## Not yet specified
 

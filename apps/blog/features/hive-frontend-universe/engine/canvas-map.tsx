@@ -62,6 +62,7 @@ import {
   type HazardState
 } from './hazards';
 import { createGems, updateGems, type GemState } from './gems';
+import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from './dhf-race';
 import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
 import { createCombat, tickCombat, type CombatState } from './combat';
 import { buildGround } from './ground';
@@ -269,7 +270,8 @@ const Stage = ({ board }: { board: Board }) => {
         icon: lm.icon,
         big: lm.big,
         handle: LANDMARK_ACCOUNTS[lm.id],
-        site: lm.kind === 'internal' || lm.kind === 'wallet'
+        site: lm.kind === 'internal' || lm.kind === 'wallet',
+        raceGoal: lm.id === 'proposals'
       })),
     [t]
   );
@@ -429,6 +431,8 @@ const Stage = ({ board }: { board: Board }) => {
   const hazardsRef = useRef<HazardState | null>(null);
   /** Colorful collectible gems, reseeded every board. */
   const gemsRef = useRef<GemState | null>(null);
+  /** The DHF race (adventure mode); rebuilt with every round. */
+  const raceRef = useRef<RaceState | null>(null);
   /** Enemy and player shots in flight. */
   const projectilesRef = useRef<ProjectileState | null>(null);
   /** The bug's hit points; three hits sends it home. */
@@ -541,6 +545,7 @@ const Stage = ({ board }: { board: Board }) => {
     helmetsRef.current = createHelmets();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
     gemsRef.current = createGems(world, board.windowStart);
+    raceRef.current = createRace(board.houses.map((h) => h.tier));
     projectilesRef.current = createProjectiles();
     combatRef.current = createCombat();
     // The newb trail resets with the board: new window, new posts, new quest.
@@ -1085,6 +1090,7 @@ const Stage = ({ board }: { board: Board }) => {
             shake = 6;
           } else {
             if (coinsRef.current) coinsRef.current.carried = 0;
+            if (raceRef.current) dropVotes(raceRef.current);
             const homeIdx = LANDMARKS.findIndex((lm) => lm.id === 'basecamp');
             const homeNode = world.landmarkNodeByIndex[homeIdx] ?? -1;
             if (homeNode >= 0) {
@@ -1122,6 +1128,15 @@ const Stage = ({ board }: { board: Board }) => {
           ) {
             newbAwardedRef.current = true;
             gemsRef.current.collected++;
+          }
+        }
+        // THE DHF RACE (adventure mode): parking at a house takes its vote,
+        // weighted by real stake; parking at the DHF Fun Park delivers.
+        if (raceRef.current && modeRef.current === 'adventure') {
+          if (vn?.kind === 'house') {
+            takeVote(raceRef.current, p.atNode, board.houses[vn.ref]?.tier ?? 0);
+          } else if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === 'proposals') {
+            if (deliverVotes(raceRef.current)) warpFxRef.current = 1;
           }
         }
         if (vn?.kind === 'landmark' && visitedRef.current) {
@@ -1354,6 +1369,7 @@ const Stage = ({ board }: { board: Board }) => {
         hoverGridCell: hoverGridRef.current,
         buzz,
         mode: modeRef.current,
+        race: raceRef.current,
         ground,
         activeCommunity: inCommunityTick.current,
         player: p,
@@ -1384,7 +1400,12 @@ const Stage = ({ board }: { board: Board }) => {
           roundLeft: formatCountdown(msToNextRound(Date.now())),
           modeLabel: modeRef.current
             ? t(GAME_MODES.find((gm) => gm.id === modeRef.current)?.labelKey ?? '')
-            : undefined
+            : undefined,
+          votesLabel: modeRef.current === 'adventure' ? t('hive_frontend_universe.race.votes') : undefined,
+          votes: raceRef.current?.carried ?? 0,
+          votesLine: raceRef.current?.line ?? 0,
+          fundedLabel: t('hive_frontend_universe.race.funded'),
+          funded: raceRef.current?.funded ?? false
         }
       });
       // Rolling frame-time meter, exposed on the debug handle (measured).
@@ -1396,6 +1417,10 @@ const Stage = ({ board }: { board: Board }) => {
           dbg.frameAvgMs = Math.round((frameAcc / frameN) * 100) / 100;
           dbg.mapness = Math.round(mapness * 100) / 100;
           dbg.avatars = avatarStats();
+          // The mode and the race, readable from the console while directing.
+          dbg.mode = modeRef.current;
+          dbg.race = raceRef.current;
+          dbg.atNode = p.atNode;
         }
         frameAcc = 0;
         frameN = 0;
@@ -1453,6 +1478,18 @@ const Stage = ({ board }: { board: Board }) => {
   /** The community the bug is standing in, for the "You are here" banner. */
   const insideCommunity: TopCommunity | null =
     inCommunity >= 0 && communities ? communities[inCommunity] ?? null : null;
+
+  // One line of news on a landmark panel: the DHF race at the park in
+  // adventure mode, else the day's buzzing station.
+  const landmarkNote = (id: string): string | undefined => {
+    const race = raceRef.current;
+    if (id === 'proposals' && mode === 'adventure' && race) {
+      if (race.funded) return t('hive_frontend_universe.panel.race_funded');
+      return t('hive_frontend_universe.panel.race_short', { count: Math.max(0, race.line - race.carried) });
+    }
+    if (buzz && id === buzz.landmarkId) return t('hive_frontend_universe.panel.buzzing');
+    return undefined;
+  };
 
   return (
     <div
@@ -1548,11 +1585,7 @@ const Stage = ({ board }: { board: Board }) => {
                 ? t('hive_frontend_universe.panel.rose_window')
                 : t('hive_frontend_universe.panel.dapps')
           }
-          note={
-            buzz && atLandmark.id === buzz.landmarkId
-              ? t('hive_frontend_universe.panel.buzzing')
-              : undefined
-          }
+          note={landmarkNote(atLandmark.id)}
           onSkip={skip}
         />
       ) : null}
