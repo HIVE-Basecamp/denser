@@ -906,6 +906,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "TRYB",
+      "round": "RUNDA",
       "houses": "DOMY",
       "window": "OKNO",
       "tokens": "ŻETONY",
@@ -917,6 +919,20 @@
     "map": {
       "hint": "Dotknij miejsca, aby tam podróżować",
       "in_community": "W: {{name}}"
+    },
+    "modes": {
+      "welcome": "Witaj w Basecamp",
+      "next_round": "Następna runda za {{time}}",
+      "pick": "Wybierz, jak grasz w tej rundzie",
+      "explore": "Wolna eksploracja",
+      "explore_blurb": "Wędruj. Nic nie odeśle cię do domu.",
+      "curation": "Kuracja",
+      "curation_blurb": "Idź przywitać się z ludźmi pod ich postami.",
+      "adventure": "Przygoda",
+      "adventure_blurb": "Strona gry. Wrogowie gryzą, żetony wypadają.",
+      "frontend": "Front end",
+      "frontend_blurb": "Narzędzia hive.blog się wyróżniają. Używaj mapy jak strony.",
+      "change": "Zmień tryb"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

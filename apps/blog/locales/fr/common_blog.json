@@ -901,6 +901,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "MODE",
+      "round": "MANCHE",
       "houses": "MAISONS",
       "window": "FENÊTRE",
       "tokens": "JETONS",
@@ -912,6 +914,20 @@
     "map": {
       "hint": "Touchez un lieu pour vous y rendre",
       "in_community": "Dans : {{name}}"
+    },
+    "modes": {
+      "welcome": "Bienvenue à Basecamp",
+      "next_round": "Prochaine manche dans {{time}}",
+      "pick": "Choisis comment jouer cette manche",
+      "explore": "Exploration libre",
+      "explore_blurb": "Vagabonde. Rien ne peut te renvoyer chez toi.",
+      "curation": "Curation",
+      "curation_blurb": "Va dire bonjour aux gens sur leurs posts.",
+      "adventure": "Aventure",
+      "adventure_blurb": "Le côté jeu. Les ennemis mordent, les jetons tombent.",
+      "frontend": "Front end",
+      "frontend_blurb": "Les outils hive.blog ressortent. Utilise la carte comme le site.",
+      "change": "Changer de mode"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

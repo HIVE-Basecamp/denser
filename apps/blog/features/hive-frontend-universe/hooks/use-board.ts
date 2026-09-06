@@ -26,8 +26,8 @@ async function loadBoard(windowStart: number): Promise<Board> {
   return board;
 }
 
-export function useBoard() {
-  const windowStart = windowStartFor(Date.now());
+/** Pass the round start to re-key when the caller's clock rolls over. */
+export function useBoard(windowStart: number = windowStartFor(Date.now())) {
   return useQuery<Board>({
     queryKey: ['hfu-board', windowStart],
     queryFn: () => loadBoard(windowStart),

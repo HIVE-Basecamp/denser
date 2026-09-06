@@ -21,8 +21,11 @@ import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBoard } from '../hooks/use-board';
 import { useCommunities } from '../hooks/use-communities';
 import { useWitnesses } from '../hooks/use-witnesses';
+import { GAME_MODES, formatCountdown, modeHasConsequences, msToNextRound, type GameMode } from '../lib/modes';
+import { WelcomeRoom } from '../card/welcome-room';
+import { ModeChip } from '../card/mode-chip';
 import { HFU_COPY } from '../lib/strings';
-import { TIERS, type Board } from '../lib/board';
+import { TIERS, windowStartFor, type Board } from '../lib/board';
 import {
   WORLD,
   LANDMARKS,
@@ -109,11 +112,24 @@ const CATEGORY_ACCENT: Record<string, string> = {
 };
 
 const CanvasMap = () => {
-  const { data: board, isLoading, isError } = useBoard();
+  // THE ROUND CLOCK. The board is keyed by the round (window) start, which
+  // used to be computed only at render time, so a bug parked across a round
+  // change kept the old world. This once-a-second check re-renders exactly
+  // when the round rolls over: the next board loads and the Stage below
+  // remounts (keyed by round) with the welcome up again.
+  const [roundStart, setRoundStart] = useState(() => windowStartFor(Date.now()));
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const ws = windowStartFor(Date.now());
+      setRoundStart((prev) => (prev === ws ? prev : ws));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const { data: board, isLoading, isError } = useBoard(roundStart);
 
   if (isLoading) return <Centered>{HFU_COPY.loadingBoard}</Centered>;
   if (isError || !board) return <Centered>{HFU_COPY.loadError}</Centered>;
-  return <Stage board={board} />;
+  return <Stage key={board.windowStart} board={board} />;
 };
 
 const Centered = ({ children }: { children: React.ReactNode }) => (
@@ -143,6 +159,17 @@ const Stage = ({ board }: { board: Board }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [atNode, setAtNode] = useState(-1);
+  // THE MODE (Bryan, 2026-09-06): null until the player answers the welcome.
+  // The frame loop reads the ref. Explore has no consequences; the others
+  // keep the setback. What each mode holds grows in later tickets.
+  const [mode, setMode] = useState<GameMode | null>(null);
+  const modeRef = useRef<GameMode | null>(null);
+  modeRef.current = mode;
+  const pickMode = (m: GameMode) => {
+    setMode(m);
+    wrapRef.current?.focus();
+  };
+  const reopenWelcome = () => setMode(null);
   /** A house opened by clicking/tapping its marker (bigger than the marker). */
   const [clickedNode, setClickedNode] = useState(-1);
   const [fullMap, setFullMap] = useState(false);
@@ -241,7 +268,8 @@ const Stage = ({ board }: { board: Board }) => {
         category: lm.category,
         icon: lm.icon,
         big: lm.big,
-        handle: LANDMARK_ACCOUNTS[lm.id]
+        handle: LANDMARK_ACCOUNTS[lm.id],
+        site: lm.kind === 'internal' || lm.kind === 'wallet'
       })),
     [t]
   );
@@ -1051,14 +1079,20 @@ const Stage = ({ board }: { board: Board }) => {
         updateProjectiles(projectilesRef.current, p, crittersRef.current, combatRef.current, dt, ts / 1000);
         if (combatRef.current.respawned) {
           combatRef.current.respawned = false;
-          if (coinsRef.current) coinsRef.current.carried = 0;
-          const homeIdx = LANDMARKS.findIndex((lm) => lm.id === 'basecamp');
-          const homeNode = world.landmarkNodeByIndex[homeIdx] ?? -1;
-          if (homeNode >= 0) {
-            placeAt(p, edges, incident, homeNode);
-            warpFxRef.current = 1;
-            p.stuck = 1.4;
-            shake = 12;
+          // EXPLORE MODE has no consequences (Bryan): the hits clear and the
+          // bug stays where it is. Every other mode pays the setback.
+          if (!modeHasConsequences(modeRef.current)) {
+            shake = 6;
+          } else {
+            if (coinsRef.current) coinsRef.current.carried = 0;
+            const homeIdx = LANDMARKS.findIndex((lm) => lm.id === 'basecamp');
+            const homeNode = world.landmarkNodeByIndex[homeIdx] ?? -1;
+            if (homeNode >= 0) {
+              placeAt(p, edges, incident, homeNode);
+              warpFxRef.current = 1;
+              p.stuck = 1.4;
+              shake = 12;
+            }
           }
         }
       }
@@ -1319,6 +1353,7 @@ const Stage = ({ board }: { board: Board }) => {
         debugGrid: gridRef.current,
         hoverGridCell: hoverGridRef.current,
         buzz,
+        mode: modeRef.current,
         ground,
         activeCommunity: inCommunityTick.current,
         player: p,
@@ -1344,7 +1379,12 @@ const Stage = ({ board }: { board: Board }) => {
           housesLabel: t('hive_frontend_universe.hud.houses'),
           windowLabel: t('hive_frontend_universe.hud.window'),
           housesCount: board.houses.length,
-          windowTime: `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+          windowTime: `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`,
+          roundLabel: t('hive_frontend_universe.hud.round'),
+          roundLeft: formatCountdown(msToNextRound(Date.now())),
+          modeLabel: modeRef.current
+            ? t(GAME_MODES.find((gm) => gm.id === modeRef.current)?.labelKey ?? '')
+            : undefined
         }
       });
       // Rolling frame-time meter, exposed on the debug handle (measured).
@@ -1525,6 +1565,12 @@ const Stage = ({ board }: { board: Board }) => {
           onSkip={skip}
         />
       ) : null}
+
+      {/* THE MODE CHIP, top right: mode name + round clock; tap to change. */}
+      {mode ? <ModeChip mode={mode} onChange={reopenWelcome} /> : null}
+
+      {/* THE WELCOME AT BASECAMP: every round starts here (Bryan). */}
+      {mode === null ? <WelcomeRoom onPick={pickMode} /> : null}
 
       <Controls
         labels={{ hop: t('hive_frontend_universe.controls.hop'), map: t('hive_frontend_universe.controls.map') }}

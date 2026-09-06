@@ -22,7 +22,9 @@ const HiveFrontendUniverse = dynamic(() => import('@/blog/features/hive-frontend
 
 export default function HiveFrontendUniversePage() {
   return (
-    <div className="fixed inset-0 h-[100dvh] w-full overflow-hidden bg-[#04060a]">
+    // Below the sticky site header (h-16), not under it: the HUD's top lines
+    // and the mode chip were hidden behind the header on this route.
+    <div className="fixed inset-x-0 bottom-0 top-16 w-full overflow-hidden bg-[#04060a]">
       <HiveFrontendUniverse />
     </div>
   );

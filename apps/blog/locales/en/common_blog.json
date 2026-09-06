@@ -1003,6 +1003,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "MODE",
+      "round": "ROUND",
       "houses": "HOUSES",
       "window": "WINDOW",
       "tokens": "TOKENS",
@@ -1014,6 +1016,20 @@
     "map": {
       "hint": "Tap a landmark to travel there",
       "in_community": "In: {{name}}"
+    },
+    "modes": {
+      "welcome": "Welcome to Basecamp",
+      "next_round": "Next round in {{time}}",
+      "pick": "Pick how you want to play this round",
+      "explore": "Open explore",
+      "explore_blurb": "Roam. Nothing can send you home.",
+      "curation": "Curation",
+      "curation_blurb": "Go say hi to people on their posts.",
+      "adventure": "Adventure",
+      "adventure_blurb": "The game side. Enemies bite, tokens drop.",
+      "frontend": "Front end",
+      "frontend_blurb": "The hive.blog tools stand out. Use the map like the site.",
+      "change": "Change mode"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

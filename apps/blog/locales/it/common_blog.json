@@ -901,6 +901,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "MODALITÀ",
+      "round": "ROUND",
       "houses": "CASE",
       "window": "FINESTRA",
       "tokens": "GETTONI",
@@ -912,6 +914,20 @@
     "map": {
       "hint": "Tocca un luogo per viaggiarci",
       "in_community": "In: {{name}}"
+    },
+    "modes": {
+      "welcome": "Benvenuto a Basecamp",
+      "next_round": "Prossimo round tra {{time}}",
+      "pick": "Scegli come giocare questo round",
+      "explore": "Esplorazione libera",
+      "explore_blurb": "Vaga. Niente può rimandarti a casa.",
+      "curation": "Curation",
+      "curation_blurb": "Vai a salutare le persone sui loro post.",
+      "adventure": "Avventura",
+      "adventure_blurb": "Il lato gioco. I nemici mordono, i token cadono.",
+      "frontend": "Front end",
+      "frontend_blurb": "Gli strumenti di hive.blog risaltano. Usa la mappa come il sito.",
+      "change": "Cambia modalità"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

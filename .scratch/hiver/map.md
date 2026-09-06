@@ -37,7 +37,7 @@ Foundational (talk, needs him fresh):
 5. [Which relay for live players, and when](issues/22-which-relay-for-live-players.md): after Meno answers (23).
 
 Fast, actionable (build or rough, small):
-1. [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md)
+1. [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): done 2026-09-06
 2. [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): after 34.
 3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md)
 4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md)
@@ -66,6 +66,7 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [Hive's real calendar](issues/12-hives-real-calendar.md): try them all; build the Power Up Day festival and the payout change
 - [The trust conversation comes early](issues/13-the-trust-conversation-comes-early.md): yes, ticket 15
 - [How far a loss can go](issues/14-how-far-a-loss-can-go.md): soft outside adventure mode; adventure mode has cemented phases
+- [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): built; welcome, four modes, round clock, live rollover; explore has no consequences
 
 ## Not yet specified
 

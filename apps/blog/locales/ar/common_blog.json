@@ -948,6 +948,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "الوضع",
+      "round": "الجولة",
       "houses": "المنازل",
       "window": "النافذة",
       "tokens": "رموز",
@@ -959,6 +961,20 @@
     "map": {
       "hint": "انقر على معلم للسفر إليه",
       "in_community": "في: {{name}}"
+    },
+    "modes": {
+      "welcome": "مرحبًا بك في Basecamp",
+      "next_round": "الجولة التالية بعد {{time}}",
+      "pick": "اختر طريقة لعبك في هذه الجولة",
+      "explore": "استكشاف حر",
+      "explore_blurb": "تجوّل. لا شيء يعيدك إلى البيت.",
+      "curation": "التنسيق",
+      "curation_blurb": "اذهب وألقِ التحية على الناس في منشوراتهم.",
+      "adventure": "مغامرة",
+      "adventure_blurb": "جانب اللعبة. الأعداء يعضّون والعملات تسقط.",
+      "frontend": "الواجهة",
+      "frontend_blurb": "أدوات hive.blog تبرز. استخدم الخريطة كموقع.",
+      "change": "تغيير الوضع"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

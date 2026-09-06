@@ -901,6 +901,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "モード",
+      "round": "ラウンド",
       "houses": "家",
       "window": "ウィンドウ",
       "tokens": "トークン",
@@ -912,6 +914,20 @@
     "map": {
       "hint": "ランドマークをタップして移動",
       "in_community": "現在地: {{name}}"
+    },
+    "modes": {
+      "welcome": "Basecampへようこそ",
+      "next_round": "次のラウンドまで {{time}}",
+      "pick": "このラウンドの遊び方を選ぼう",
+      "explore": "自由探索",
+      "explore_blurb": "さまよおう。家に送り返されることはない。",
+      "curation": "キュレーション",
+      "curation_blurb": "みんなの投稿に挨拶しに行こう。",
+      "adventure": "アドベンチャー",
+      "adventure_blurb": "ゲームの側。敵は噛むし、トークンは落ちる。",
+      "frontend": "フロントエンド",
+      "frontend_blurb": "hive.blogのツールが目立つ。地図をサイトのように使おう。",
+      "change": "モード変更"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

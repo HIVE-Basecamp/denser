@@ -901,6 +901,8 @@
       "rose_window": "Hive Comb Home"
     },
     "hud": {
+      "mode": "模式",
+      "round": "回合",
       "houses": "房屋",
       "window": "窗口",
       "tokens": "代币",
@@ -912,6 +914,20 @@
     "map": {
       "hint": "点按地标即可前往",
       "in_community": "所在: {{name}}"
+    },
+    "modes": {
+      "welcome": "欢迎来到 Basecamp",
+      "next_round": "下一回合还有 {{time}}",
+      "pick": "选择这一回合的玩法",
+      "explore": "自由探索",
+      "explore_blurb": "随处漫游。没有什么能把你送回家。",
+      "curation": "策展",
+      "curation_blurb": "去别人的帖子下打个招呼。",
+      "adventure": "冒险",
+      "adventure_blurb": "游戏的一面。敌人会咬，代币会掉。",
+      "frontend": "前端",
+      "frontend_blurb": "hive.blog 的工具会突出显示。把地图当网站用。",
+      "change": "切换模式"
     },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",

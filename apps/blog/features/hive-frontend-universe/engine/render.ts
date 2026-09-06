@@ -16,6 +16,7 @@
  * lines, full on the pulled-out map where it reads as size.
  */
 
+import type { GameMode } from '../lib/modes';
 import type { WorldEdge, WorldNode } from './world';
 import type { PlayerState, Vec2 } from './movement';
 import { posAt } from './movement';
@@ -216,6 +217,8 @@ export interface LandmarkVisual {
   big?: boolean;
   /** Real Hive account whose avatar this landmark wears, if it has one. */
   handle?: string;
+  /** A hive.blog page (internal route or wallet): front end mode beacons these. */
+  site?: boolean;
 }
 
 export interface CommunityVisual {
@@ -353,11 +356,17 @@ export interface RenderScene {
    * the zone hums visibly here.
    */
   buzz?: { x: number; y: number; r: number } | null;
+  /** The picked mode; null before the welcome is answered. */
+  mode?: GameMode | null;
   hud: {
     housesLabel: string;
     windowLabel: string;
     housesCount: number;
     windowTime: string;
+    /** The round clock and the mode name, one HUD line. */
+    roundLabel?: string;
+    roundLeft?: string;
+    modeLabel?: string;
     tokensLabel: string;
     carried: number;
     banked: number;
@@ -1291,6 +1300,19 @@ export function drawScene(scene: RenderScene): void {
       const col = scene.tierColors[h.tier];
       const rNode = Math.min(17 / Math.max(z, 0.35), 180);
       const rHalo = rNode * (2.1 + mapness * 1.6);
+      // CURATION MODE: every post breathes a faint ring, so "go engage with
+      // live posts" reads off the map. Newcomers keep their louder trail
+      // glow below.
+      if (scene.mode === 'curation' && !h.isNewcomer) {
+        const cb = 0.5 + Math.sin(time * 1.6 + n.id * 0.7) * 0.5;
+        ctx.strokeStyle = '#9be8ff';
+        ctx.globalAlpha = 0.18 + cb * 0.3;
+        ctx.lineWidth = 2 / Math.max(z, 0.1);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, rNode * 2.2 + cb * 6, 0, 6.283);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
       if (h.isNewcomer) {
         const beat = 0.5 + Math.sin(time * 1.9 + n.id) * 0.5;
         // THE NEWB TRAIL QUEST GLOW: an unvisited newcomer post burns in
@@ -1429,6 +1451,28 @@ export function drawScene(scene: RenderScene): void {
     const s = lm.big
       ? (BIG_SIZE[lm.icon] ?? 300) * bigScale
       : (minor ? 34 : 52) / Math.max(z, 0.45);
+    // FRONT END MODE: the places that are hive.blog pages (internal routes
+    // and the wallet) wear a cyan beacon sized from the art itself, so it
+    // shows around the tent as well as around a small marker. Drawn before
+    // the pad and the icon, so the art sits inside the ring.
+    if (scene.mode === 'frontend' && lm.site) {
+      const fb = 0.5 + Math.sin(time * 2.2 + n.id) * 0.5;
+      const br = s * 1.7;
+      const bg = ctx.createRadialGradient(n.x, n.y, s * 0.6, n.x, n.y, br);
+      bg.addColorStop(0, `rgba(93, 240, 255, ${(0.2 + fb * 0.14).toFixed(3)})`);
+      bg.addColorStop(1, 'rgba(93, 240, 255, 0)');
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, br, 0, 6.283);
+      ctx.fill();
+      ctx.strokeStyle = '#5df0ff';
+      ctx.globalAlpha = 0.35 + fb * 0.5;
+      ctx.lineWidth = 3 / Math.max(z, 0.1);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, s * 1.25 + fb * s * 0.08, 0, 6.283);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     // GROUND PAD: a dark clearing under each big place, fading in with the
     // map. Anchors the attraction to the land (park maps sit rides in
     // plazas) and buys silhouette contrast against the busy red.
@@ -1903,6 +1947,14 @@ function drawHud(scene: RenderScene): void {
   if (hud.newbsLabel !== undefined && (hud.newbsTotal ?? 0) > 0) {
     ctx.fillStyle = '#ff5fd0';
     ctx.fillText(`${hud.newbsLabel} ${hud.newbs} / ${hud.newbsTotal}`, 16, hudY);
+    hudY += 19;
+  }
+  // THE ROUND CLOCK and the mode: one line, so the clock is readable even
+  // with the top-right chip covered by a panel.
+  if (hud.roundLabel !== undefined && hud.roundLeft !== undefined) {
+    ctx.fillStyle = '#ffd24a';
+    const modePart = hud.modeLabel ? `  ${hud.modeLabel}` : '';
+    ctx.fillText(`${hud.roundLabel} ${hud.roundLeft}${modePart}`, 16, hudY);
     hudY += 19;
   }
   // With the planning grid on, the HUD names the box the bug stands in, so
