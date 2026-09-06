@@ -1,0 +1,56 @@
+# H.I.V.E.R. map
+
+Effort slug: `hiver`. Charted 2026-09-05 and 2026-09-06 with Bryan. Tracker: local markdown, see `docs/agents/issue-tracker.md`. Round 2 answers in full: `round-2-open-questions.md`.
+
+## Destination
+
+Bryan's words: "we feel good enough about the game and code to give it to a hive dev for review and hopefully deployment."
+
+On the road, in order:
+- B: "the game is a game when it is fun to play and people want to come back to play it again (ie. percy wants to play it on his own volition, not because i asked him to play, he actually enjoys playing it)".
+- C: an SDK created and tested with Snapie or a dev friend, with Bryan.
+- Then the tidy-up for dev review.
+
+## Notes
+
+- Building on the map. Bryan: "yes to building on the map". Build tickets are `Type: task` and live here.
+- Not rules. Bryan: "we are not making rules we are discovering and brainstorming". Never write "rule" or "your rule" in a ticket or to him. Say "the idea", "we are trying". Try it, look at it, pull it back.
+- Attribution. Lines in `HANDOFF.md` Part B, the Sep 2 grilling archive, and `research/00` (the August brainstorm) were written by earlier sessions. Never hand them back as his words. Quote only what he said.
+- Percy meter is casual. Bryan tests with Percy now and then and reports. Never a ticket.
+- Read first, every session: `apps/blog/features/basecamp/ETHOS.md` and `CONTEXT.md`; the game's `README.md`. Hard lines from `HANDOFF.md` still hold: `movement.ts` frozen; the game writes nothing to the chain; no image assets; every string via t(); no join/leave; nothing that flags a real account until ticket 15 resolves; nothing depends on Hive Communities tooling; never hardcode an op type id; never call a signer directly; no new repos, forks, folders or branches unless asked.
+- Skills: grilling and domain-modeling for grilling tickets; research for research tickets; prototype for prototype tickets; wait-what when Bryan asks. Plain English, extremely concise (top of CLAUDE.md).
+- Research lives in `.scratch/hiver/research/` on the working branch, not on `research/<name>` branches, because of the no-new-branches line. Files 00 to 04.
+- Glossary care: code and HUD say "newcomer", "Newb", "NEWBS"; the glossary avoids those. Handle in ticket 29, not ad hoc.
+- Frontier order is by ticket number. Bryan may name any ticket instead.
+
+## Decisions so far
+
+- [Adventure-game return loops](issues/01-adventure-game-return-loops.md): twelve return mechanisms; the game lacks a record of what you learned, a calendar past one day, and people
+- [Hive history, culture, jargon](issues/02-hive-history-culture-jargon.md): dated fork timeline, ~89 jargon terms, ten places the game invents what the chain provides
+- [Learning through play and live data](issues/03-learning-through-play-and-live-data.md): teach without telling; notice a chain act, never pay for one is a PROPOSAL awaiting Bryan
+- [Live players without a big server](issues/04-live-players-without-a-big-server.md): a tiny relay is unavoidable and enough; chain and hive.blog server are the wrong pipes; 3speak space fits
+- [The game feeds the card, the card feeds the game](issues/05-game-feeds-card-card-feeds-game.md): door open; a card space tied to game engagement is fine; details to come
+- [Virtues from real chain history](issues/06-virtues-from-real-chain-history.md): yes, read from the player's own chain history
+- [The ending at the keep](issues/07-the-ending-at-the-keep.md): the real ending: his hoard became everyone's
+- [Four modes](issues/08-four-modes.md): open explore, curation, adventure, front end; a welcome at Basecamp
+- [Live players are the goal](issues/09-live-players-are-the-goal.md): 100% wanted, live players in the world at once
+- [Obstacles on the lines](issues/10-obstacles-on-the-lines.md): yes, try it
+- [What found things are worth](issues/11-what-found-things-are-worth.md): value in game; skins and colours; power against enemies allowed in adventure mode; roaming without collecting still works
+- [Hive's real calendar](issues/12-hives-real-calendar.md): try them all; build the Power Up Day festival and the payout change
+- [The trust conversation comes early](issues/13-the-trust-conversation-comes-early.md): yes, ticket 15
+- [How far a loss can go](issues/14-how-far-a-loss-can-go.md): soft outside adventure mode; adventure mode has cemented phases
+
+## Not yet specified
+
+- Enemies as threat vectors: each head of the emperor's fortress one threat to the Hive ecosystem; "cut off each head to destroy the fortress"; which threats.
+- Grief and frustration on Hive, triggered by enemies: rug pulls, dilution, losing everything; banishment somewhere in the game and the way back.
+- Games within games: trying to win money inside the game, then a rug pull or a token going to zero. Keep close to Hive lore and people's real ten years of crypto.
+- "Savior of Hive": just you, one little HIVER, could be the savior. How that framing reaches the player.
+- The SDK (C on the road): what it exposes, who tests it (Snapie or a dev friend). Depends on what the game becomes.
+- Tidy-up for dev review: file sizes (`engine/icons.ts` 3426 lines, `engine/render.ts` 2297, `engine/canvas-map.tsx` 1551), tests, docs. After B and C.
+- Whether the game notices real chain acts and never pays for them (research/03 PROPOSAL). Bryan has not answered.
+- 21 helmets vs the real 20 witnesses plus one rotating seat (research/02).
+
+## Out of scope
+
+Nothing ruled out yet. The earlier thought that a live-player server was out of scope is dead: live players are the goal (ticket 09).
