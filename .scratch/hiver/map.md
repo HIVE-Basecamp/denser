@@ -41,8 +41,8 @@ Fast, actionable (build or rough, small):
 2. [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): after 34.
 3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md)
 4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md)
-5. [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md)
-6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md)
+5. [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md): done 2026-09-06, the ruins flip the board
+6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): done 2026-09-06, rough list of facts
 7. [H.I.V.E.R. in the glossary](issues/29-hiver-in-the-glossary.md): five minutes once Bryan gives the letters.
 8. [Confirm 3speak space with Meno](issues/23-confirm-3speak-space-with-meno.md): Bryan's, one message.
 
@@ -68,6 +68,8 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [How far a loss can go](issues/14-how-far-a-loss-can-go.md): soft outside adventure mode; adventure mode has cemented phases
 - [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): built; welcome, four modes, round clock, live rollover; explore has no consequences
 - [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): built; stake-weighted votes from houses, return line, deliver at the Fun Park, votes drop on the setback
+- [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md): the ruins are a landmark on a rail; park there and the board flips to its back, the dead chain, mirrored and drained. Rough; what stands on the back is open.
+- [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): the I key or STATS opens a plain list of every fact the engine holds; which rows stay, and the design, are open.
 
 ## Not yet specified
 
