@@ -171,3 +171,15 @@ Full lint rule table, how to fix each violation, translation-key rules and valid
 TTL constants, which data needs a TTL, available utilities, legacy migration — see [`docs/localstorage-ttl.md`](docs/localstorage-ttl.md). Read on demand; not needed at session start.
 
 ---
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Local markdown files under `.scratch/<effort>/`. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context. `ETHOS.md` and `CONTEXT.md` live in `apps/blog/features/basecamp/`, ADRs in `docs/adr/`. See `docs/agents/domain.md`.
