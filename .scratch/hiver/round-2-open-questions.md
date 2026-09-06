@@ -79,3 +79,15 @@ No lives, no game over, no lost banked progress.
 - Journey/companionship needs presence vs no-server rule (Q5).
 - Lore Bible 21 thrones vs report 02: 20 witnesses + rotating seat.
 - Korok discipline matches helmets = capacity (Q7).
+
+## Answers (2026-09-06)
+
+Q1 - ANSWERED, rule REJECTED. Bryan: "The game feeds the card. The card feeds
+the game." Keep that. Drop "game progress never becomes card progress"; that
+line was the Sep 2 session's ADR candidate (archive Q33), never his. A space or
+illustration on the card connected to the game is fine; players will be asked to
+do tasks and win challenges or phases in the game, and the card may show that
+engagement. Playing the patrol games may open something in the game. What each
+of these looks like: to be determined. "I would like that door to remain open."
+Note: docs/basecamp-context.md already says a game may award Basecamp progress
+through the task action, so the code path agrees with him.
