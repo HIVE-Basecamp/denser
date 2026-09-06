@@ -76,3 +76,13 @@ readouts, and whatever else gets added. Two people read it: a curator deciding
 whether to support them, and the person themselves, seeing how they come across.
 A new user changing what their card says by going and doing things on Hive is the
 point of Basecamp, not a side effect.
+
+## Talking about the work
+
+**Overview chart**:
+The wayfinder planning file for an effort: what is decided, what is still open,
+and its tickets. "Chart" or "overview" alone means this. Never call it the map.
+The file on disk stays `map.md` because the skill looks for that name.
+
+**Game map**:
+The world you fly over in H.I.V.E.R. When "map" is said on its own, it means this.

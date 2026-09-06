@@ -186,3 +186,25 @@ restarts you at the dungeon entrance with everything kept). His shape is the
 roguelite "meta-progression" plus checkpoints.
 
 ## Round 2 complete 2026-09-06. Next: create map.md and tickets.
+
+## Bryan's riff after the map (2026-09-06), fodder not decisions
+- Feels the open tickets are still brainstorming. Asks what the 32 tickets
+  drive at overall.
+- DHF race: Hive works like a popularity contest, you need enough votes; DHF is
+  money. In one 30-minute round, players hunt votes; maybe you find a very
+  powerful DHF vote; you run into another player and each tries to get the
+  other's vote; only two players get funded per round because there are only so
+  many votes. One piece of gameplay among many. "It's money, and it has a lot
+  to do with the real truth of hive."
+- Downvotes: nobody wants one; everybody should fear it; something in the game
+  could wipe your in-game reputation. Always within the game.
+- Things cycle every round, but some things become permanent if you keep
+  playing: the cemented things you work toward.
+- Wants research and shared language for "elements": what happens in a game
+  that is enjoyable, that people try to achieve, overcome, get through, and
+  that brings them back. Many kinds of interactions: exploring, challenges,
+  battles with opponents in your way, small tricks like Zelda weapons breaking
+  without warning so people get careful and save the one they love.
+- Method: identify elements of loved adventure games, identify Hive truths
+  (downvotes, DHF, witness votes, bots, "all the things that make hive hive"),
+  find the matches, overlay.
