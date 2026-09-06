@@ -86,3 +86,32 @@ The file on disk stays `map.md` because the skill looks for that name.
 
 **Game map**:
 The world you fly over in H.I.V.E.R. When "map" is said on its own, it means this.
+
+## Making the game
+
+**Element**:
+One thing players enjoy doing or overcoming in a game, and come back for.
+Exploring, a battle, a weapon that breaks without warning. Bryan's word.
+_Avoid_: mechanism, mechanic, loop
+
+**Hive truth**:
+Something everyone on Hive knows or feels. Nobody wants a downvote. The DHF is
+money. Bots. Witness votes.
+
+**Match**:
+One element laid over one Hive truth, made into a piece of the game.
+_Avoid_: overlay (as a noun), mapping
+
+## In the game
+
+**Round**:
+One 30-minute game. The world is built again from the chain when a new round
+starts. The code says "window" for the same thing; we say round.
+
+**Cemented**:
+What stays from round to round when you keep playing. Its opposite is
+per-round: gone when the round ends.
+
+**Phase**:
+A stretch of adventure mode that ends in a lock-in, where what you have becomes
+cemented. Not used for moods of play (exploring, fighting); those are elements.

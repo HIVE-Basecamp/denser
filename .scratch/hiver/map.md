@@ -19,6 +19,7 @@ On the road, in order:
 - Percy meter is casual. Bryan tests with Percy now and then and reports. Never a ticket.
 - Read first, every session: `apps/blog/features/basecamp/ETHOS.md` and `CONTEXT.md`; the game's `README.md`. Hard lines from `HANDOFF.md` still hold: `movement.ts` frozen; the game writes nothing to the chain; no image assets; every string via t(); no join/leave; nothing that flags a real account until ticket 15 resolves; nothing depends on Hive Communities tooling; never hardcode an op type id; never call a signer directly; no new repos, forks, folders or branches unless asked.
 - Skills: grilling and domain-modeling for grilling tickets; research for research tickets; prototype for prototype tickets; wait-what when Bryan asks. Plain English, extremely concise (top of CLAUDE.md).
+- Idea pile: `.scratch/hiver/ideas.md`. Brainstorm fodder from Bryan, dated, never decisions. Read only when a ticket or Bryan points at it.
 - Research lives in `.scratch/hiver/research/` on the working branch, not on `research/<name>` branches, because of the no-new-branches line. Files 00 to 04.
 - Glossary care: code and HUD say "newcomer", "Newb", "NEWBS"; the glossary avoids those. Handle in ticket 29, not ad hoc.
 - This file is the **overview chart** when we talk (Bryan, 2026-09-06). "The map" means the game world. See CONTEXT.md.

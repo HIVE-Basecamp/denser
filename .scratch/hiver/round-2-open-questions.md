@@ -118,21 +118,6 @@ mode. Four modes, his words:
      of the game, not the blockchain.
   4. Front end: the tools linked to hive.blog stand out on the map.
 
-## Bryan's notes, fodder not rules (2026-09-06, after Q4)
-- H.I.V.E.R.: "A game that teaches you hive through Game Play." (tagline in his
-  words; acronym expansion still unknown)
-- Touch the grief and frustration on Hive. Enemies could trigger those feelings.
-- "Savior of Hive": just you, one little HIVER, could be the savior of Hive.
-- Fulfill missions, foil J Son's minions, take down the emperor's fortress. Cut
-  off each head to destroy the fortress. Each head = one threat vector to the
-  Hive ecosystem.
-- Failure and loss as feeling: ups and downs of crypto, losing everything,
-  dilution. Zelda has a philosophy around suffering many find appealing. Maybe
-  banished somewhere in the game; recover from being rug pulled.
-- "The more little real touches we can give, the more enjoyable the game."
-- Glossary candidates raised, not agreed: "HIVER" (the player), offer, assign,
-  task, task list. He asked whether such words belong in CONTEXT.md.
-
 Q5 - ANSWERED. (a) is already there: finding posts is the game. (b) footprints
 you can track: liked. But the goal, "one hundred percent", said many times:
 multiple REAL players in the world at the same time, each at their own spot,
@@ -185,26 +170,4 @@ flags mid-level; classic Zelda (hearts and key items are permanent, death
 restarts you at the dungeon entrance with everything kept). His shape is the
 roguelite "meta-progression" plus checkpoints.
 
-## Round 2 complete 2026-09-06. Next: create map.md and tickets.
-
-## Bryan's riff after the map (2026-09-06), fodder not decisions
-- Feels the open tickets are still brainstorming. Asks what the 32 tickets
-  drive at overall.
-- DHF race: Hive works like a popularity contest, you need enough votes; DHF is
-  money. In one 30-minute round, players hunt votes; maybe you find a very
-  powerful DHF vote; you run into another player and each tries to get the
-  other's vote; only two players get funded per round because there are only so
-  many votes. One piece of gameplay among many. "It's money, and it has a lot
-  to do with the real truth of hive."
-- Downvotes: nobody wants one; everybody should fear it; something in the game
-  could wipe your in-game reputation. Always within the game.
-- Things cycle every round, but some things become permanent if you keep
-  playing: the cemented things you work toward.
-- Wants research and shared language for "elements": what happens in a game
-  that is enjoyable, that people try to achieve, overcome, get through, and
-  that brings them back. Many kinds of interactions: exploring, challenges,
-  battles with opponents in your way, small tricks like Zelda weapons breaking
-  without warning so people get careful and save the one they love.
-- Method: identify elements of loved adventure games, identify Hive truths
-  (downvotes, DHF, witness votes, bots, "all the things that make hive hive"),
-  find the matches, overlay.
+## Round 2 complete 2026-09-06. Overview chart and tickets created. Idea fodder lives in ideas.md.
