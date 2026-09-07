@@ -80,6 +80,8 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
   helmets.ts      The 21 oxygen helmets and the drift-range upgrade ladder.
   blocks.ts       Blocks parked on the lines each round: a rail bug that pushes
                   into one is stopped; hop over or route around.
+  footprints.ts   Tracks from the accounts that voted on or replied to a post
+                  this round, each leading to the account. Facts only.
   critters.ts     The population: five kinds, their look and their wander.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.

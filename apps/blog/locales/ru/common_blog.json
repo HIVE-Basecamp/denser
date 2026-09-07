@@ -892,6 +892,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "проголосовал(а)",
+      "replied": "ответил(а)"
+    },
     "controls": {
       "hop": "ПРЫЖОК",
       "map": "КАРТА"

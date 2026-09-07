@@ -886,6 +886,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "が投票しました",
+      "replied": "が返信しました"
+    },
     "controls": {
       "hop": "ホップ",
       "map": "マップ"

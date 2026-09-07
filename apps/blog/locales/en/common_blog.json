@@ -988,6 +988,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "voted",
+      "replied": "replied"
+    },
     "controls": {
       "hop": "HOP",
       "map": "MAP"

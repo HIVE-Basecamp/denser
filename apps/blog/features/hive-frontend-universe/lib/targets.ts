@@ -32,7 +32,7 @@ const WALLET_FALLBACK = 'https://wallet.hive.blog';
  */
 const EXPLORER_FALLBACK = 'https://hivehub.dev';
 
-export type TargetKind = 'post' | 'landmark' | 'community' | 'witness' | 'critter';
+export type TargetKind = 'post' | 'landmark' | 'community' | 'witness' | 'critter' | 'footprint';
 
 export interface MapTarget {
   kind: TargetKind;

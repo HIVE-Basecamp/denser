@@ -933,6 +933,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "صوّت",
+      "replied": "ردّ"
+    },
     "controls": {
       "hop": "قفز",
       "map": "خريطة"

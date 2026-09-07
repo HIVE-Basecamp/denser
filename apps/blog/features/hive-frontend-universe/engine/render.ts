@@ -58,6 +58,7 @@ import { avatarImage } from './avatars';
 import { drawGround, GROUND_VOID, type Ground } from './ground';
 import { drawPlanet, planetPath } from './planet';
 import { drawBlocks, type BlockState } from './blocks';
+import { drawFootprints, type FootprintState } from './footprints';
 import { towerLean } from '../lib/planet';
 
 export const PALETTE = {
@@ -321,6 +322,8 @@ export interface RenderScene {
   gems?: GemState | null;
   /** Blocks parked on the lines: hop over or route around (engine/blocks.ts). */
   blocks?: BlockState | null;
+  /** Tracks from the accounts that voted or replied this round (engine/footprints.ts). */
+  footprints?: FootprintState | null;
   /** Community handles the player has visited; unvisited bubbles rest dim. */
   visitedCommunities?: ReadonlySet<string> | null;
   /** Trophies mounted on the ferris wheel this board, in mount order. */
@@ -1322,6 +1325,13 @@ export function drawScene(scene: RenderScene): void {
   // The oxygen helmets, waiting to be found. Sub-pixel on the far map.
   if (scene.helmetState && mapness < 0.6) {
     drawHelmets(ctx, scene.helmetState, time, vis);
+  }
+
+  // FOOTPRINTS: who voted or replied this round, as prints on the street
+  // leading out from the post to the account that left them. Play zoom
+  // only; on the pulled-out map they would be dust.
+  if (scene.footprints && mapness < 0.6) {
+    drawFootprints(ctx, scene.footprints, edges, vis);
   }
 
   // Stake fog.

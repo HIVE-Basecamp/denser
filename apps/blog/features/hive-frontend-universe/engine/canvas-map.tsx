@@ -71,6 +71,8 @@ import {
 } from './hazards';
 import { createGems, updateGems, type GemState } from './gems';
 import { placeBlocks, blockPlayer, type BlockState } from './blocks';
+import { createFootprints, addReplyTracks, type FootprintState } from './footprints';
+import { fetchRepliers } from '../data/fetch-replies';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from './dhf-race';
 import { gridCellName } from './render';
 import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
@@ -461,6 +463,8 @@ const Stage = ({ board }: { board: Board }) => {
   const hazardsRef = useRef<HazardState | null>(null);
   /** Blocks on the lines this round; scenery that stops a rail bug. */
   const blocksRef = useRef<BlockState | null>(null);
+  /** Who voted or replied this round, as tracks in the world. */
+  const footprintsRef = useRef<FootprintState | null>(null);
   /** Colorful collectible gems, reseeded every board. */
   const gemsRef = useRef<GemState | null>(null);
   /** The DHF race (adventure mode); rebuilt with every round. */
@@ -577,6 +581,7 @@ const Stage = ({ board }: { board: Board }) => {
     helmetsRef.current = createHelmets();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
     blocksRef.current = placeBlocks(world, board.windowStart);
+    footprintsRef.current = createFootprints(world, board.houses);
     gemsRef.current = createGems(world, board.windowStart);
     raceRef.current = createRace(board.houses.map((h) => h.tier));
     projectilesRef.current = createProjectiles();
@@ -841,6 +846,26 @@ const Stage = ({ board }: { board: Board }) => {
         }
       }
 
+      // Footprints: the marker at the end of a track is the account that
+      // left it. Hover names it and what it did; a click opens its page.
+      if (footprintsRef.current && !fullMapRef.current) {
+        for (const tr of footprintsRef.current.tracks) {
+          consider(
+            {
+              kind: 'footprint',
+              node: -1,
+              title: `@${tr.handle} ${t(`hive_frontend_universe.footprints.${tr.act === 'vote' ? 'voted' : 'replied'}`)}`,
+              href: profileHref(tr.handle),
+              account: tr.handle,
+              travelable: false,
+              x: tr.x,
+              y: tr.y
+            },
+            60
+          );
+        }
+      }
+
       // Witness citadels: scenery, so they have no node, but they still lead
       // somewhere real. Aim at the crowned head, which is where the eye goes.
       for (const wt of witnessVisualsRef.current) {
@@ -897,14 +922,15 @@ const Stage = ({ board }: { board: Board }) => {
       if (target.kind === 'critter') {
         return; // named on hover, but not a destination
       }
-      if (target.kind === 'witness') {
+      if (target.kind === 'witness' || target.kind === 'footprint') {
         // A clicked citadel gets the same real chain stats as a beam visit
-        // (Bryan: more info on ALL the witness cards). Rose panes and the
-        // ruins ride this same path with no account, so no stats.
+        // (Bryan: more info on ALL the witness cards). Rose panes, the
+        // ruins and footprints ride this same path: a small panel with the
+        // page to open, and no stats.
         setClickedWitness({
           title: target.title,
           href: target.href,
-          stats: target.account ? witnessStats(target.account) : undefined
+          stats: target.kind === 'witness' && target.account ? witnessStats(target.account) : undefined
         });
         setClickedNode(-1);
         if (fullMapRef.current && target.href) {
@@ -1016,6 +1042,23 @@ const Stage = ({ board }: { board: Board }) => {
 
     // Lazy avatar loading: request faces as the player approaches, never all
     // at once, never blocking anything. Throttled well below frame rate.
+    // FOOTPRINTS: a house near the bug is asked, once, who replied to its
+    // post; the repliers become tracks. Read only, cached for the round.
+    const askReplies = (nodeId: number, ref: number) => {
+      const fp = footprintsRef.current;
+      const house = board.houses[ref];
+      if (!fp || !house || fp.asked.has(ref)) return;
+      fp.asked.add(ref);
+      if (!house.post || house.post.comments <= 0) return;
+      const author = house.post.author;
+      fetchRepliers(author, house.post.permlink)
+        .then((rs) => {
+          if (footprintsRef.current !== fp) return;
+          const handles = [...new Set(rs.map((r) => r.handle))].filter((h) => h !== author);
+          addReplyTracks(fp, world, nodeId, ref, handles);
+        })
+        .catch(() => undefined);
+    };
     let avatarTick = 0;
     const requestNearbyAvatars = (dt: number) => {
       avatarTick -= dt;
@@ -1024,13 +1067,21 @@ const Stage = ({ board }: { board: Board }) => {
       for (const n of nodes) {
         if (n.kind === 'house') {
           const h = houseVisuals[n.ref];
-          if (h && Math.hypot(n.x - p.x, n.y - p.y) < 2000) requestAvatar(h.handle);
+          if (h && Math.hypot(n.x - p.x, n.y - p.y) < 2000) {
+            requestAvatar(h.handle);
+            askReplies(n.id, n.ref);
+          }
         } else if (n.kind === 'landmark') {
           const handle = LANDMARK_ACCOUNTS[LANDMARKS[n.ref]?.id];
           if (handle && Math.hypot(n.x - p.x, n.y - p.y) < 2400) requestAvatar(handle);
         } else if (n.kind === 'community') {
           const c = communityVisualsRef.current[n.ref];
           if (c && Math.hypot(n.x - p.x, n.y - p.y) < 2800) requestAvatar(c.handle);
+        }
+      }
+      if (footprintsRef.current) {
+        for (const tr of footprintsRef.current.tracks) {
+          if (Math.hypot(tr.x - p.x, tr.y - p.y) < 2000) requestAvatar(tr.handle);
         }
       }
     };
@@ -1420,6 +1471,7 @@ const Stage = ({ board }: { board: Board }) => {
         combat: combatRef.current,
         gems: alive ? gemsRef.current : null,
         blocks: blocksRef.current,
+        footprints: alive ? footprintsRef.current : null,
         side: sideRef.current,
         flipX,
         flipSkew,

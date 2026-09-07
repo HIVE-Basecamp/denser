@@ -886,6 +886,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "a voté",
+      "replied": "a répondu"
+    },
     "controls": {
       "hop": "SAUT",
       "map": "CARTE"

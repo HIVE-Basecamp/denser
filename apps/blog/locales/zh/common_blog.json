@@ -886,6 +886,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "投了票",
+      "replied": "回复了"
+    },
     "controls": {
       "hop": "跳跃",
       "map": "地图"

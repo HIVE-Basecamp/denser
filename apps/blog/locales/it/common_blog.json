@@ -886,6 +886,10 @@
     }
   },
   "hive_frontend_universe": {
+    "footprints": {
+      "voted": "ha votato",
+      "replied": "ha risposto"
+    },
     "controls": {
       "hop": "SALTO",
       "map": "MAPPA"
