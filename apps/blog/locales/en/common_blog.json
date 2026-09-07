@@ -1055,6 +1055,23 @@
       "votes": "VOTES",
       "funded": "FUNDED"
     },
+    "keep": {
+      "motto": "He owned the stake, but he never owned us.",
+      "released": "His hoard became everyone's.",
+      "guardians": "Guardians with you",
+      "hoard": "The hoard",
+      "hoard_his": "his, until all 21 stand with you",
+      "hoard_everyones": "everyone's",
+      "vault_hive": "The vault, HIVE",
+      "vault_hbd": "The vault, HBD",
+      "keys": "Keys to the vault",
+      "keys_none": "none",
+      "keys_some": "some",
+      "record": "The real record",
+      "link_vault": "The vault account",
+      "link_proposals": "Where it pays out",
+      "link_hf24": "The day the stake moved, Oct 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1107,7 +1124,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "The keep",
+      "keep_done": "his hoard became everyone's",
+      "keep_not": "still his"
     }
   }
 }

@@ -1000,6 +1000,23 @@
       "votes": "الأصوات",
       "funded": "مموَّل"
     },
+    "keep": {
+      "motto": "كان يملك الحصة، لكنه لم يملكنا يومًا.",
+      "released": "صار كنزه ملكًا للجميع.",
+      "guardians": "الحرّاس معك",
+      "hoard": "الكنز",
+      "hoard_his": "له، حتى يقف معك الحرّاس الـ21 جميعًا",
+      "hoard_everyones": "للجميع",
+      "vault_hive": "الخزنة، HIVE",
+      "vault_hbd": "الخزنة، HBD",
+      "keys": "مفاتيح الخزنة",
+      "keys_none": "لا شيء",
+      "keys_some": "بعضها",
+      "record": "السجل الحقيقي",
+      "link_vault": "حساب الخزنة",
+      "link_proposals": "أين تُصرف",
+      "link_hf24": "يوم انتقلت الحصة، أكتوبر 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1052,7 +1069,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "القلعة",
+      "keep_done": "صار كنزه ملكًا للجميع",
+      "keep_not": "ما زال له"
     }
   }
 }

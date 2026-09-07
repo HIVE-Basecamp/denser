@@ -959,6 +959,23 @@
       "votes": "ГОЛОСА",
       "funded": "ПРОФИНАНСИРОВАНО"
     },
+    "keep": {
+      "motto": "Он владел стейком, но никогда не владел нами.",
+      "released": "Его клад стал общим.",
+      "guardians": "Стражи с вами",
+      "hoard": "Клад",
+      "hoard_his": "его, пока все 21 не встанут рядом с вами",
+      "hoard_everyones": "общий",
+      "vault_hive": "Хранилище, HIVE",
+      "vault_hbd": "Хранилище, HBD",
+      "keys": "Ключи от хранилища",
+      "keys_none": "нет",
+      "keys_some": "есть",
+      "record": "Настоящая запись",
+      "link_vault": "Аккаунт хранилища",
+      "link_proposals": "Откуда платят",
+      "link_hf24": "День, когда стейк переехал, окт. 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1011,7 +1028,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "Крепость",
+      "keep_done": "его клад стал общим",
+      "keep_not": "всё ещё его"
     }
   }
 }

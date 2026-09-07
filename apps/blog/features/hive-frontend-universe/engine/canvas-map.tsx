@@ -74,6 +74,15 @@ import { placeBlocks, blockPlayer, type BlockState } from './blocks';
 import { createFootprints, addReplyTracks, type FootprintState } from './footprints';
 import { fetchRepliers } from '../data/fetch-replies';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from './dhf-race';
+import {
+  createKeep,
+  releaseHoard,
+  updateKeep,
+  KEEP_LANDMARK_ID,
+  GUARDIANS_NEEDED,
+  type KeepState
+} from './keep';
+import { fetchVault, VAULT_ACCOUNT, type Vault } from '../data/fetch-vault';
 import { gridCellName } from './render';
 import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
 import { createCombat, tickCombat, MAX_HITS, type CombatState } from './combat';
@@ -111,6 +120,9 @@ import { LandmarkPanel } from '../card/landmark-panel';
 import type { TopCommunity } from '../data/fetch-communities';
 
 const MAX_TRAFFIC = 30;
+/** The real record of the stake moving into the DHF: the HF24 post, October 2020. */
+const HF24_POST =
+  'https://hive.blog/@hiveio/has-the-eclipse-happened-explaining-how-hive-hardforks-work-and-activating-hf24-on-october-14th';
 /** Presses shorter than this are taps (keyboard M mirror of the button). */
 const TAP_MS = 250;
 
@@ -469,6 +481,10 @@ const Stage = ({ board }: { board: Board }) => {
   const gemsRef = useRef<GemState | null>(null);
   /** The DHF race (adventure mode); rebuilt with every round. */
   const raceRef = useRef<RaceState | null>(null);
+  /** The keep's ending; the hoard re-forms with every round (engine/keep.ts). */
+  const keepRef = useRef<KeepState | null>(null);
+  /** The real vault behind the ending, fetched when the bug reaches the keep. */
+  const [vault, setVault] = useState<Vault | null>(null);
   /** Enemy and player shots in flight. */
   const projectilesRef = useRef<ProjectileState | null>(null);
   /** The bug's hit points; three hits sends it home. */
@@ -584,6 +600,7 @@ const Stage = ({ board }: { board: Board }) => {
     footprintsRef.current = createFootprints(world, board.houses);
     gemsRef.current = createGems(world, board.windowStart);
     raceRef.current = createRace(board.houses.map((h) => h.tier));
+    keepRef.current = createKeep(world, BIG_SIZE.jsonboss ?? 300);
     projectilesRef.current = createProjectiles();
     combatRef.current = createCombat();
     // The newb trail resets with the board: new window, new posts, new quest.
@@ -1210,6 +1227,7 @@ const Stage = ({ board }: { board: Board }) => {
       // need no React state to stay current.
       if (alive && coinsRef.current) updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
       if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
+      if (alive && keepRef.current) updateKeep(keepRef.current, dt);
       if (alive && gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
       requestNearbyAvatars(dt);
       camUpdate(dt);
@@ -1247,6 +1265,14 @@ const Stage = ({ board }: { board: Board }) => {
         // either side. Not while a turn is already under way.
         if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === FLIP_LANDMARK_ID && !flipRef.current) {
           flipRef.current = { t: 0, to: otherSide(sideRef.current) };
+        }
+        // THE KEEP: park there wearing all 21 helmets and his hoard is set
+        // loose (engine/keep.ts). Fewer, and you only get to look.
+        if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === KEEP_LANDMARK_ID && keepRef.current) {
+          if (releaseHoard(keepRef.current, helmetsRef.current?.count ?? 0)) {
+            warpFxRef.current = 1;
+            shake = 8;
+          }
         }
         if (vn?.kind === 'landmark' && visitedRef.current) {
           const id = LANDMARKS[vn.ref]?.id;
@@ -1482,6 +1508,7 @@ const Stage = ({ board }: { board: Board }) => {
         buzz,
         mode: modeRef.current,
         race: raceRef.current,
+        keep: alive ? keepRef.current : null,
         ground,
         activeCommunity: inCommunityTick.current,
         player: p,
@@ -1602,6 +1629,11 @@ const Stage = ({ board }: { board: Board }) => {
       rows.push({ label: t(`${k}.funded`), value: t(`${k}.${race.funded ? 'yes' : 'no'}`), accent: '#ffd24a' });
     }
     rows.push({
+      label: t(`${k}.keep`),
+      value: t(`${k}.${keepRef.current?.everReleased ? 'keep_done' : 'keep_not'}`),
+      accent: '#ffd24a'
+    });
+    rows.push({
       label: t(`${k}.trophies`),
       value: wheelTrophiesRef.current.length ? wheelTrophiesRef.current.join(', ') : t(`${k}.none`)
     });
@@ -1659,8 +1691,71 @@ const Stage = ({ board }: { board: Board }) => {
       if (race.funded) return t('hive_frontend_universe.panel.race_funded');
       return t('hive_frontend_universe.panel.race_short', { count: Math.max(0, race.line - race.carried) });
     }
+    if (id === KEEP_LANDMARK_ID) {
+      const key = keepRef.current?.released ? 'released' : 'motto';
+      return t(`hive_frontend_universe.keep.${key}`);
+    }
     if (buzz && id === buzz.landmarkId) return t('hive_frontend_universe.panel.buzzing');
     return undefined;
+  };
+
+  // THE KEEP'S PANEL: the guardians with you, and the real vault the hoard
+  // went into, fetched on arrival. Facts only; the reader decides.
+  const atKeep = atLandmark?.id === KEEP_LANDMARK_ID;
+  useEffect(() => {
+    if (!atKeep || vault) return;
+    let live = true;
+    fetchVault()
+      .then((v) => {
+        if (live) setVault(v);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [atKeep, vault]);
+  const keepStats = (): { label: string; value: string }[] => {
+    const k = 'hive_frontend_universe.keep';
+    const helmets = helmetsRef.current?.count ?? 0;
+    const released = keepRef.current?.released ?? false;
+    const rows = [
+      { label: t(`${k}.guardians`), value: `${helmets} / ${GUARDIANS_NEEDED}` },
+      { label: t(`${k}.hoard`), value: t(`${k}.${released ? 'hoard_everyones' : 'hoard_his'}`) }
+    ];
+    if (vault) {
+      rows.push({ label: t(`${k}.vault_hive`), value: Math.round(vault.hive).toLocaleString() });
+      rows.push({ label: t(`${k}.vault_hbd`), value: Math.round(vault.hbd).toLocaleString() });
+      rows.push({ label: t(`${k}.keys`), value: t(`${k}.${vault.keyless ? 'keys_none' : 'keys_some'}`) });
+    }
+    return rows;
+  };
+  const keepLinks = (): { label: string; href: string }[] => {
+    const k = 'hive_frontend_universe.keep';
+    return [
+      { label: t(`${k}.link_vault`), href: landmarkHref('explorer', `/@${VAULT_ACCOUNT}`) ?? '' },
+      { label: t(`${k}.link_proposals`), href: landmarkHref('wallet', '/proposals') ?? '' },
+      { label: t(`${k}.link_hf24`), href: HF24_POST }
+    ].filter((l) => l.href !== '');
+  };
+
+  // The extra real destinations a place offers, and the heading over them.
+  const landmarkLinks = (id: string): { label: string; href: string }[] | undefined => {
+    if (id === 'arcade') return ARCADE_GAMES.map((g) => ({ label: g.name, href: g.url }));
+    if (id === 'our_dapps') return DAPP_DIRECTORY.map((d) => ({ label: d.name, href: d.url }));
+    if (id === 'rose_window') {
+      return ROSE_WINDOW_PANES.map((pane) => ({
+        label: t(pane.labelKey),
+        href: landmarkHref(pane.kind, pane.path) ?? ''
+      })).filter((l) => l.href !== '');
+    }
+    if (id === KEEP_LANDMARK_ID) return keepLinks();
+    return undefined;
+  };
+  const landmarkLinksLabel = (id: string): string => {
+    if (id === 'arcade') return t('hive_frontend_universe.panel.real_games');
+    if (id === 'rose_window') return t('hive_frontend_universe.panel.rose_window');
+    if (id === KEEP_LANDMARK_ID) return t('hive_frontend_universe.keep.record');
+    return t('hive_frontend_universe.panel.dapps');
   };
 
   return (
@@ -1738,25 +1833,9 @@ const Stage = ({ board }: { board: Board }) => {
           kind={atLandmark.kind}
           path={atLandmark.path}
           accent={CATEGORY_ACCENT[atLandmark.category]}
-          links={
-            atLandmark.id === 'arcade'
-              ? ARCADE_GAMES.map((g) => ({ label: g.name, href: g.url }))
-              : atLandmark.id === 'our_dapps'
-                ? DAPP_DIRECTORY.map((d) => ({ label: d.name, href: d.url }))
-                : atLandmark.id === 'rose_window'
-                  ? ROSE_WINDOW_PANES.map((pane) => ({
-                      label: t(pane.labelKey),
-                      href: landmarkHref(pane.kind, pane.path) ?? ''
-                    })).filter((l) => l.href !== '')
-                  : undefined
-          }
-          linksLabel={
-            atLandmark.id === 'arcade'
-              ? t('hive_frontend_universe.panel.real_games')
-              : atLandmark.id === 'rose_window'
-                ? t('hive_frontend_universe.panel.rose_window')
-                : t('hive_frontend_universe.panel.dapps')
-          }
+          links={landmarkLinks(atLandmark.id)}
+          linksLabel={landmarkLinksLabel(atLandmark.id)}
+          stats={atKeep ? keepStats() : undefined}
           note={landmarkNote(atLandmark.id)}
           onSkip={skip}
         />

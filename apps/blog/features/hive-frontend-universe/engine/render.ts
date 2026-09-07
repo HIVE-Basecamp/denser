@@ -49,6 +49,7 @@ import {
 import { drawCritters } from './critters';
 import { drawCoins, type CoinState } from './coins';
 import { drawHelmets, drawSuitBubble, type HelmetState } from './helmets';
+import { drawKeepRelease, hoardLeft, type KeepState } from './keep';
 import type { HazardState } from './hazards';
 import { drawProjectiles, type ProjectileState } from './projectiles';
 import { MAX_HITS, type CombatState } from './combat';
@@ -380,6 +381,8 @@ export interface RenderScene {
   mode?: GameMode | null;
   /** The DHF race (adventure mode): which houses' votes are taken, and whether funded. */
   race?: { taken: ReadonlySet<number>; funded: boolean } | null;
+  /** The keep: whether the Emperor's hoard has been set loose this round (engine/keep.ts). */
+  keep?: KeepState | null;
   hud: {
     housesLabel: string;
     windowLabel: string;
@@ -1596,7 +1599,8 @@ export function drawScene(scene: RenderScene): void {
       ctx.arc(n.x, n.y, rA, 0, 6.283);
       ctx.stroke();
     } else {
-      drawIcon(ctx, lm.icon, n.x, n.y, s, col, time, lm.label);
+      const hoard = lm.icon === 'jsonboss' ? hoardLeft(scene.keep) : 1;
+      drawIcon(ctx, lm.icon, n.x, n.y, s, col, time, lm.label, hoard);
     }
     if (lm.icon === 'ferris') ferrisPos = { x: n.x, y: n.y, s };
     // THE dAPP STATION'S WINDOWS: real dApp logos looking out. The icon
@@ -1664,6 +1668,9 @@ export function drawScene(scene: RenderScene): void {
       }
     }
   }
+
+  // THE KEEP'S ENDING: the hoard streaming away over the villain's head.
+  if (scene.keep && mapness < 0.7) drawKeepRelease(ctx, scene.keep, time, vis);
 
   // TROPHY GONDOLAS: items brought to the ferris wheel and ridden one full
   // rotation mount into a gondola and ride with the wheel for the rest of

@@ -953,6 +953,23 @@
       "votes": "票数",
       "funded": "已资助"
     },
+    "keep": {
+      "motto": "他拥有那些权益，却从未拥有我们。",
+      "released": "他的宝藏成了大家的。",
+      "guardians": "与你同在的守护者",
+      "hoard": "宝藏",
+      "hoard_his": "他的，直到 21 位守护者都与你同在",
+      "hoard_everyones": "大家的",
+      "vault_hive": "金库，HIVE",
+      "vault_hbd": "金库，HBD",
+      "keys": "金库钥匙",
+      "keys_none": "没有",
+      "keys_some": "有",
+      "record": "真实记录",
+      "link_vault": "金库账户",
+      "link_proposals": "资金流向",
+      "link_hf24": "权益转移的那一天，2020 年 10 月"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1005,7 +1022,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "要塞",
+      "keep_done": "他的宝藏成了大家的",
+      "keep_not": "仍是他的"
     }
   }
 }

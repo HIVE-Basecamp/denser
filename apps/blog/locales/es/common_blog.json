@@ -953,6 +953,23 @@
       "votes": "VOTOS",
       "funded": "FINANCIADO"
     },
+    "keep": {
+      "motto": "Era dueño del stake, pero nunca fue dueño de nosotros.",
+      "released": "Su tesoro pasó a ser de todos.",
+      "guardians": "Guardianes contigo",
+      "hoard": "El tesoro",
+      "hoard_his": "suyo, hasta que los 21 estén contigo",
+      "hoard_everyones": "de todos",
+      "vault_hive": "La bóveda, HIVE",
+      "vault_hbd": "La bóveda, HBD",
+      "keys": "Llaves de la bóveda",
+      "keys_none": "ninguna",
+      "keys_some": "algunas",
+      "record": "El registro real",
+      "link_vault": "La cuenta de la bóveda",
+      "link_proposals": "Donde se paga",
+      "link_hf24": "El día que se movió el stake, oct. 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1005,7 +1022,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "La fortaleza",
+      "keep_done": "su tesoro pasó a ser de todos",
+      "keep_not": "todavía suyo"
     }
   }
 }

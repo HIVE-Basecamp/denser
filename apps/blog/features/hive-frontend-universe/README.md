@@ -82,6 +82,8 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
                   into one is stopped; hop over or route around.
   footprints.ts   Tracks from the accounts that voted on or replied to a post
                   this round, each leading to the account. Facts only.
+  keep.ts         The ending: park at the keep with all 21 helmets and the
+                  hoard streams away to the vault. The panel shows the real one.
   critters.ts     The population: five kinds, their look and their wander.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.

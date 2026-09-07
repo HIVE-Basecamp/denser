@@ -953,6 +953,23 @@
       "votes": "票",
       "funded": "資金獲得"
     },
+    "keep": {
+      "motto": "彼はステークを持っていた。でも、私たちを持つことはなかった。",
+      "released": "彼の宝はみんなのものになった。",
+      "guardians": "共にいる守護者",
+      "hoard": "宝",
+      "hoard_his": "彼のもの。21人全員がそろうまで",
+      "hoard_everyones": "みんなのもの",
+      "vault_hive": "金庫、HIVE",
+      "vault_hbd": "金庫、HBD",
+      "keys": "金庫の鍵",
+      "keys_none": "なし",
+      "keys_some": "あり",
+      "record": "本当の記録",
+      "link_vault": "金庫のアカウント",
+      "link_proposals": "支払われる先",
+      "link_hf24": "ステークが移された日、2020年10月"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1005,7 +1022,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "要塞",
+      "keep_done": "彼の宝はみんなのものになった",
+      "keep_not": "まだ彼のもの"
     }
   }
 }

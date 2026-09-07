@@ -184,7 +184,9 @@ export function drawIcon(
   col: string,
   time: number,
   /** The landmark's own name, for the few icons that letter themselves. */
-  label?: string
+  label?: string,
+  /** How much of the Emperor's hoard is still at his feet, 1 to 0 (engine/keep.ts). */
+  hoard = 1
 ): void {
   ctx.save();
   ctx.strokeStyle = col;
@@ -209,7 +211,7 @@ export function drawIcon(
       drawBlackHole(ctx, x, y, s * 1.5, time);
       break;
     case 'jsonboss':
-      drawJsonBoss(ctx, x, y, s * 1.5, time);
+      drawJsonBoss(ctx, x, y, s * 1.5, time, hoard);
       break;
     case 'sockmount':
       drawSockMount(ctx, x, y, s * 2.2, time);
@@ -1692,7 +1694,9 @@ function drawJsonBoss(
   x: number,
   y: number,
   R: number,
-  time: number
+  time: number,
+  /** 1 while the hoard is his; 0 once it has streamed away (engine/keep.ts). */
+  hoard = 1
 ): void {
   const lw = Math.max(4, R * 0.05);
   ctx.save();
@@ -2431,15 +2435,18 @@ function drawJsonBoss(
   }
 
   /* ---------- the hoard and the tribute march ---------- */
-  // The mound he guards, glowing.
+  // The mound he guards, glowing. Everything gold here fades with `hoard`:
+  // once the pile is set loose (engine/keep.ts) the mound, the tribute and
+  // the sky tithe go with it, and he is left on his rock with nothing.
   const mound = ctx.createRadialGradient(R * 0.1, R * 0.85, 0, R * 0.1, R * 0.85, R * 0.7);
-  mound.addColorStop(0, 'rgba(255, 210, 74, 0.24)');
+  mound.addColorStop(0, `rgba(255, 210, 74, ${0.24 * hoard})`);
   mound.addColorStop(1, 'rgba(255, 210, 74, 0)');
   ctx.fillStyle = mound;
   ctx.beginPath();
   ctx.ellipse(R * 0.1, R * 0.88, R * 0.7, R * 0.3, 0, 0, 6.283);
   ctx.fill();
-  for (let k = 0; k < 10; k++) {
+  ctx.globalAlpha = hoard;
+  for (let k = 0; k < 10 * hoard; k++) {
     const hx2 = R * 0.1 + Math.sin(k * 2.7) * R * 0.45;
     const hy2 = R * (0.78 + (k % 3) * 0.08);
     ctx.beginPath();
@@ -2455,7 +2462,7 @@ function drawJsonBoss(
     const t = (time * 0.16 + k / 6) % 1;
     const px = -R * 1.9 + t * R * 1.9;
     const py = R * 1.32 - t * R * 0.45 + Math.sin(t * 12) * R * 0.02;
-    ctx.globalAlpha = t > 0.92 ? (1 - t) / 0.08 : 0.9;
+    ctx.globalAlpha = (t > 0.92 ? (1 - t) / 0.08 : 0.9) * hoard;
     ctx.beginPath();
     ctx.ellipse(px, py, R * 0.065, R * 0.05, 0.1, 0, 6.283);
     ctx.fillStyle = '#ffd24a';
@@ -2473,7 +2480,7 @@ function drawJsonBoss(
     const ang = seed + phase * 3.8;
     const tx2 = Math.cos(ang) * rad;
     const ty2 = Math.sin(ang) * rad * 0.42 + R * 0.5 * phase;
-    ctx.globalAlpha = 0.2 + phase * 0.65;
+    ctx.globalAlpha = (0.2 + phase * 0.65) * hoard;
     ctx.beginPath();
     ctx.ellipse(tx2, ty2, R * 0.05, R * 0.065, ang, 0, 6.283);
     ctx.fillStyle = '#ffd24a';

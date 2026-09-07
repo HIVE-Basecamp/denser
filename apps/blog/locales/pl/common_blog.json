@@ -958,6 +958,23 @@
       "votes": "GŁOSY",
       "funded": "SFINANSOWANO"
     },
+    "keep": {
+      "motto": "Miał stake, ale nigdy nie miał nas.",
+      "released": "Jego skarb stał się wspólny.",
+      "guardians": "Strażnicy z tobą",
+      "hoard": "Skarb",
+      "hoard_his": "jego, dopóki nie stanie z tobą cała 21",
+      "hoard_everyones": "wszystkich",
+      "vault_hive": "Skarbiec, HIVE",
+      "vault_hbd": "Skarbiec, HBD",
+      "keys": "Klucze do skarbca",
+      "keys_none": "brak",
+      "keys_some": "kilka",
+      "record": "Prawdziwy zapis",
+      "link_vault": "Konto skarbca",
+      "link_proposals": "Skąd wypłaca",
+      "link_hf24": "Dzień, w którym stake się przeniósł, paź. 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1010,7 +1027,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "Twierdza",
+      "keep_done": "jego skarb stał się wspólny",
+      "keep_not": "wciąż jego"
     }
   }
 }

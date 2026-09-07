@@ -953,6 +953,23 @@
       "votes": "VOTES",
       "funded": "FINANCÉ"
     },
+    "keep": {
+      "motto": "Il possédait le stake, mais il ne nous a jamais possédés.",
+      "released": "Son trésor est devenu celui de tous.",
+      "guardians": "Gardiens avec vous",
+      "hoard": "Le trésor",
+      "hoard_his": "à lui, tant que les 21 ne sont pas avec vous",
+      "hoard_everyones": "à tous",
+      "vault_hive": "Le coffre, HIVE",
+      "vault_hbd": "Le coffre, HBD",
+      "keys": "Clés du coffre",
+      "keys_none": "aucune",
+      "keys_some": "quelques-unes",
+      "record": "Les faits réels",
+      "link_vault": "Le compte du coffre",
+      "link_proposals": "Où il est versé",
+      "link_hf24": "Le jour où le stake a bougé, oct. 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1005,7 +1022,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "Le donjon",
+      "keep_done": "son trésor est devenu celui de tous",
+      "keep_not": "encore à lui"
     }
   }
 }

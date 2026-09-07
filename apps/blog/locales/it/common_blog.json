@@ -953,6 +953,23 @@
       "votes": "VOTI",
       "funded": "FINANZIATO"
     },
+    "keep": {
+      "motto": "Possedeva lo stake, ma non ha mai posseduto noi.",
+      "released": "Il suo tesoro è diventato di tutti.",
+      "guardians": "Guardiani con te",
+      "hoard": "Il tesoro",
+      "hoard_his": "suo, finché i 21 non sono con te",
+      "hoard_everyones": "di tutti",
+      "vault_hive": "Il caveau, HIVE",
+      "vault_hbd": "Il caveau, HBD",
+      "keys": "Chiavi del caveau",
+      "keys_none": "nessuna",
+      "keys_some": "alcune",
+      "record": "I fatti veri",
+      "link_vault": "Il conto del caveau",
+      "link_proposals": "Dove paga",
+      "link_hf24": "Il giorno in cui lo stake si è mosso, ott. 2020"
+    },
     "worlds": {
       "dhf_fun_park": "DHF Fun Park",
       "witty_world": "Witty World"
@@ -1005,7 +1022,10 @@
       "no": "not yet",
       "none": "none",
       "front": "front",
-      "back": "back"
+      "back": "back",
+      "keep": "La fortezza",
+      "keep_done": "il suo tesoro è diventato di tutti",
+      "keep_not": "ancora suo"
     }
   }
 }
