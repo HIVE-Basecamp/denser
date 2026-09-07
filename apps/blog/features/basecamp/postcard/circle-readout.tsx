@@ -21,8 +21,10 @@ const INSIDE_FONT_SHARE: Partial<Record<ReadoutViz, number>> = { clock: 0.125, o
 /** The pie is chunkier than a ring: its slices are the drawing. */
 const PIE_STROKE = 15;
 const PIE_GAP = 5;
-/** Narrowest column a label can still be read in. */
+/** Narrowest column a label can still be read in, unless the feed's tier says otherwise. */
 const MIN_COLUMN_WIDTH = 52;
+/** Under this width the half-moon's four numbers drop a point and close ranks, so they stay inside their column. */
+const HALF_MOON_SMALL_WIDTH = 72;
 
 interface CircleReadoutProps {
   readout: Readout;
@@ -34,6 +36,10 @@ interface CircleReadoutProps {
    * baseline whatever their diameters.
    */
   boxHeight?: number;
+  /** Narrowest column the drawing gets; a long name may run a little past a small drawing. */
+  minColumnWidth?: number;
+  /** Type size of the name under the drawing, when the feed's tier wants it smaller than usual. */
+  captionSize?: number;
 }
 
 /**
@@ -41,7 +47,7 @@ interface CircleReadoutProps {
  * drawing leaves room and under it where it does not, its name under that,
  * and a popover that says what it counts.
  */
-const CircleReadout = ({ readout, size, boxHeight }: CircleReadoutProps) => {
+const CircleReadout = ({ readout, size, boxHeight, minColumnWidth = MIN_COLUMN_WIDTH, captionSize }: CircleReadoutProps) => {
   const { t } = useTranslation('common_blog');
   const viz: ReadoutViz = readout.viz ?? 'bubble';
   const label = t(`basecamp.card.labels.${readout.id}`);
@@ -98,12 +104,16 @@ const CircleReadout = ({ readout, size, boxHeight }: CircleReadoutProps) => {
     return formatReadoutValue(t, readout);
   };
 
+  const smallMoon = isHalfMoon && size < HALF_MOON_SMALL_WIDTH;
   const valueRow = isHalfMoon ? (
-    <div className="flex items-center justify-center gap-1.5 leading-none" data-testid={`readout-value-${readout.id}`}>
+    <div
+      className={cn('flex items-center justify-center leading-none', smallMoon ? 'gap-1' : 'gap-1.5')}
+      data-testid={`readout-value-${readout.id}`}
+    >
       {slices.map((slice) => (
         <span
           key={slice.id}
-          className="text-[10px] font-semibold tabular-nums"
+          className={cn('font-semibold tabular-nums', smallMoon ? 'text-[9px]' : 'text-[10px]')}
           style={{ color: slice.known ? slice.hex : undefined, opacity: slice.known ? 1 : 0.4 }}
         >
           {formatReadoutValue(t, slice)}
@@ -123,7 +133,7 @@ const CircleReadout = ({ readout, size, boxHeight }: CircleReadoutProps) => {
     <Hint title={label} body={hint} value={insideShare ? valueText() : undefined} rows={rows}>
       <div
         className="flex shrink-0 cursor-default flex-col items-center gap-1"
-        style={{ width: Math.max(size, MIN_COLUMN_WIDTH) }}
+        style={{ width: Math.max(size, minColumnWidth) }}
         data-testid={`readout-${readout.id}`}
         data-readout-known={readout.known ? 'true' : 'false'}
         data-readout-ratio={readout.ratio.toFixed(3)}
@@ -150,7 +160,9 @@ const CircleReadout = ({ readout, size, boxHeight }: CircleReadoutProps) => {
           </div>
           {valueRow}
         </div>
-        <span className={cn(BASECAMP_MICRO_LABEL, 'whitespace-nowrap text-center')}>{caption}</span>
+        <span className={cn(BASECAMP_MICRO_LABEL, 'whitespace-nowrap text-center')} style={{ fontSize: captionSize }}>
+          {caption}
+        </span>
       </div>
     </Hint>
   );

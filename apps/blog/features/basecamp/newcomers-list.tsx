@@ -6,7 +6,7 @@ import { useTranslation } from '@/blog/i18n/client';
 import { useElementWidth } from './hooks/use-element-width';
 import { useNewcomers } from './hooks/use-newcomers';
 import NewcomersListItem from './newcomers-list-item';
-import { POST_FLOOR_WIDTH, POST_MAX_WIDTH, POSTCARD_TIERS, postcardTierFor } from './lib/postcard-sizes';
+import { POST_MAX_WIDTH, POSTCARD_TIERS, postcardTierFor } from './lib/postcard-sizes';
 import { BASECAMP_CARD, BASECAMP_MUTED, BASECAMP_SKELETON, accentButton } from './lib/theme';
 import { POST_CARD_HEIGHT } from './postcard/post-card';
 import { HALF_MOON_ASPECT } from './viz/half-moon';
@@ -28,7 +28,7 @@ function NewcomerCardSkeleton() {
     >
       <div
         className="min-w-0 flex-auto"
-        style={{ flexBasis: tier.postMinWidth, minWidth: POST_FLOOR_WIDTH, maxWidth: POST_MAX_WIDTH }}
+        style={{ flexBasis: tier.postMinWidth, minWidth: tier.postFloor, maxWidth: POST_MAX_WIDTH }}
       >
         <div className="flex items-center gap-2">
           <Skeleton className={cn(BASECAMP_SKELETON, 'h-11 w-11 shrink-0 rounded-full')} />

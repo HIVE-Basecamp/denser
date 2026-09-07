@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { cn } from '@ui/lib/utils';
 import CircleReadout from './postcard/circle-readout';
@@ -10,13 +11,7 @@ import { useAccountCreator } from './hooks/use-account-creator';
 import { useAccountHistory } from './hooks/use-account-history';
 import { useVestsToHivePowerRate } from './hooks/use-vests-rate';
 import { buildReadouts, type ReadoutDisplay, type StakeInput } from './lib/readouts';
-import {
-  DEFAULT_DRAWING_SIZE,
-  POST_FLOOR_WIDTH,
-  POST_MAX_WIDTH,
-  POSTCARD_TIERS,
-  type PostcardTier
-} from './lib/postcard-sizes';
+import { DEFAULT_DRAWING_SIZE, POST_MAX_WIDTH, POSTCARD_TIERS, type PostcardTier } from './lib/postcard-sizes';
 import { BASECAMP_SIGNALS, type SignalInput, type SignalValue } from './lib/signals';
 import { hivePowerFromAmount } from './lib/stake';
 import { BASECAMP_POSTCARD_STYLE } from './lib/theme';
@@ -26,12 +21,20 @@ import type { Newcomer } from './hooks/use-newcomers';
  * Between the two anchors — the rings flush left, the flower flush right —
  * the post is the one thing that stretches or gives, so a wider feed gives
  * the title more room rather than leaving a gap, and a narrower one takes
- * room from the title rather than folding the row. The row only wraps on a
- * phone, where nothing fits on one line anyway; on a desktop a card that
- * folds its right half onto a second line is a card with a hole in it.
+ * room from the title rather than folding the row. On a desktop a card that
+ * folds its right half onto a second line is a card with a hole in it, so
+ * the row holds one line. Only where the feed has measured itself too narrow
+ * for even the smallest row does it fold, and then into two full lines: the
+ * post and the flower, then the five drawings spread edge to edge.
  */
 export const POSTCARD_CLASS =
   'my-2 flex flex-wrap items-center justify-between gap-y-2 rounded-2xl border border-white/10 px-3 py-[10px] text-[#E8EDF5] shadow-[0_18px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm transition-colors duration-200 hover:border-[#B79CFF]/40 sm:flex-nowrap';
+
+/** Stacked, the post shares the first line with the flower and may grow past the usual cap to meet it. */
+function postZoneStyle(tier: PostcardTier): CSSProperties {
+  if (tier.stacked) return { flexBasis: tier.postMinWidth, minWidth: tier.postFloor };
+  return { flexBasis: tier.postMinWidth, minWidth: tier.postFloor, maxWidth: POST_MAX_WIDTH };
+}
 
 interface NewcomersListItemProps extends Newcomer {
   /** Shows a follow button. On where the card is a call to act, off in the feed. */
@@ -104,17 +107,15 @@ const NewcomersListItem = ({
   return (
     <li ref={ref}>
       <div
-        className={cn(POSTCARD_CLASS)}
+        className={cn(POSTCARD_CLASS, tier.stacked && 'sm:flex-wrap')}
         style={{ ...BASECAMP_POSTCARD_STYLE, columnGap: tier.zoneGap }}
         data-testid="newcomer-list-item"
         data-postcard-tier={tier.name}
       >
-        <div
-          className="min-w-0 flex-auto"
-          style={{ flexBasis: tier.postMinWidth, minWidth: POST_FLOOR_WIDTH, maxWidth: POST_MAX_WIDTH }}
-        >
+        <div className="min-w-0 flex-auto" style={postZoneStyle(tier)}>
           <IdentityStrip
             username={post.author}
+            ringsSize={tier.rings}
             reputation={post.author_reputation}
             accountAgeDays={accountAgeDays}
             createdIso={post.created}
@@ -126,13 +127,18 @@ const NewcomersListItem = ({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center" style={{ columnGap: tier.drawingGap }}>
+        <div
+          className={cn('flex shrink-0 items-center', tier.stacked && 'order-1 w-full justify-between')}
+          style={{ columnGap: tier.drawingGap }}
+        >
           {shown('circle').map((readout) => (
             <CircleReadout
               key={readout.id}
               readout={readout}
               size={tier.drawings[readout.id] ?? DEFAULT_DRAWING_SIZE}
               boxHeight={tier.hero}
+              minColumnWidth={tier.column}
+              captionSize={tier.caption}
             />
           ))}
         </div>

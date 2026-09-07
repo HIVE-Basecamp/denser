@@ -677,7 +677,16 @@
         "pair": "{{first}} / {{second}}",
         "pair_short": "{{first}}/{{second}}",
         "days_short": "{{value}}d",
-        "per_day_short": "{{value}}/d"
+        "per_day_short": "{{value}}/d",
+        "age": {
+          "now": "now",
+          "minute": "{{value}}m",
+          "hour": "{{value}}h",
+          "day": "{{value}}d",
+          "week": "{{value}}w",
+          "month": "{{value}}mo",
+          "year": "{{value}}y"
+        }
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -702,7 +711,8 @@
         "stake_kept": "Kept",
         "stake_out": "Lent out",
         "stake_in": "Lent in",
-        "flower": "Activity flower"
+        "flower": "Activity flower",
+        "posted": "Posted"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -729,7 +739,8 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one."
+        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
+        "posted": "When this post was published."
       }
     },
     "title": "Basecamp",

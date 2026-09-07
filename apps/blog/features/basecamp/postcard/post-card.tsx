@@ -24,7 +24,9 @@ interface PostCardProps {
  * The post, as its own small card inside the postcard — the one thing here the
  * person actually made. The picture bleeds to the card's left edge so the
  * picture is the corner; the title and its two counts sit beside it in plain
- * text, no chips, no second frame.
+ * text, no chips, no second frame. The community's name at the end of the
+ * counts row is whole or absent: when the row is too narrow for it, it wraps
+ * under the row's fixed height and out of sight, never to a clipped letter.
  */
 const PostCard = ({ post }: PostCardProps) => {
   const { t } = useTranslation('common_blog');
@@ -63,7 +65,7 @@ const PostCard = ({ post }: PostCardProps) => {
         >
           {post.title}
         </Link>
-        <div className="flex items-center gap-2.5 text-[11px] font-medium leading-none tabular-nums text-white/60">
+        <div className="flex h-3 flex-wrap items-center gap-x-2.5 overflow-hidden text-[11px] font-medium leading-none tabular-nums text-white/60">
           <span className="flex items-center gap-1" title={t('basecamp.card.hints.votes_on_post')}>
             <ChevronUp className="h-3 w-3" style={{ color: BASECAMP_VIVID.orange }} aria-hidden="true" />
             {voteCount}
@@ -76,7 +78,7 @@ const PostCard = ({ post }: PostCardProps) => {
             <MessageSquare className="h-3 w-3" style={{ color: BASECAMP_VIVID.cyan }} aria-hidden="true" />
             {replyCount}
           </Link>
-          <span className={cn(BASECAMP_MUTED, 'ml-auto min-w-0 truncate text-[10px]')}>{post.category}</span>
+          <span className={cn(BASECAMP_MUTED, 'ml-auto whitespace-nowrap text-[10px]')}>{post.category}</span>
         </div>
       </div>
     </div>

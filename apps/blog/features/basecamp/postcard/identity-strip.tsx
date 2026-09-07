@@ -2,18 +2,18 @@
 
 import { Link } from '@hive/ui';
 import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
-import TimeAgo from '@ui/components/time-ago';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import ActivityRings from '../activity-rings';
 import FollowNewcomerButton from '../follow-newcomer-button';
 import type { Readout } from '../lib/readouts';
 import { RING_TRACK_COLOR } from '../lib/rings';
-import { BASECAMP_LINK, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
+import { BASECAMP_LINK, BASECAMP_VIVID } from '../lib/theme';
 import Hint from './hint';
+import PostAge from './post-age';
 
 /** Small enough to share a band with the post; still the card's anchor. */
-const RINGS_SIZE = 44;
+const DEFAULT_RINGS_SIZE = 44;
 
 interface ProfilePipsProps {
   readout: Readout;
@@ -47,6 +47,8 @@ const ProfilePips = ({ readout }: ProfilePipsProps) => {
 
 interface IdentityStripProps {
   username: string;
+  /** Diameter of the rings; the feed's tier sets it. */
+  ringsSize?: number;
   reputation: number;
   accountAgeDays: number;
   createdIso: string;
@@ -58,18 +60,23 @@ interface IdentityStripProps {
 /**
  * Who this is. The three rings keep their place because they are the only
  * drawing that shows what the chain proves someone has done, rather than what
- * it measures about how they behave. The time sits at the line's far end, the
- * way a message list puts it, so the line is held at both edges however short
- * the name.
+ * it measures about how they behave. The name is printed whole, always: it is
+ * the one thing on the card that is never cut short, so the post's age sits
+ * after it, small, and is the part that gives way — whole or not at all,
+ * never as a clipped fragment: when it does not fit it wraps under the line's
+ * fixed height and out of sight.
  */
-const IdentityStrip = ({ username, reputation, accountAgeDays, createdIso, showFollow, profile }: IdentityStripProps) => (
+const IdentityStrip = ({
+  username,
+  ringsSize = DEFAULT_RINGS_SIZE,
+  reputation,
+  accountAgeDays,
+  createdIso,
+  showFollow,
+  profile
+}: IdentityStripProps) => (
   <div className="flex items-center gap-2" data-testid="postcard-identity">
-    <ActivityRings
-      username={username}
-      reputation={reputation}
-      accountAgeDays={accountAgeDays}
-      size={RINGS_SIZE}
-    />
+    <ActivityRings username={username} reputation={reputation} accountAgeDays={accountAgeDays} size={ringsSize} />
     <Link href={`/@${username}`} data-testid="newcomer-avatar" className="shrink-0">
       <span
         className="block h-6 w-6 rounded-full bg-cover bg-no-repeat ring-1 ring-white/15 transition-shadow hover:ring-2 hover:ring-[#B79CFF]/60"
@@ -77,17 +84,15 @@ const IdentityStrip = ({ username, reputation, accountAgeDays, createdIso, showF
       />
     </Link>
     <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex h-4 flex-wrap items-baseline gap-x-1.5 overflow-hidden">
         <Link
           href={`/@${username}`}
-          className={cn(BASECAMP_LINK, 'block min-w-[40px] truncate text-[13px] font-semibold leading-4')}
+          className={cn(BASECAMP_LINK, 'shrink-0 whitespace-nowrap text-[13px] font-semibold leading-4')}
           data-testid="newcomer-username"
         >
           {username}
         </Link>
-        <span className={cn(BASECAMP_MUTED, 'shrink-0 text-[11px] leading-none')}>
-          <TimeAgo date={createdIso} />
-        </span>
+        <PostAge createdIso={createdIso} />
       </div>
       {profile ? <ProfilePips readout={profile} /> : null}
     </div>
