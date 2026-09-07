@@ -57,6 +57,7 @@ import { DAPP_DIRECTORY } from '../lib/fixed-world';
 import { avatarImage } from './avatars';
 import { drawGround, GROUND_VOID, type Ground } from './ground';
 import { drawPlanet, planetPath } from './planet';
+import { drawBlocks, type BlockState } from './blocks';
 import { towerLean } from '../lib/planet';
 
 export const PALETTE = {
@@ -318,6 +319,8 @@ export interface RenderScene {
   combat?: CombatState | null;
   /** Colorful collectible gems: eye candy with no economy yet, by design. */
   gems?: GemState | null;
+  /** Blocks parked on the lines: hop over or route around (engine/blocks.ts). */
+  blocks?: BlockState | null;
   /** Community handles the player has visited; unvisited bubbles rest dim. */
   visitedCommunities?: ReadonlySet<string> | null;
   /** Trophies mounted on the ferris wheel this board, in mount order. */
@@ -1770,6 +1773,12 @@ export function drawScene(scene: RenderScene): void {
       ctx.arc(n.x, n.y, 12 / Math.max(z, 0.3), 0, 6.283);
       ctx.fill();
     }
+  }
+
+  // BLOCKS on the lines, drawn late and opaque so they hide whatever passes
+  // behind them; a drifting bug still sails over the top.
+  if (scene.blocks && mapness < 0.7) {
+    drawBlocks(ctx, scene.blocks, vis);
   }
 
   const bugX = scene.rideOverlay ? scene.rideOverlay.x : player.x;

@@ -78,6 +78,8 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
   movement.ts     Rail riding and drift. Position is always edge + fraction.
   coins.ts        The token economy: collect, bank, thieves, recapture.
   helmets.ts      The 21 oxygen helmets and the drift-range upgrade ladder.
+  blocks.ts       Blocks parked on the lines each round: a rail bug that pushes
+                  into one is stopped; hop over or route around.
   critters.ts     The population: five kinds, their look and their wander.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.

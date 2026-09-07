@@ -5,11 +5,13 @@
  * and json factories that pulse and spit diamonds down the lines. Nothing
  * collides, nothing opens, nothing can be entered.
  *
- * THE SEAM: cubes become obstacles and factories become real custom_json
- * activity later. Placement is deterministic from the window seed so every
- * player sees the same scenery; keep the Cube/Factory shapes and replace the
- * place* functions with data-fed versions when the time comes — the renderer
- * will not change. Particle FLOWS live in `particles.ts`, not here.
+ * THE SEAM: factories become real custom_json activity later. Placement is
+ * deterministic from the window seed so every player sees the same scenery;
+ * keep the Cube/Factory shapes and replace the place* functions with
+ * data-fed versions when the time comes — the renderer will not change.
+ * The obstacles the cubes were placeholders for live in `blocks.ts` now
+ * (ticket 17); the cubes stay as texture. Particle FLOWS live in
+ * `particles.ts`, not here.
  */
 
 import type { GameWorld } from './world';

@@ -70,6 +70,7 @@ import {
   type HazardState
 } from './hazards';
 import { createGems, updateGems, type GemState } from './gems';
+import { placeBlocks, blockPlayer, type BlockState } from './blocks';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from './dhf-race';
 import { gridCellName } from './render';
 import { createProjectiles, updateProjectiles, playerFire, type ProjectileState } from './projectiles';
@@ -458,6 +459,8 @@ const Stage = ({ board }: { board: Board }) => {
   const beamCooldownRef = useRef(0);
   /** The nuisance hazards: goo, wrap, the sock trip. */
   const hazardsRef = useRef<HazardState | null>(null);
+  /** Blocks on the lines this round; scenery that stops a rail bug. */
+  const blocksRef = useRef<BlockState | null>(null);
   /** Colorful collectible gems, reseeded every board. */
   const gemsRef = useRef<GemState | null>(null);
   /** The DHF race (adventure mode); rebuilt with every round. */
@@ -573,6 +576,7 @@ const Stage = ({ board }: { board: Board }) => {
     coinsRef.current = createCoins(world, board.counts.customJson, board.windowStart);
     helmetsRef.current = createHelmets();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
+    blocksRef.current = placeBlocks(world, board.windowStart);
     gemsRef.current = createGems(world, board.windowStart);
     raceRef.current = createRace(board.houses.map((h) => h.tier));
     projectilesRef.current = createProjectiles();
@@ -1078,6 +1082,10 @@ const Stage = ({ board }: { board: Board }) => {
           }
         }
       }
+      // BLOCKS on the line (engine/blocks.ts): a rail bug that pushed into
+      // one is set back to its edge, stopped. Hop over it or take another
+      // line. movement.ts untouched, like the hazards.
+      if (blocksRef.current && blockPlayer(blocksRef.current, p, edges, dt)) shake = Math.max(shake, 5);
       if (shake > 0) shake = Math.max(0, shake - dt * 40);
       if (warpFxRef.current > 0) warpFxRef.current = Math.max(0, warpFxRef.current - dt * 1.6);
       // THE FLIP: the board turns over; at the midpoint the side changes.
@@ -1411,6 +1419,7 @@ const Stage = ({ board }: { board: Board }) => {
         projectiles: alive ? projectilesRef.current : null,
         combat: combatRef.current,
         gems: alive ? gemsRef.current : null,
+        blocks: blocksRef.current,
         side: sideRef.current,
         flipX,
         flipSkew,
