@@ -46,9 +46,9 @@ Fast, actionable (build or rough, small):
 7. [H.I.V.E.R. in the glossary](issues/29-hiver-in-the-glossary.md): five minutes once Bryan gives the letters.
 8. [Confirm 3speak space with Meno](issues/23-confirm-3speak-space-with-meno.md): Bryan's, one message.
 9. [Build the board lean (2.5D)](issues/36-build-the-board-lean.md): tried and pulled out 2026-09-06 on Bryan's call.
-10. [The planet pass](issues/37-the-planet-pass.md): built 2026-09-06, not committed; the map view reads as a globe.
+10. [The planet pass](issues/37-the-planet-pass.md): built 2026-09-06; the map view reads as a globe.
 
-Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md) (done 2026-09-07, not committed), [Build footprints](issues/30-build-footprints.md) (done 2026-09-07, not committed), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md).
+Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md) (done 2026-09-07), [Build footprints](issues/30-build-footprints.md) (done 2026-09-07), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md) (built 2026-09-07, not committed).
 
 Blocked until the foundational talks land: 20, 25, 31, 32.
 
@@ -76,6 +76,7 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [The planet pass](issues/37-the-planet-pass.md): a shaded sea under the mark inside the ring, towers leaning outward like pins in a globe as the camera pulls out, the flip turns a sphere; nothing moved
 - [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md): blocks parked on one street in six per round, seeded; a rail bug that pushes in is stopped, a hop carries it over; `movement.ts` untouched
 - [Build footprints](issues/30-build-footprints.md): prints on a post's streets from the accounts that voted or replied this round, out to a marker with the face; hover names the act, click opens the account; facts only
+- [What happens at the keep](issues/27-what-happens-at-the-keep.md): two helmets still cross; all 21 set the hoard loose, streaming to the park, "his hoard became everyone's"; the panel shows the real keyless vault, live; the heads untouched
 
 ## Not yet specified
 
