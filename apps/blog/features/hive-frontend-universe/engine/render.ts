@@ -56,6 +56,8 @@ import { DAPP_WINDOWS, rosePaneCentre } from './icons';
 import { DAPP_DIRECTORY } from '../lib/fixed-world';
 import { avatarImage } from './avatars';
 import { drawGround, GROUND_VOID, type Ground } from './ground';
+import { drawPlanet, planetPath } from './planet';
+import { towerLean } from '../lib/planet';
 
 export const PALETTE = {
   bg: GROUND_VOID,
@@ -717,6 +719,38 @@ function blobPath(ctx: CanvasRenderingContext2D, x: number, y: number, r: number
   ctx.closePath();
 }
 
+/** The nebulae: four vast, faint clouds in the void, under the planet. */
+function drawNebulae(
+  ctx: CanvasRenderingContext2D,
+  vx0: number,
+  vy0: number,
+  vx1: number,
+  vy1: number
+): void {
+  // NEBULAE: two vast, faint clouds so the void reads as space instead of
+  // unfinished black. Fixed world positions, one violet behind the north-east
+  // citadels, one deep teal in the south-west sea. Two gradient fills, drawn
+  // under the land; the darkening overlay below dims them a little, which the
+  // alphas here already account for.
+  // Four now, and bolder: Bryan asked for braver color in the void
+  // ("a magical colorful star universe"), so the clouds stopped whispering.
+  for (const [nx, ny, nr, colIn] of [
+    [6200, -5200, 3400, 'rgba(88, 46, 160, 0.55)'],
+    [-6300, 4400, 3800, 'rgba(18, 92, 126, 0.5)'],
+    [-6900, -5400, 3000, 'rgba(210, 70, 140, 0.34)'],
+    [2000, 7500, 3200, 'rgba(214, 140, 60, 0.3)']
+  ] as const) {
+    if (nx + nr < vx0 || nx - nr > vx1 || ny + nr < vy0 || ny - nr > vy1) continue;
+    const neb = ctx.createRadialGradient(nx, ny, nr * 0.1, nx, ny, nr);
+    neb.addColorStop(0, colIn);
+    neb.addColorStop(1, 'rgba(10, 6, 20, 0)');
+    ctx.fillStyle = neb;
+    ctx.beginPath();
+    ctx.arc(nx, ny, nr, 0, 6.283);
+    ctx.fill();
+  }
+}
+
 export function drawScene(scene: RenderScene): void {
   const { ctx, W, H, DPR, cam, nodes, edges, player, time, mapness } = scene;
 
@@ -734,13 +768,12 @@ export function drawScene(scene: RenderScene): void {
   const sy = scene.shake ? (Math.random() - 0.5) * scene.shake : 0;
   const z = cam.z;
 
-  // THE FLIP: the board turns on its vertical axis. flipX runs 1 to -1
-  // (cosine), so past the midpoint the world is mirrored: you are looking
-  // at the back. The skew fakes perspective on the way round.
+  // THE SKY AND THE PLANET'S BODY sit behind the board and do not turn with
+  // it: when the board flips at the ruins the sphere stays round and only
+  // its face slides across. Plain world space, no flip.
   const flipX = scene.flipX ?? 1;
   ctx.save();
   ctx.translate(W / 2 + sx, H / 2 + sy);
-  ctx.transform(flipX, 0, scene.flipSkew ?? 0, 1, 0, 0);
   ctx.scale(z, z);
   ctx.translate(-cam.x, -cam.y);
 
@@ -763,6 +796,19 @@ export function drawScene(scene: RenderScene): void {
   // THE SKY: colorful stars, diagonal streaks, Hive constellations. Visible
   // at every zoom; loudest exactly where the map used to be dead black.
   drawSky(ctx, time, z, vx0, vy0, vx1, vy1);
+  drawNebulae(ctx, vx0, vy0, vx1, vy1);
+  // THE PLANET (lib/planet.ts): the sphere the mark sits on, seen face-on.
+  drawPlanet(ctx, mapness);
+  ctx.restore();
+
+  // THE FLIP: the board turns on its vertical axis. flipX runs 1 to -1
+  // (cosine), so past the midpoint the world is mirrored: you are looking
+  // at the back. Everything from here on is the planet's face.
+  ctx.save();
+  ctx.translate(W / 2 + sx, H / 2 + sy);
+  ctx.transform(flipX, 0, scene.flipSkew ?? 0, 1, 0, 0);
+  ctx.scale(z, z);
+  ctx.translate(-cam.x, -cam.y);
 
   // The tier fish, out in the open water: plankton through whale, dim
   // silhouettes so the sea-in-space theme reads while playing.
@@ -783,29 +829,6 @@ export function drawScene(scene: RenderScene): void {
         drawFish(ctx, fx, fy, FISH_SIZE[tier], scene.tierColors[tier], dir, 0.17 + tier * 0.04);
       }
     }
-  }
-
-  // NEBULAE: two vast, faint clouds so the void reads as space instead of
-  // unfinished black. Fixed world positions, one violet behind the north-east
-  // citadels, one deep teal in the south-west sea. Two gradient fills, drawn
-  // under the land; the darkening overlay below dims them a little, which the
-  // alphas here already account for.
-  // Four now, and bolder: Bryan asked for braver color in the void
-  // ("a magical colorful star universe"), so the clouds stopped whispering.
-  for (const [nx, ny, nr, colIn] of [
-    [6200, -5200, 3400, 'rgba(88, 46, 160, 0.55)'],
-    [-6300, 4400, 3800, 'rgba(18, 92, 126, 0.5)'],
-    [-6900, -5400, 3000, 'rgba(210, 70, 140, 0.34)'],
-    [2000, 7500, 3200, 'rgba(214, 140, 60, 0.3)']
-  ] as const) {
-    if (nx + nr < vx0 || nx - nr > vx1 || ny + nr < vy0 || ny - nr > vy1) continue;
-    const neb = ctx.createRadialGradient(nx, ny, nr * 0.1, nx, ny, nr);
-    neb.addColorStop(0, colIn);
-    neb.addColorStop(1, 'rgba(10, 6, 20, 0)');
-    ctx.fillStyle = neb;
-    ctx.beginPath();
-    ctx.arc(nx, ny, nr, 0, 6.283);
-    ctx.fill();
   }
 
   // THE GROUND. Filled landmasses, drawn over the void (and over the stars and
@@ -963,6 +986,13 @@ export function drawScene(scene: RenderScene): void {
       ctx.stroke();
       ctx.globalAlpha = 1;
     }
+    // On the pulled-out map the tower leans outward from the planet's
+    // centre, a pin in a globe; up close it stands (lib/planet.ts).
+    const lean = towerLean(wt.x, wt.y, mapness);
+    ctx.save();
+    ctx.translate(wt.x, wt.y);
+    ctx.rotate(lean);
+    ctx.translate(-wt.x, -wt.y);
     drawWitnessCitadel(
       ctx,
       wt.x,
@@ -973,7 +1003,8 @@ export function drawScene(scene: RenderScene): void {
       avatarImage(wt.name),
       time,
       wt.rank * 0.7,
-      z >= 0.12
+      z >= 0.12,
+      lean
     );
     // Lit windows up the tower, a blinking few among them: 21 lonely
     // monuments become 21 inhabited outposts (population silhouette tier).
@@ -992,6 +1023,7 @@ export function drawScene(scene: RenderScene): void {
       );
     }
     ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
   // Emperor J SON's troll holes, sunk into the terrain. The keep is a
@@ -1894,6 +1926,9 @@ export function drawScene(scene: RenderScene): void {
   // saturation, then pulled cold. Two blend fills over the whole view; the
   // world underneath is drawn exactly as on the front.
   if (scene.side === 'steem') {
+    ctx.save();
+    planetPath(ctx, 1.15);
+    ctx.clip();
     ctx.globalCompositeOperation = 'saturation';
     ctx.fillStyle = '#4a5560';
     ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
@@ -1903,16 +1938,24 @@ export function drawScene(scene: RenderScene): void {
     ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
+    ctx.restore();
   }
 
   ctx.restore();
 
-  // Mid-flip the board is edge-on: darken so the turn has weight.
+  // Mid-turn the far side comes round: darken the sphere's face, not the
+  // sky, so the turn has weight and the planet stays a planet.
   if (Math.abs(flipX) < 1) {
+    ctx.save();
+    ctx.translate(W / 2 + sx, H / 2 + sy);
+    ctx.scale(z, z);
+    ctx.translate(-cam.x, -cam.y);
+    planetPath(ctx, 1.15);
+    ctx.clip();
     ctx.globalAlpha = (1 - Math.abs(flipX)) * 0.7;
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalAlpha = 1;
+    ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
+    ctx.restore();
   }
 
   // VIGNETTE, screen space, map zoom only: darkened corners pull the eye

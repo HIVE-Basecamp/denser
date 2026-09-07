@@ -70,6 +70,7 @@ lib/        Pure, DOM-free. The world's shape and rules.
   routes.ts       Named edge-id lists over the mesh (post line, dApps line).
   targets.ts      What every clickable thing links to. One mapping, one file.
   board.ts        Raw chain data -> the window's board (posts, tiers, counts).
+  planet.ts       The planet's disc, and how the towers lean on it.
 
 engine/     Canvas + game state. No React except canvas-map.tsx.
   world.ts        Welds mesh + clusters + communities into one graph, then
@@ -80,6 +81,7 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
   critters.ts     The population: five kinds, their look and their wander.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.
+  planet.ts       The sphere's paint: sea, limb, night, sheen. Under the land.
   render.ts       One draw pass over the whole scene, viewport-culled.
   icons.ts        Every code-drawn illustration (no image assets).
   canvas-map.tsx  The React shell: frame loop, input, hover/click, HUD.

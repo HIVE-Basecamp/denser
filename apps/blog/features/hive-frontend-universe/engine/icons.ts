@@ -1408,7 +1408,9 @@ export function drawWitnessCitadel(
   beat: number,
   /** False on the pulled-out map: drops the sweep beam and the climbing motes,
    *  which are sub-pixel there but cost a clip and two gradients per tower. */
-  detail: boolean
+  detail: boolean,
+  /** How far the caller has leaned the tower (radians); the face undoes it. */
+  lean = 0
 ): void {
   const w = h * 0.26; // shaft half-width at the base
   const lw = Math.max(2, h * 0.016);
@@ -1564,6 +1566,11 @@ export function drawWitnessCitadel(
   }
   ctx.globalAlpha = 1;
 
+  // The face stays upright however the tower leans on the planet.
+  ctx.save();
+  ctx.translate(0, headY);
+  ctx.rotate(-lean);
+  ctx.translate(0, -headY);
   if (avatar) {
     ctx.save();
     ctx.beginPath();
@@ -1582,6 +1589,7 @@ export function drawWitnessCitadel(
     ctx.textBaseline = 'middle';
     ctx.fillText(name.charAt(0).toUpperCase(), 0, headY + headR * 0.06);
   }
+  ctx.restore();
   ctx.strokeStyle = energy;
   ctx.lineWidth = lw * 1.8;
   ctx.beginPath();

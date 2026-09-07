@@ -36,17 +36,15 @@ import {
   type FlipState
 } from '../lib/board-side';
 import { HFU_COPY } from '../lib/strings';
+import { MAP_FIT, placeWitnesses, towerLean, towerPoint } from '../lib/planet';
 import { TIERS, windowStartFor, type Board } from '../lib/board';
 import {
-  WORLD,
   LANDMARKS,
   LANDMARK_ACCOUNTS,
   TROLL_HOLES,
   ARCADE_GAMES,
   DAPP_DIRECTORY,
-  ROSE_WINDOW_PANES,
-  WITNESS_OVERRIDES,
-  witnessPosts
+  ROSE_WINDOW_PANES
 } from '../lib/fixed-world';
 import { mulberry32 } from '../lib/mesh';
 import { getStorageItem, setStorageItem, StorageTTL } from '@ui/lib/storage-with-ttl';
@@ -315,12 +313,12 @@ const Stage = ({ board }: { board: Board }) => {
   // may never walk out to it.
   const witnessVisuals: WitnessVisual[] = useMemo(() => {
     if (!witnesses?.length) return [];
-    const posts = witnessPosts(witnesses.length);
+    // Every tower with its own space on the map (lib/planet.ts): Bryan's
+    // named placements first, the ring formula for the rest.
+    const posts = placeWitnesses(witnesses.map((w) => w.name));
     return witnesses.map((w, i) => {
-      // Bryan's named placements beat the ring formula.
-      const override = WITNESS_OVERRIDES[w.name];
-      const x = override ? override.x : posts[i].x;
-      const y = override ? override.y : posts[i].y;
+      const x = posts[i].x;
+      const y = posts[i].y;
       // THE TRACTOR LANE. The first beam grabbed within 260px of the base,
       // which physics proved unreachable for 14 of the 21 citadels (the ring
       // stands 1000-2200px off the coast; a bare jump dies first). The lane
@@ -843,6 +841,8 @@ const Stage = ({ board }: { board: Board }) => {
       // somewhere real. Aim at the crowned head, which is where the eye goes.
       for (const wt of witnessVisualsRef.current) {
         const towerH = 1680 - (wt.rank - 1) * 22;
+        // The head moves as the tower leans on the pulled-out map.
+        const head = towerPoint(wt.x, wt.y, towerH * 0.87, towerLean(wt.x, wt.y, mapnessAt(z)));
         consider(
           {
             kind: 'witness',
@@ -851,8 +851,8 @@ const Stage = ({ board }: { board: Board }) => {
             href: profileHref(wt.name),
             account: wt.name,
             travelable: false,
-            x: wt.x,
-            y: wt.y - towerH * 0.87
+            x: head.x,
+            y: head.y
           },
           towerH * 0.45
         );
@@ -1003,9 +1003,12 @@ const Stage = ({ board }: { board: Board }) => {
     };
 
     const playZ = () => (W >= 900 ? 0.6 : Math.max(0.42, W / 2100));
-    // The fit must include the farthest breakout clusters (the walled ones),
-    // or the frontier gets clipped off the travel map.
-    const fitZ = () => Math.min(W, H) / (2 * WORLD.fitExtent);
+    // The fit must hold the whole ring with its towers leaning outward, and
+    // a band under the hint at the top (lib/planet.ts).
+    const fitZ = () => Math.min(W / (2 * MAP_FIT.halfW), H / (2 * MAP_FIT.halfH));
+    /** 0 at play zoom, 1 on the pulled-out map, for a camera zoom. */
+    const mapnessAt = (zc: number) =>
+      Math.max(0, Math.min(1, (playZ() - zc) / Math.max(playZ() - fitZ(), 0.001)));
 
     // Lazy avatar loading: request faces as the player approaches, never all
     // at once, never blocking anything. Throttled well below frame rate.
@@ -1038,7 +1041,7 @@ const Stage = ({ board }: { board: Board }) => {
       const targetZ = out ? fitZ() : playZ();
       const follow = overlayPos ?? p;
       const tx = out ? 0 : follow.x;
-      const ty = out ? 0 : follow.y;
+      const ty = out ? MAP_FIT.centreY : follow.y;
       const k = Math.min(1, dt * 10); // ~90% in a quarter second, both ways
       cam.z += (targetZ - cam.z) * k;
       cam.x += (tx - cam.x) * k;
@@ -1374,9 +1377,7 @@ const Stage = ({ board }: { board: Board }) => {
         setInCommunity(inside);
       }
 
-      const zPlay = playZ();
-      const zFit = fitZ();
-      const mapness = Math.max(0, Math.min(1, (zPlay - camRef.current.z) / Math.max(zPlay - zFit, 0.001)));
+      const mapness = mapnessAt(camRef.current.z);
 
       const d = new Date(board.windowStart);
       const drawT0 = performance.now();

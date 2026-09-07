@@ -15,8 +15,11 @@ export const FLIP_LANDMARK_ID = 'steem_ruins';
 /** How long the board takes to turn over. */
 export const FLIP_SECONDS = 1.1;
 
-/** How much the board shears at the midpoint of the turn. */
-const FLIP_SKEW = 0.22;
+/**
+ * How much the board shears at the midpoint of the turn. 0.22 sold the turn
+ * of a card; a sphere turning has no shear (lib/planet.ts), so none now.
+ */
+const FLIP_SKEW = 0;
 
 export interface FlipState {
   /** 0 at the start of the turn, 1 when it has landed. */
