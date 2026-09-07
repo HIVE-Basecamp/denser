@@ -45,6 +45,8 @@ Fast, actionable (build or rough, small):
 6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): done 2026-09-06, rough list of facts
 7. [H.I.V.E.R. in the glossary](issues/29-hiver-in-the-glossary.md): five minutes once Bryan gives the letters.
 8. [Confirm 3speak space with Meno](issues/23-confirm-3speak-space-with-meno.md): Bryan's, one message.
+9. [Build the board lean (2.5D)](issues/36-build-the-board-lean.md): tried and pulled out 2026-09-06 on Bryan's call.
+10. [The planet pass](issues/37-the-planet-pass.md): built 2026-09-06, not committed; the map view reads as a globe.
 
 Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md), [Build footprints](issues/30-build-footprints.md), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md).
 
@@ -70,6 +72,8 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): built; stake-weighted votes from houses, return line, deliver at the Fun Park, votes drop on the setback
 - [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md): the ruins are a landmark on a rail; park there and the board flips to its back, the dead chain, mirrored and drained. Rough; what stands on the back is open.
 - [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): the I key or STATS opens a plain list of every fact the engine holds; which rows stay, and the design, are open.
+- [Build the board lean (2.5D)](issues/36-build-the-board-lean.md): tried, pulled out; a squashed board reads as a card and breaks the spacing; what Bryan wants is a planet with sides
+- [The planet pass](issues/37-the-planet-pass.md): a shaded sea under the mark inside the ring, towers leaning outward like pins in a globe as the camera pulls out, the flip turns a sphere; nothing moved
 
 ## Not yet specified
 
