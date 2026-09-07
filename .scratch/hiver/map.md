@@ -48,7 +48,7 @@ Fast, actionable (build or rough, small):
 9. [Build the board lean (2.5D)](issues/36-build-the-board-lean.md): tried and pulled out 2026-09-06 on Bryan's call.
 10. [The planet pass](issues/37-the-planet-pass.md): built 2026-09-06, not committed; the map view reads as a globe.
 
-Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md), [Build footprints](issues/30-build-footprints.md), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md).
+Medium (build, half a day each): [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md) (done 2026-09-07, not committed), [Build footprints](issues/30-build-footprints.md), [Which chain numbers feed the virtues](issues/26-which-chain-numbers-feed-the-virtues.md), [What happens at the keep](issues/27-what-happens-at-the-keep.md).
 
 Blocked until the foundational talks land: 20, 25, 31, 32.
 
@@ -74,6 +74,7 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): the I key or STATS opens a plain list of every fact the engine holds; which rows stay, and the design, are open.
 - [Build the board lean (2.5D)](issues/36-build-the-board-lean.md): tried, pulled out; a squashed board reads as a card and breaks the spacing; what Bryan wants is a planet with sides
 - [The planet pass](issues/37-the-planet-pass.md): a shaded sea under the mark inside the ring, towers leaning outward like pins in a globe as the camera pulls out, the flip turns a sphere; nothing moved
+- [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md): blocks parked on one street in six per round, seeded; a rail bug that pushes in is stopped, a hop carries it over; `movement.ts` untouched
 
 ## Not yet specified
 
