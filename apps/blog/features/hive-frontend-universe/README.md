@@ -89,7 +89,10 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
                   per window, only blitted per frame.
   planet.ts       The sphere's paint: sea, limb, night, sheen. Under the land.
   render.ts       One draw pass over the whole scene, viewport-culled.
-  icons.ts        Every code-drawn illustration (no image assets).
+  icons/          Every code-drawn illustration (no image assets), one place
+                  per file. `index.ts` is the seam everything imports from;
+                  `dispatch.ts` holds the `IconKey` switch; `shared.ts` the
+                  outline colour and the few helpers they all use.
   canvas-map.tsx  The React shell: frame loop, input, hover/click, HUD.
 
 data/       One fetch per file, localStorage-cached.
@@ -118,14 +121,15 @@ keep them; several are load-bearing for future multiplayer.
 - **Nothing broadcasts.** Read-only chain access. When gifting/rewards arrive
   they will go through the app's `transactionService`, like every other write
   in Denser.
-- **No image assets.** All art is drawn in code (`icons.ts`, `critters.ts`),
+- **No image assets.** All art is drawn in code (`icons/`, `critters.ts`),
   except real avatars, which come through the app's own proxy.
 - **Every user-facing string goes through `t()`.**
 
 ## Extending it
 
 - **New landmark**: one line in `lib/fixed-world.ts` (position, link, icon
-  key), one icon case in `engine/icons.ts`, one label key per locale.
+  key), one icon case in `engine/icons/dispatch.ts` (and a new file beside
+  it if the shape is a big one), one label key per locale.
 - **New route line**: add a stop list + builder in `lib/routes.ts` and a
   `RouteLayer` (colour/width/dash) where routes are assembled in
   `canvas-map.tsx`. Routes are edge-id lists; they never add geometry.
