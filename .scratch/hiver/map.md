@@ -40,7 +40,7 @@ Fast, actionable (build or rough, small):
 1. [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): done 2026-09-06
 2. [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): after 34.
 3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md)
-4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md)
+4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md): closed 2026-09-08 without building it; it cannot happen in a 30-minute round
 5. [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md): done 2026-09-06, the ruins flip the board
 6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): done 2026-09-06, rough list of facts
 7. [H.I.V.E.R. in the glossary](issues/29-hiver-in-the-glossary.md): five minutes once Bryan gives the letters.
@@ -78,6 +78,7 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [Build footprints](issues/30-build-footprints.md): prints on a post's streets from the accounts that voted or replied this round, out to a marker with the face; hover names the act, click opens the account; facts only
 - [What happens at the keep](issues/27-what-happens-at-the-keep.md): two helmets still cross; all 21 set the hoard loose, streaming to the park, "his hoard became everyone's"; the panel shows the real keyless vault, live; the heads untouched
 - [Tidy-up for dev review](issues/38-tidy-up-for-dev-review.md): the three giant files are folders now, one thing per file, everything moved and nothing rewritten; `frame-loop.ts` stays whole on purpose; a doubled `ctx.restore()` caught on the way
+- [Build the payout change on houses](issues/19-build-payout-change-on-houses.md): closed, not built. A house is a post from the last 30 minutes, so it can never reach its 7th day. Bryan caught it. The idea underneath, not agreed: a house brightening as it earns, live, inside the round
 - [Build automatic checks](issues/39-build-automatic-checks.md): thirty headless checks, one command from `apps/blog`, no browser and no account; world, movement, blocks, footprints, keep, helmets, race. Nothing that draws is covered yet
 
 ## Not yet specified
