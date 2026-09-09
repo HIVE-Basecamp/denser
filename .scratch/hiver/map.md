@@ -39,7 +39,7 @@ Foundational (talk, needs him fresh):
 Fast, actionable (build or rough, small):
 1. [Build the waiting room, mode picker and round clock](issues/34-build-waiting-room-modes-and-round-clock.md): done 2026-09-06
 2. [Build the DHF race, one funded per round](issues/35-build-the-dhf-race.md): after 34.
-3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md)
+3. [Build the Power Up Day festival](issues/18-build-power-up-day-festival.md): parked 2026-09-08 on Bryan's call, a distraction for now; still open, nothing built
 4. [Build the payout change on houses](issues/19-build-payout-change-on-houses.md): closed 2026-09-08 without building it; it cannot happen in a 30-minute round
 5. [The Steem Ruins as a place you can reach](issues/28-the-steem-ruins-as-a-place.md): done 2026-09-06, the ruins flip the board
 6. [The pop-up dashboard](issues/21-the-pop-up-dashboard.md): done 2026-09-06, rough list of facts
