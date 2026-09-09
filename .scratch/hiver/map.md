@@ -77,6 +77,8 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - [Build obstacles on the lines](issues/17-build-obstacles-on-the-lines.md): blocks parked on one street in six per round, seeded; a rail bug that pushes in is stopped, a hop carries it over; `movement.ts` untouched
 - [Build footprints](issues/30-build-footprints.md): prints on a post's streets from the accounts that voted or replied this round, out to a marker with the face; hover names the act, click opens the account; facts only
 - [What happens at the keep](issues/27-what-happens-at-the-keep.md): two helmets still cross; all 21 set the hoard loose, streaming to the park, "his hoard became everyone's"; the panel shows the real keyless vault, live; the heads untouched
+- [Tidy-up for dev review](issues/38-tidy-up-for-dev-review.md): the three giant files are folders now, one thing per file, everything moved and nothing rewritten; `frame-loop.ts` stays whole on purpose; a doubled `ctx.restore()` caught on the way
+- [Build automatic checks](issues/39-build-automatic-checks.md): thirty headless checks, one command from `apps/blog`, no browser and no account; world, movement, blocks, footprints, keep, helmets, race. Nothing that draws is covered yet
 
 ## Not yet specified
 
@@ -85,7 +87,6 @@ Blocked until the foundational talks land: 20, 25, 31, 32.
 - Games within games: trying to win money inside the game, then a rug pull or a token going to zero. Keep close to Hive lore and people's real ten years of crypto.
 - "Savior of Hive": just you, one little HIVER, could be the savior. How that framing reaches the player.
 - The SDK (C on the road): what it exposes, who tests it (Snapie or a dev friend). Depends on what the game becomes.
-- Tidy-up for dev review: file sizes (`engine/icons.ts` 3426 lines, `engine/render.ts` 2297, `engine/canvas-map.tsx` 1551), tests, docs. After B and C.
 - Whether the game notices real chain acts and never pays for them (research/03 PROPOSAL). Bryan has not answered.
 - 21 helmets vs the real 20 witnesses plus one rotating seat (research/02).
 
