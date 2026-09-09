@@ -88,7 +88,10 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.
   planet.ts       The sphere's paint: sea, limb, night, sheen. Under the land.
-  render.ts       One draw pass over the whole scene, viewport-culled.
+  render/         One draw pass over the whole scene, viewport-culled.
+                  `scene.ts` sets the frame up and runs the layers in order;
+                  each `layer-*.ts` is one band of that pass, reading the
+                  frame's numbers out of `pass.ts`.
   icons/          Every code-drawn illustration (no image assets), one place
                   per file. `index.ts` is the seam everything imports from;
                   `dispatch.ts` holds the `IconKey` switch; `shared.ts` the
