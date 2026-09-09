@@ -104,6 +104,7 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
 data/       One fetch per file, localStorage-cached.
 hooks/      TanStack Query wrappers + the age gate.
 card/       The DOM panels (post card, landmark panel).
+checks/     The headless checks. Node only, no browser, no account.
 ```
 
 ## Invariants
@@ -199,13 +200,28 @@ invariant that keeps future multiplayer cheap.
 
 ## Verification
 
-The world's invariants can be checked headlessly (the `lib/` and world-building
-code is DOM-free and runs under ts-node). During development the game was also
-driven in a browser harness that runs the real engine against a scripted
-player, which is how the numbers in the commit messages (crossings, gap
-widths, frame times) were measured. There is no automated test suite for the
-module yet; that is the most honest criticism of it, and the commit history
-records what was verified by hand at every pass.
+There is a small headless suite in `checks/`. It runs the real engine in a
+plain Node process: no browser, no signed-in account, no test framework, and
+nothing to install. From `apps/blog`:
+
+```bash
+npx -y tsx --tsconfig tsconfig.json features/hive-frontend-universe/checks/run.ts
+```
+
+It builds the world from one fixed round start and holds it to the invariants
+above (zero crossings, max degree 4, 35 degrees at a junction, and the same
+world twice from the same round), then checks the movement integrator, the
+blocks on the lines, the footprints, the keep's ending, the 21 helmets and the
+DHF race line. One file per area, `run.ts` runs them all, and a failure exits
+non-zero. `lib/` and the world-building code are DOM-free, which is what makes
+this possible; `localStorage` is simply absent in Node and the storage helper
+tolerates that.
+
+During development the game was also driven in a browser harness that runs the
+real engine against a scripted player, which is how the numbers in the commit
+messages (crossings, gap widths, frame times) were measured. Nothing draws in
+the checks: the canvas layers are still verified by eye and by the type
+checker.
 
 ## Design notes (borrowed deliberately)
 
