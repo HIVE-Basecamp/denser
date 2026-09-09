@@ -96,7 +96,10 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
                   per file. `index.ts` is the seam everything imports from;
                   `dispatch.ts` holds the `IconKey` switch; `shared.ts` the
                   outline colour and the few helpers they all use.
-  canvas-map.tsx  The React shell: frame loop, input, hover/click, HUD.
+  canvas-map.tsx  The React shell: state, refs, the panels and the HUD.
+  canvas-map/     What the shell hands off: `frame-loop.ts` is the one effect
+                  that wires input and runs the requestAnimationFrame loop,
+                  plus its constants and shared types.
 
 data/       One fetch per file, localStorage-cached.
 hooks/      TanStack Query wrappers + the age gate.
