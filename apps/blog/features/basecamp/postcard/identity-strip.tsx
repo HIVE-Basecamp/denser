@@ -11,6 +11,7 @@ import { RING_TRACK_COLOR } from '../lib/rings';
 import { BASECAMP_LINK, BASECAMP_VIVID } from '../lib/theme';
 import Hint from './hint';
 import PostAge from './post-age';
+import SusButton from './sus-button';
 
 /** Small enough to share a band with the post; still the card's anchor. */
 const DEFAULT_RINGS_SIZE = 44;
@@ -47,6 +48,8 @@ const ProfilePips = ({ readout }: ProfilePipsProps) => {
 
 interface IdentityStripProps {
   username: string;
+  /** The post this card is showing — what a SUS report is filed against. */
+  permlink: string;
   /** Diameter of the rings; the feed's tier sets it. */
   ringsSize?: number;
   reputation: number;
@@ -68,6 +71,7 @@ interface IdentityStripProps {
  */
 const IdentityStrip = ({
   username,
+  permlink,
   ringsSize = DEFAULT_RINGS_SIZE,
   reputation,
   accountAgeDays,
@@ -96,6 +100,7 @@ const IdentityStrip = ({
       </div>
       {profile ? <ProfilePips readout={profile} /> : null}
     </div>
+    <SusButton account={username} permlink={permlink} />
     {showFollow ? <FollowNewcomerButton username={username} /> : null}
   </div>
 );

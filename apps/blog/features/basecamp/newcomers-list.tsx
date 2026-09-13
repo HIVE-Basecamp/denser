@@ -6,6 +6,7 @@ import { useTranslation } from '@/blog/i18n/client';
 import { useElementWidth } from './hooks/use-element-width';
 import { useNewcomers } from './hooks/use-newcomers';
 import NewcomersListItem from './newcomers-list-item';
+import { FirstPostRingStyles } from './postcard/first-post-ring';
 import { POST_MAX_WIDTH, POSTCARD_TIERS, postcardTierFor } from './lib/postcard-sizes';
 import { BASECAMP_CARD, BASECAMP_MUTED, BASECAMP_SKELETON, accentButton } from './lib/theme';
 import { POST_CARD_HEIGHT } from './postcard/post-card';
@@ -82,6 +83,7 @@ const NewcomersList = () => {
 
   return (
     <>
+      <FirstPostRingStyles />
       <ul ref={feedRef} data-testid="newcomers-list">
         {newcomers.map(({ post, accountAgeDays, account }) => (
           <NewcomersListItem

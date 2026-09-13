@@ -33,6 +33,8 @@ export interface CommentPatterns {
   known: boolean;
   /** How many of the account's own comments and posts were examined. */
   writtenCount: number;
+  /** How many of those were posts of their own rather than replies. */
+  rootPostCount: number;
   postCount7d: number;
   replyCount7d: number;
   /** Share of their replies that repeat text they have already used elsewhere. */
@@ -67,6 +69,7 @@ const BOT_COMMAND_ONLY = /^(?:![A-Za-z][A-Za-z0-9_]{1,19}(?:\s+\d+)?[\s,.!]*)+$/
 export const EMPTY_COMMENT_PATTERNS: CommentPatterns = {
   known: false,
   writtenCount: 0,
+  rootPostCount: 0,
   postCount7d: 0,
   replyCount7d: 0,
   duplicatePercent: null,
@@ -141,6 +144,7 @@ export function summarizePatterns(
     const replyTargets = new Set<string>();
     const keyCounts = new Map<string, number>();
 
+    let rootPostCount = 0;
     let postCount7d = 0;
     let replyCount7d = 0;
     let replyTotal = 0;
@@ -160,7 +164,10 @@ export function summarizePatterns(
         }
       }
 
-      if (!isReply) continue;
+      if (!isReply) {
+        rootPostCount++;
+        continue;
+      }
 
       replyTotal++;
       if (comment.parentAuthor === username) selfReplies++;
@@ -196,6 +203,7 @@ export function summarizePatterns(
     return {
       known: true,
       writtenCount: comments.length,
+      rootPostCount,
       postCount7d,
       replyCount7d,
       // Measured against replies that carried enough text to compare, so an
