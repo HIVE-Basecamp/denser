@@ -672,6 +672,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "¿Algo raro en esta publicación o cuenta? Dílo.",
+        "hint_marked": "Ya la marcaste. Ábrela para cambiarla o retirarla.",
+        "title": "¿Qué te parece raro?",
+        "subtitle": "Sobre la publicación de @{{account}}. Elige todo lo que encaje.",
+        "reasons": {
+          "bot": "Bot",
+          "sock": "Títere",
+          "extractor": "Extractor",
+          "scammer": "Estafador",
+          "spammer": "Spammer",
+          "other": "Otro"
+        },
+        "other_placeholder": "Otro: ¿qué es?",
+        "note_label": "¿Qué te pareció raro en esta publicación o cuenta?",
+        "note_placeholder": "Opcional",
+        "where_it_goes": "Por ahora se guarda en este dispositivo y no se publica nada en Hive. Más adelante puede alimentar los juegos de patrulla o ir a un grupo que protege Hive.",
+        "send": "Enviar",
+        "cancel": "Cancelar",
+        "remove": "Retirarlo"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -917,6 +943,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Ruinas de Steem",
+      "blurt_island": "Isla Blurt",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -952,6 +979,20 @@
     "race": {
       "votes": "VOTOS",
       "funded": "FINANCIADO"
+    },
+    "goals": {
+      "title": "ESTA RONDA",
+      "heading": "Lo que haces en esta ronda",
+      "posts": "Visita cada publicación nueva y luego vótala o respóndele",
+      "posts_short": "PUBLICACIONES",
+      "newbs": "Visita la publicación de cada usuario nuevo en el sendero rosa",
+      "newbs_short": "SENDERO NUEVO",
+      "race": "Lleva los votos de las casas al Parque DHF",
+      "race_short": "CARRERA DHF",
+      "helmets": "Encuentra los 21 cascos de oxígeno",
+      "helmets_short": "CASCOS",
+      "keep": "Llega a la fortaleza del Emperador y libera el botín",
+      "keep_short": "LA FORTALEZA"
     },
     "keep": {
       "motto": "Era dueño del stake, pero nunca fue dueño de nosotros.",

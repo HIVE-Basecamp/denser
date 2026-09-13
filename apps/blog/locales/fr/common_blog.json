@@ -672,6 +672,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "Quelque chose cloche dans ce billet ou ce compte ? Dites-le.",
+        "hint_marked": "Vous l'avez signalé. Ouvrez pour modifier ou retirer.",
+        "title": "Qu'est-ce qui cloche ?",
+        "subtitle": "À propos du billet de @{{account}}. Cochez tout ce qui correspond.",
+        "reasons": {
+          "bot": "Bot",
+          "sock": "Marionnette",
+          "extractor": "Extracteur",
+          "scammer": "Arnaqueur",
+          "spammer": "Spammeur",
+          "other": "Autre"
+        },
+        "other_placeholder": "Autre : quoi donc ?",
+        "note_label": "Qu'est-ce qui vous a semblé anormal dans ce billet ou ce compte ?",
+        "note_placeholder": "Facultatif",
+        "where_it_goes": "Conservé sur cet appareil pour l'instant, rien n'est publié sur Hive. Plus tard, cela pourra alimenter les jeux de patrouille ou être transmis à un groupe qui protège Hive.",
+        "send": "Envoyer",
+        "cancel": "Annuler",
+        "remove": "Retirer"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -917,6 +943,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Ruines de Steem",
+      "blurt_island": "Île Blurt",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -952,6 +979,20 @@
     "race": {
       "votes": "VOTES",
       "funded": "FINANCÉ"
+    },
+    "goals": {
+      "title": "CETTE MANCHE",
+      "heading": "Ce que vous faites cette manche",
+      "posts": "Visitez chaque nouveau billet, puis votez ou répondez",
+      "posts_short": "BILLETS VUS",
+      "newbs": "Visitez le billet de chaque nouvel utilisateur sur la piste rose",
+      "newbs_short": "PISTE DES NOUVEAUX",
+      "race": "Portez les votes des maisons au Parc DHF",
+      "race_short": "COURSE DHF",
+      "helmets": "Trouvez les 21 casques à oxygène",
+      "helmets_short": "CASQUES",
+      "keep": "Atteignez le donjon de l'Empereur et libérez le trésor",
+      "keep_short": "LE DONJON"
     },
     "keep": {
       "motto": "Il possédait le stake, mais il ne nous a jamais possédés.",

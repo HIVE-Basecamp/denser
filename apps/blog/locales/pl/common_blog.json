@@ -677,6 +677,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "Coś nie gra w tym poście albo koncie? Powiedz to.",
+        "hint_marked": "Już to oznaczyłeś. Otwórz, aby zmienić lub wycofać.",
+        "title": "Co tu nie gra?",
+        "subtitle": "O poście @{{account}}. Zaznacz wszystko, co pasuje.",
+        "reasons": {
+          "bot": "Bot",
+          "sock": "Kukiełka",
+          "extractor": "Wyciskacz",
+          "scammer": "Oszust",
+          "spammer": "Spamer",
+          "other": "Inne"
+        },
+        "other_placeholder": "Inne — co takiego?",
+        "note_label": "Co wydało się podejrzane w tym poście lub koncie?",
+        "note_placeholder": "Opcjonalnie",
+        "where_it_goes": "Na razie zostaje na tym urządzeniu i nic nie trafia na Hive. Później może zasilić gry patrolowe albo trafić do grupy chroniącej Hive.",
+        "send": "Wyślij",
+        "cancel": "Anuluj",
+        "remove": "Wycofaj"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -922,6 +948,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Ruiny Steem",
+      "blurt_island": "Wyspa Blurt",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -957,6 +984,20 @@
     "race": {
       "votes": "GŁOSY",
       "funded": "SFINANSOWANO"
+    },
+    "goals": {
+      "title": "TA RUNDA",
+      "heading": "Co robisz w tej rundzie",
+      "posts": "Odwiedź każdy nowy post, a potem zagłosuj lub odpowiedz",
+      "posts_short": "POZNANE POSTY",
+      "newbs": "Odwiedź post każdego nowego użytkownika na różowym szlaku",
+      "newbs_short": "SZLAK NOWYCH",
+      "race": "Zanieś głosy domów do Parku DHF",
+      "race_short": "WYŚCIG DHF",
+      "helmets": "Znajdź wszystkie 21 hełmów tlenowych",
+      "helmets_short": "HEŁMY",
+      "keep": "Dotrzyj do twierdzy Cesarza i uwolnij skarb",
+      "keep_short": "TWIERDZA"
     },
     "keep": {
       "motto": "Miał stake, ale nigdy nie miał nas.",

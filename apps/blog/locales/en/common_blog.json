@@ -774,6 +774,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "Something off about this post or account? Say so.",
+        "hint_marked": "You marked this one. Open it to change it or take it back.",
+        "title": "What seems off?",
+        "subtitle": "About @{{account}}'s post. Pick every one that fits.",
+        "reasons": {
+          "bot": "Bot",
+          "sock": "Sock",
+          "extractor": "Extractor",
+          "scammer": "Scammer",
+          "spammer": "Spammer",
+          "other": "Other"
+        },
+        "other_placeholder": "Other — what is it?",
+        "note_label": "What seemed off about this post/account?",
+        "note_placeholder": "Optional",
+        "where_it_goes": "Kept on this device for now, and nothing is posted to Hive. Later it may feed the Patrol games, or go to a group that protects Hive.",
+        "send": "Send",
+        "cancel": "Cancel",
+        "remove": "Take it back"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -1019,6 +1045,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Steem Ruins",
+      "blurt_island": "Blurt Island",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -1054,6 +1081,20 @@
     "race": {
       "votes": "VOTES",
       "funded": "FUNDED"
+    },
+    "goals": {
+      "title": "THIS ROUND",
+      "heading": "What you are doing this round",
+      "posts": "Meet every new post: visit it, then vote or reply on it",
+      "posts_short": "POSTS MET",
+      "newbs": "Visit every new user's post on the pink trail",
+      "newbs_short": "NEWB TRAIL",
+      "race": "Carry the houses' votes to the DHF Fun Park",
+      "race_short": "DHF RACE",
+      "helmets": "Find all 21 oxygen helmets",
+      "helmets_short": "HELMETS",
+      "keep": "Reach the Emperor's keep and set the hoard loose",
+      "keep_short": "THE KEEP"
     },
     "keep": {
       "motto": "He owned the stake, but he never owned us.",

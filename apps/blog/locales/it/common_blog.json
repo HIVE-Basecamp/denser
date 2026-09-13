@@ -672,6 +672,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "Qualcosa non torna in questo post o account? Dillo.",
+        "hint_marked": "L'hai segnalato. Apri per modificarlo o ritirarlo.",
+        "title": "Cosa non torna?",
+        "subtitle": "Sul post di @{{account}}. Scegli tutto ciò che calza.",
+        "reasons": {
+          "bot": "Bot",
+          "sock": "Burattino",
+          "extractor": "Estrattore",
+          "scammer": "Truffatore",
+          "spammer": "Spammer",
+          "other": "Altro"
+        },
+        "other_placeholder": "Altro: che cosa?",
+        "note_label": "Che cosa non tornava in questo post o account?",
+        "note_placeholder": "Facoltativo",
+        "where_it_goes": "Per ora resta su questo dispositivo e nulla viene pubblicato su Hive. In futuro potrà alimentare i giochi di pattuglia o andare a un gruppo che protegge Hive.",
+        "send": "Invia",
+        "cancel": "Annulla",
+        "remove": "Ritiralo"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -917,6 +943,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Rovine di Steem",
+      "blurt_island": "Isola Blurt",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -952,6 +979,20 @@
     "race": {
       "votes": "VOTI",
       "funded": "FINANZIATO"
+    },
+    "goals": {
+      "title": "QUESTO TURNO",
+      "heading": "Cosa fai in questo turno",
+      "posts": "Visita ogni nuovo post, poi votalo o rispondi",
+      "posts_short": "POST INCONTRATI",
+      "newbs": "Visita il post di ogni nuovo utente sulla pista rosa",
+      "newbs_short": "PISTA DEI NUOVI",
+      "race": "Porta i voti delle case al Parco DHF",
+      "race_short": "CORSA DHF",
+      "helmets": "Trova tutti i 21 caschi d'ossigeno",
+      "helmets_short": "CASCHI",
+      "keep": "Raggiungi la fortezza dell'Imperatore e libera il tesoro",
+      "keep_short": "LA FORTEZZA"
     },
     "keep": {
       "motto": "Possedeva lo stake, ma non ha mai posseduto noi.",

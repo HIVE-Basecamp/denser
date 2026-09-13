@@ -672,6 +672,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "这篇帖子或账号有问题？说出来。",
+        "hint_marked": "你已标记过。打开可以修改或撤回。",
+        "title": "哪里不对劲？",
+        "subtitle": "关于 @{{account}} 的帖子。符合的都选上。",
+        "reasons": {
+          "bot": "机器人",
+          "sock": "马甲",
+          "extractor": "只提现不建设",
+          "scammer": "骗子",
+          "spammer": "垃圾信息",
+          "other": "其他"
+        },
+        "other_placeholder": "其他：是什么？",
+        "note_label": "这篇帖子或账号哪里让你觉得不对？",
+        "note_placeholder": "可选",
+        "where_it_goes": "目前只保存在本设备，不会发布到 Hive。以后可能用于巡逻游戏，或交给保护 Hive 的团队。",
+        "send": "发送",
+        "cancel": "取消",
+        "remove": "撤回"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -917,6 +943,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Steem废墟",
+      "blurt_island": "Blurt岛",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -952,6 +979,20 @@
     "race": {
       "votes": "票数",
       "funded": "已资助"
+    },
+    "goals": {
+      "title": "本回合",
+      "heading": "本回合你要做的事",
+      "posts": "拜访每一篇新帖子，然后为它投票或回复",
+      "posts_short": "已会面帖子",
+      "newbs": "沿着粉色小径拜访每位新用户的帖子",
+      "newbs_short": "新手小径",
+      "race": "把房屋的选票送到 DHF 游乐园",
+      "race_short": "DHF 竞赛",
+      "helmets": "找齐全部 21 顶氧气头盔",
+      "helmets_short": "头盔",
+      "keep": "抵达皇帝的城堡并释放宝藏",
+      "keep_short": "城堡"
     },
     "keep": {
       "motto": "他拥有那些权益，却从未拥有我们。",

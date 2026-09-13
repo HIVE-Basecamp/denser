@@ -672,6 +672,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "この投稿やアカウントに違和感がありますか？",
+        "hint_marked": "すでに報告済みです。開いて変更・取り消しができます。",
+        "title": "何がおかしい？",
+        "subtitle": "@{{account}} の投稿について。当てはまるものをすべて選んでください。",
+        "reasons": {
+          "bot": "ボット",
+          "sock": "複数アカウント",
+          "extractor": "収益の抜き取り",
+          "scammer": "詐欺",
+          "spammer": "スパム",
+          "other": "その他"
+        },
+        "other_placeholder": "その他：内容は？",
+        "note_label": "この投稿やアカウントのどこが気になりましたか？",
+        "note_placeholder": "任意",
+        "where_it_goes": "今はこの端末にのみ保存され、Hive には何も投稿されません。将来、パトロールゲームや Hive を守る団体に渡る可能性があります。",
+        "send": "送信",
+        "cancel": "キャンセル",
+        "remove": "取り消す"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -917,6 +943,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "Steemの廃墟",
+      "blurt_island": "Blurt島",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -952,6 +979,20 @@
     "race": {
       "votes": "票",
       "funded": "資金獲得"
+    },
+    "goals": {
+      "title": "このラウンド",
+      "heading": "このラウンドですること",
+      "posts": "新しい投稿をすべて訪ね、投票するか返信する",
+      "posts_short": "訪ねた投稿",
+      "newbs": "ピンクの小道で新規ユーザーの投稿をすべて訪ねる",
+      "newbs_short": "新人の小道",
+      "race": "家々の票を DHF 遊園地へ運ぶ",
+      "race_short": "DHF レース",
+      "helmets": "21個の酸素ヘルメットをすべて見つける",
+      "helmets_short": "ヘルメット",
+      "keep": "皇帝の城にたどり着き、宝を解き放つ",
+      "keep_short": "城"
     },
     "keep": {
       "motto": "彼はステークを持っていた。でも、私たちを持つことはなかった。",

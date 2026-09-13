@@ -719,6 +719,32 @@
   },
   "basecamp": {
     "card": {
+      "first_post": {
+        "label": "First post",
+        "aria": "This is their first ever post on Hive."
+      },
+      "sus": {
+        "button": "SUS",
+        "hint": "هل هناك ما يثير الريبة في هذا المنشور أو الحساب؟ قل ذلك.",
+        "hint_marked": "لقد أبلغت عنه من قبل. افتحه للتعديل أو السحب.",
+        "title": "ما الذي يبدو غريبًا؟",
+        "subtitle": "عن منشور @{{account}}. اختر كل ما ينطبق.",
+        "reasons": {
+          "bot": "روبوت",
+          "sock": "حساب وهمي",
+          "extractor": "مستنزف",
+          "scammer": "محتال",
+          "spammer": "مزعج",
+          "other": "أخرى"
+        },
+        "other_placeholder": "أخرى — ما هي؟",
+        "note_label": "ما الذي بدا غريبًا في هذا المنشور أو الحساب؟",
+        "note_placeholder": "اختياري",
+        "where_it_goes": "يُحفظ على هذا الجهاز فقط حاليًا، ولا يُنشر شيء على Hive. لاحقًا قد يغذّي ألعاب الدوريات أو يصل إلى جهة تحمي Hive.",
+        "send": "إرسال",
+        "cancel": "إلغاء",
+        "remove": "سحب البلاغ"
+      },
       "values": {
         "of_total": "{{value}}/{{total}}",
         "pair": "{{first}} / {{second}}",
@@ -964,6 +990,7 @@
       "json_keep": "Emperor J SON",
       "mount_socko": "Mount Socko",
       "steem_ruins": "أطلال Steem",
+      "blurt_island": "جزيرة Blurt",
       "rose_window": "Hive Comb Home"
     },
     "hud": {
@@ -999,6 +1026,20 @@
     "race": {
       "votes": "الأصوات",
       "funded": "مموَّل"
+    },
+    "goals": {
+      "title": "هذه الجولة",
+      "heading": "ما تفعله في هذه الجولة",
+      "posts": "زُر كل منشور جديد، ثم صوّت له أو ردّ عليه",
+      "posts_short": "المنشورات",
+      "newbs": "زُر منشور كل مستخدم جديد على المسار الوردي",
+      "newbs_short": "مسار الجدد",
+      "race": "احمل أصوات البيوت إلى منتزه DHF",
+      "race_short": "سباق DHF",
+      "helmets": "اعثر على خوذات الأكسجين الـ21 كلها",
+      "helmets_short": "الخوذات",
+      "keep": "ابلغ قلعة الإمبراطور وأطلق الكنز",
+      "keep_short": "القلعة"
     },
     "keep": {
       "motto": "كان يملك الحصة، لكنه لم يملكنا يومًا.",
