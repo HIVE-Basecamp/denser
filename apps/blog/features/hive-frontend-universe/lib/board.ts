@@ -300,7 +300,11 @@ export function buildBoard(input: BuildBoardInput): Board {
         permlink: post.permlink,
         title: post.title ?? '',
         body: post.body ?? '',
-        url: post.url ?? `/@${post.author}/${post.permlink}`,
+        // Route is /{category}/@{author}/{permlink}: a bare "/@author/permlink"
+        // 404s (that path shape has no page), so the fallback needs the
+        // category too. Bridge always sends a real category on a root post;
+        // 'blog' matches the site's own default when one is truly missing.
+        url: post.url ?? `/${post.category ?? 'blog'}/@${post.author}/${post.permlink}`,
         community: post.community ?? null,
         communityTitle: post.community_title ?? null,
         tags: parseTags(post.json_metadata),

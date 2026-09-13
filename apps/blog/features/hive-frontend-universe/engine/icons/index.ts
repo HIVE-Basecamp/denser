@@ -25,6 +25,8 @@ export { drawFormation } from './formation';
 export { drawWitnessCitadel } from './citadel';
 export { drawTrollHole } from './troll-hole';
 export { drawSteemRuins } from './steem-ruins';
+export { drawSteemRubble } from './steem-rubble';
+export { drawBlurtIsland } from './blurt-island';
 export { drawIslandChip } from './island-chip';
 export { rosePaneCentre } from './rose-comb';
 export { drawRoseWindow } from './rose-window';

@@ -1,12 +1,12 @@
 import { drawCube } from './decor';
 import { ISLAND_CHIPS, STEEM_RUINS, TROLL_HOLES } from '../../lib/fixed-world';
 import { drawGems } from '../gems';
-import { drawIslandChip, drawSteemRuins, drawTrollHole } from '../icons';
+import { drawIslandChip, drawSteemRubble, drawTrollHole } from '../icons';
 import type { Pass } from './pass';
 
 /**
- * The places that are not on a street: troll holes, the Steem Ruins, the
- * floating island chips, the gems and the cubes.
+ * The places that are not on a street: troll holes, the door to the Steem
+ * Ruins, the floating island chips, the gems and the cubes.
  */
 export function drawVoidPlaces(p: Pass): void {
   const { scene, ctx, time, mapness, vis } = p;
@@ -18,10 +18,11 @@ export function drawVoidPlaces(p: Pass): void {
     drawTrollHole(ctx, hole.x, hole.y, time);
   }
 
-  // THE STEEM RUINS: the old chain, dead and grey in the western void.
-  // Scenery with a story; the hover chip and click live in canvas-map.
+  // THE DOOR TO THE STEEM RUINS: the ruins themselves are round the back of
+  // the planet (layer-steem.ts); what marks the way here is the rubble that
+  // came round. The hover chip and click live in canvas-map.
   if (vis(STEEM_RUINS.x, STEEM_RUINS.y)) {
-    drawSteemRuins(ctx, STEEM_RUINS.x, STEEM_RUINS.y, 300, time);
+    drawSteemRubble(ctx, STEEM_RUINS.x, STEEM_RUINS.y, 260, time);
   }
 
   // FLOATING ISLAND CHIPS: the planet's shed fragments, occupying the void

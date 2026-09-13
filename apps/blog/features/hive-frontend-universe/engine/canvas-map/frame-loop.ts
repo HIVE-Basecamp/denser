@@ -22,6 +22,7 @@ import {
 import { MAP_FIT, towerLean, towerPoint } from '../../lib/planet';
 import { TIERS, type Board } from '../../lib/board';
 import { LANDMARKS, LANDMARK_ACCOUNTS, TROLL_HOLES, ROSE_WINDOW_PANES } from '../../lib/fixed-world';
+import { BLURT_ISLAND, STEEM_DISTRICT } from '../../lib/steem-side';
 import { getStorageItem, setStorageItem, StorageTTL } from '@ui/lib/storage-with-ttl';
 import { buildRoutes } from '../../lib/routes';
 import { landmarkHref, profileHref, communityHref, postHref, type MapTarget } from '../../lib/targets';
@@ -35,6 +36,9 @@ import { placeBlocks, blockPlayer, type BlockState } from '../blocks';
 import { createFootprints, addReplyTracks, type FootprintState } from '../footprints';
 import { fetchRepliers } from '../../data/fetch-replies';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from '../dhf-race';
+import { createPostMarks, visitPost, shouldAskMark, applyMark, postsMet, type PostMarkState } from '../post-marks';
+import { fetchMyMark } from '../../data/fetch-my-mark';
+import { adventureGoals } from '../../lib/goals';
 import { createKeep, releaseHoard, updateKeep, KEEP_LANDMARK_ID, type KeepState } from '../keep';
 import { createProjectiles, updateProjectiles, type ProjectileState } from '../projectiles';
 import { createCombat, tickCombat, type CombatState } from '../combat';
@@ -127,6 +131,9 @@ interface FrameLoopArgs {
   visitedNewbsRef: MutableRefObject<Set<number>>;
   visitedCommunitiesRef: MutableRefObject<Set<string> | null>;
   newbAwardedRef: MutableRefObject<boolean>;
+  postMarksRef: MutableRefObject<PostMarkState | null>;
+  /** The signed-in player; without one nothing can be marked met. */
+  playerHandle?: string;
   atNodeTick: MutableRefObject<number>;
   inCommunityTick: MutableRefObject<number>;
   mKeyDownAt: MutableRefObject<number>;
@@ -219,6 +226,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     visitedNewbsRef,
     visitedCommunitiesRef,
     newbAwardedRef,
+    postMarksRef,
+    playerHandle,
     atNodeTick,
     inCommunityTick,
     mKeyDownAt,
@@ -256,6 +265,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     // The newb trail resets with the board: new window, new posts, new quest.
     visitedNewbsRef.current = new Set();
     newbAwardedRef.current = false;
+    // So does the new-posts challenge: a round's worth of posts to meet.
+    postMarksRef.current = createPostMarks(playerHandle, board.houses);
     if (!visitedRef.current) {
       visitedRef.current = new Set(getStorageItem<string[]>('hfu-visited') ?? []);
     }
@@ -393,11 +404,16 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         }
       };
 
+      // THE BACK OF THE PLANET shows none of the living side, so nothing of
+      // it answers to the cursor there: only the door, the ruined district
+      // and the Blurt island. The same nodes still carry the bug's tracks.
+      const back = sideRef.current === 'steem';
+
       // Posts: the hit target is over twice the visual marker with a floor,
       // because "half again" was still too hard to hit in real play.
       const rNode = Math.min(17 / Math.max(z, 0.35), 180);
       for (const n of nodes) {
-        if (n.kind !== 'house') continue;
+        if (n.kind !== 'house' || back) continue;
         const h = houseVisuals[n.ref];
         const post = board.houses[n.ref];
         if (!h || !post) continue;
@@ -406,7 +422,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
             kind: 'post',
             node: n.id,
             title: `@${h.handle}`,
-            href: postHref(post.post?.url, post.post?.author ?? h.handle, post.post?.permlink ?? ''),
+            href: postHref(post.post?.url),
             travelable: false,
             x: n.x,
             y: n.y
@@ -421,6 +437,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         const lm = LANDMARKS[n.ref];
         const vis = landmarkVisuals[n.ref];
         if (!lm || !vis) continue;
+        if (back && lm.id !== FLIP_LANDMARK_ID) continue;
         const minor = lm.icon === 'doc' || lm.icon === 'docq';
         const reach = lm.big ? 520 : Math.max(((minor ? 34 : 52) / Math.max(z, 0.45)) * 2.2, 80);
         consider(
@@ -477,7 +494,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // unclickable. The ref carries the community's account handle too, so
       // nothing here needs the query state at all.
       for (const n of nodes) {
-        if (n.kind !== 'community') continue;
+        if (n.kind !== 'community' || back) continue;
         const c = communityVisualsRef.current[n.ref];
         if (!c) continue;
         consider(
@@ -496,7 +513,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
 
       // The population: every creature answers to a name on hover. Display
       // only; a critter is not a link, so clicking it does nothing.
-      if (crittersRef.current) {
+      if (crittersRef.current && !back) {
         for (const cr of crittersRef.current.critters) {
           consider(
             {
@@ -513,9 +530,38 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         }
       }
 
+      // THE BACK OF THE PLANET: the ruined district and the Blurt island are
+      // named on hover like the population, and like it are no destination.
+      if (back) {
+        consider(
+          {
+            kind: 'critter',
+            node: -1,
+            title: t('hive_frontend_universe.landmarks.steem_ruins'),
+            href: null,
+            travelable: false,
+            x: STEEM_DISTRICT.x,
+            y: STEEM_DISTRICT.y
+          },
+          STEEM_DISTRICT.r * 1.6
+        );
+        consider(
+          {
+            kind: 'critter',
+            node: -1,
+            title: t('hive_frontend_universe.landmarks.blurt_island'),
+            href: null,
+            travelable: false,
+            x: BLURT_ISLAND.x,
+            y: BLURT_ISLAND.y
+          },
+          BLURT_ISLAND.r * 1.1
+        );
+      }
+
       // Footprints: the marker at the end of a track is the account that
       // left it. Hover names it and what it did; a click opens its page.
-      if (footprintsRef.current && !fullMapRef.current) {
+      if (footprintsRef.current && !fullMapRef.current && !back) {
         for (const tr of footprintsRef.current.tracks) {
           consider(
             {
@@ -535,7 +581,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
 
       // Witness citadels: scenery, so they have no node, but they still lead
       // somewhere real. Aim at the crowned head, which is where the eye goes.
-      for (const wt of witnessVisualsRef.current) {
+      for (const wt of back ? [] : witnessVisualsRef.current) {
         const towerH = 1680 - (wt.rank - 1) * 22;
         // The head moves as the tower leans on the pulled-out map.
         const head = towerPoint(wt.x, wt.y, towerH * 0.87, towerLean(wt.x, wt.y, mapnessAt(z)));
@@ -890,6 +936,22 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         // THE NEWB TRAIL: parking at a newcomer's post checks it off; check
         // them ALL off before the window turns and a gem lands in the
         // pocket, ready to carry to the ferris wheel.
+        // THE NEW-POSTS CHALLENGE: parking at any house meets that post, and
+        // the chain is asked whether this player has voted on it or replied
+        // to it. Read only, and only ever a question (engine/post-marks.ts).
+        if (vn?.kind === 'house' && postMarksRef.current) {
+          const marks = postMarksRef.current;
+          const house = vn.ref;
+          visitPost(marks, house);
+          if (shouldAskMark(marks, house, Date.now())) {
+            const post = board.houses[house]?.post;
+            if (post) {
+              fetchMyMark(post.author, post.permlink, marks.handle)
+                .then((m) => applyMark(marks, house, m.voted, m.replied))
+                .catch(() => undefined);
+            }
+          }
+        }
         if (vn?.kind === 'house' && newbieNodes.has(p.atNode)) {
           visitedNewbsRef.current.add(p.atNode);
           if (
@@ -1195,6 +1257,26 @@ export function useFrameLoop(a: FrameLoopArgs): void {
           votesLine: raceRef.current?.line ?? 0,
           fundedLabel: t('hive_frontend_universe.race.funded'),
           funded: raceRef.current?.funded ?? false,
+          goalsTitle: modeRef.current === 'adventure' ? t('hive_frontend_universe.goals.title') : undefined,
+          goals:
+            modeRef.current === 'adventure'
+              ? adventureGoals({
+                  postsMet: postMarksRef.current ? postsMet(postMarksRef.current) : 0,
+                  postsTotal: board.houses.length,
+                  newbsVisited: visitedNewbsRef.current.size,
+                  newbsTotal: newbieNodes.size,
+                  raceCarried: raceRef.current?.carried ?? 0,
+                  raceLine: raceRef.current?.line ?? 0,
+                  raceFunded: raceRef.current?.funded ?? false,
+                  helmets: helmetsRef.current?.count ?? 0,
+                  helmetTotal: HELMET_TOTAL,
+                  keepReleased: keepRef.current?.released ?? false
+                }).map((g) => ({
+                  label: t(g.shortKey),
+                  value: g.id === 'keep' ? '' : `${g.done} / ${g.total}`,
+                  complete: g.complete
+                }))
+              : undefined,
           sideLabel:
             sideRef.current === 'steem'
               ? `${t('hive_frontend_universe.hud.side')} ${t('hive_frontend_universe.sides.steem')}`

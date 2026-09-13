@@ -124,8 +124,9 @@ export interface RenderScene {
   /** Spiky rock formations standing on the terrain. Inert scenery. */
   formations: Formation[];
   /**
-   * WHICH SIDE OF THE BOARD is up. The Steem side is the back: the same
-   * board seen from behind (mirrored), drained of colour, nothing alive.
+   * WHICH SIDE OF THE PLANET is up. The Steem side is the back: the old
+   * chain's land, the busted Steem mark, with the ruins on it and nothing
+   * alive (layer-steem.ts).
    */
   side?: BoardSide;
   /** Horizontal view scale: 1 front, -1 back, passing through 0 mid-flip. */
@@ -254,5 +255,11 @@ export interface RenderScene {
     funded?: boolean;
     /** Which side of the board, named only on the back. */
     sideLabel?: string;
+    /**
+     * The round's goals, adventure mode only (lib/goals.ts): the block that
+     * says what you are doing this round, and how far along you are.
+     */
+    goalsTitle?: string;
+    goals?: readonly { label: string; value: string; complete: boolean }[];
   };
 }

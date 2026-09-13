@@ -1,10 +1,11 @@
 /**
  * H.I.V.E.R. - the two sides of the board.
  *
- * Bryan's picture: the map is a board with a back. The Steem Ruins are the
- * door; park there and the board flips. The back is the old chain: the same
- * board mirrored, drained of colour, nothing alive on it. Pure and DOM-free;
- * the animation lives in the engine, the look in render.ts.
+ * Bryan's picture: the planet has a back. The rubble at the Steem Ruins'
+ * door is the way round; park there and the planet turns. The back is the
+ * old chain: the busted Steem mark for land, the ruins on it, nothing alive
+ * (lib/steem-side.ts). Pure and DOM-free; the animation lives in the
+ * engine, the look in engine/render.
  */
 
 export type BoardSide = 'hive' | 'steem';

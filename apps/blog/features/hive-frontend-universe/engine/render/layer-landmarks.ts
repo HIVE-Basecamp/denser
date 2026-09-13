@@ -1,5 +1,6 @@
 import { drawBeacon } from './decor';
 import { DAPP_DIRECTORY } from '../../lib/fixed-world';
+import { towerLean } from '../../lib/planet';
 import { avatarImage } from '../avatars';
 import { DAPP_WINDOWS, FERRIS_SPIN, drawIcon, rosePaneCentre } from '../icons';
 import { drawKeepRelease, hoardLeft } from '../keep';
@@ -47,6 +48,18 @@ export function drawLandmarks(p: Pass): void {
     // gold, the race's finish line.
     if (scene.mode === 'frontend' && lm.site) drawBeacon(ctx, n.x, n.y, s, z, time + n.id, '93, 240, 255', '#5df0ff');
     if (scene.mode === 'adventure' && lm.raceGoal) drawBeacon(ctx, n.x, n.y, s, z, time + n.id, '255, 210, 74', '#ffd24a');
+    // MOUNT SOCKO AND THE KEEP sit on the planet the way the citadels do:
+    // islands at the rim, leaning outward as the camera pulls out, pins in a
+    // globe (lib/planet.ts). Pad, pool and art turn together about the
+    // node, so the click test needs nothing new.
+    const isle = lm.icon === 'sockmount' || lm.icon === 'jsonboss';
+    if (isle) {
+      const lean = towerLean(n.x, n.y, mapness);
+      ctx.save();
+      ctx.translate(n.x, n.y);
+      ctx.rotate(lean);
+      ctx.translate(-n.x, -n.y);
+    }
     // GROUND PAD: a dark clearing under each big place, fading in with the
     // map. Anchors the attraction to the land (park maps sit rides in
     // plazas) and buys silhouette contrast against the busy red.
@@ -101,6 +114,7 @@ export function drawLandmarks(p: Pass): void {
       const hoard = lm.icon === 'jsonboss' ? hoardLeft(scene.keep) : 1;
       drawIcon(ctx, lm.icon, n.x, n.y, s, col, time, lm.label, hoard);
     }
+    if (isle) ctx.restore();
     if (lm.icon === 'ferris') ferrisPos = { x: n.x, y: n.y, s };
     // THE dAPP STATION'S WINDOWS: real dApp logos looking out. The icon
     // draws the holes (DAPP_WINDOWS, same list); once each dApp account's

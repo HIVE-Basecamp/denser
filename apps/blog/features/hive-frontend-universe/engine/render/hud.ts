@@ -1,6 +1,10 @@
 import { MONO, PALETTE } from './palette';
 import type { RenderScene } from './types';
 import { gridCellName } from './util';
+/** A goal still open, and a goal finished. */
+const GOAL_TODO = '#cfe4ee';
+const GOAL_DONE = '#8cf5b0';
+
 export function drawHud(scene: RenderScene): void {
   const { ctx, hud } = scene;
   // No scrim box any more (Bryan: "the score card stuff is bright enough
@@ -29,9 +33,12 @@ export function drawHud(scene: RenderScene): void {
     ctx.fillText(`${hud.gemsLabel} ${hud.gems}`, 16, hudY);
     hudY += 19;
   }
+  // The goals block below repeats the two quest lines with better words, so
+  // in adventure mode they are not drawn twice.
+  const questLinesElsewhere = (hud.goals?.length ?? 0) > 0;
   // The newb-trail quest line, only when this window actually has newcomer
   // posts to visit.
-  if (hud.newbsLabel !== undefined && (hud.newbsTotal ?? 0) > 0) {
+  if (!questLinesElsewhere && hud.newbsLabel !== undefined && (hud.newbsTotal ?? 0) > 0) {
     ctx.fillStyle = '#ff5fd0';
     ctx.fillText(`${hud.newbsLabel} ${hud.newbs} / ${hud.newbsTotal}`, 16, hudY);
     hudY += 19;
@@ -52,11 +59,28 @@ export function drawHud(scene: RenderScene): void {
   }
   // THE DHF RACE line, adventure mode only: votes carried against the return
   // line, then FUNDED once delivered.
-  if (hud.votesLabel !== undefined && hud.votes !== undefined) {
+  if (!questLinesElsewhere && hud.votesLabel !== undefined && hud.votes !== undefined) {
     ctx.fillStyle = '#ffd24a';
     const text = hud.funded ? `${hud.votesLabel} ${hud.fundedLabel ?? ''}` : `${hud.votesLabel} ${hud.votes} / ${hud.votesLine ?? 0}`;
     ctx.fillText(text, 16, hudY);
     hudY += 19;
+  }
+  // WHAT YOU ARE DOING THIS ROUND (adventure mode). Bryan picked the mode
+  // and still did not know what the game was, so the goals stand in the
+  // corner the whole time, each with its own progress, a done one ticked.
+  if (hud.goalsTitle !== undefined && hud.goals && hud.goals.length > 0) {
+    hudY += 6;
+    ctx.font = `700 12px ${MONO}`;
+    ctx.fillStyle = PALETTE.textDim;
+    ctx.fillText(hud.goalsTitle, 16, hudY);
+    hudY += 17;
+    ctx.font = `600 12px ${MONO}`;
+    for (const g of hud.goals) {
+      ctx.fillStyle = g.complete ? GOAL_DONE : GOAL_TODO;
+      ctx.fillText(`${g.complete ? '\u2713' : '\u00b7'} ${g.label} ${g.value}`, 16, hudY);
+      hudY += 17;
+    }
+    ctx.font = `600 13px ${MONO}`;
   }
   // With the planning grid on, the HUD names the box the bug stands in, so
   // "where should this go" can be answered by walking there and reading it.

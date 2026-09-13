@@ -16,6 +16,7 @@ import { drawLandmarks } from './layer-landmarks';
 import { drawCommunities } from './layer-communities';
 import { drawBugLayer } from './layer-bug';
 import { drawOverlays } from './layer-overlay';
+import { drawSteemSide } from './layer-steem';
 import { planetPath } from '../planet';
 
 export function drawScene(scene: RenderScene): void {
@@ -103,35 +104,26 @@ export function drawScene(scene: RenderScene): void {
     edgeVis
   };
 
-  drawGroundLayer(p);
-  drawWitnessRing(p);
-  drawVoidPlaces(p);
-  drawRails(p);
-  drawTraffic(p);
-  drawNodes(p);
-  drawBuzzingStation(p);
-  drawLandmarks(p);
-  drawCommunities(p);
-  drawBugLayer(p);
-  drawOverlays(p);
-
-  // THE BACK OF THE BOARD is the dead chain: everything drained of its
-  // saturation, then pulled cold. Two blend fills over the whole view; the
-  // world underneath is drawn exactly as on the front.
   if (scene.side === 'steem') {
-    ctx.save();
-    planetPath(ctx, 1.15);
-    ctx.clip();
-    ctx.globalCompositeOperation = 'saturation';
-    ctx.fillStyle = '#4a5560';
-    ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
-    ctx.globalCompositeOperation = 'color';
-    ctx.globalAlpha = 0.55;
-    ctx.fillStyle = '#5c7590';
-    ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.restore();
+    // THE BACK OF THE PLANET is the old chain: the busted Steem mark for
+    // land, the rusted tracks, the ruins and the Blurt island
+    // (layer-steem.ts). Nothing of the living side is drawn; the bug alone
+    // still rides.
+    drawSteemSide(p);
+    drawBugLayer(p);
+    drawOverlays(p);
+  } else {
+    drawGroundLayer(p);
+    drawWitnessRing(p);
+    drawVoidPlaces(p);
+    drawRails(p);
+    drawTraffic(p);
+    drawNodes(p);
+    drawBuzzingStation(p);
+    drawLandmarks(p);
+    drawCommunities(p);
+    drawBugLayer(p);
+    drawOverlays(p);
   }
 
   ctx.restore();

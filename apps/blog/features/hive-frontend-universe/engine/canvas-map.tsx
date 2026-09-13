@@ -25,6 +25,8 @@ import { GAME_MODES, formatCountdown, msToNextRound, type GameMode } from '../li
 import { WelcomeRoom } from '../card/welcome-room';
 import { ModeChip } from '../card/mode-chip';
 import { PlayerDashboard, type DashboardRow } from '../card/player-dashboard';
+import { adventureGoals, type Goal } from '../lib/goals';
+import { postsMet, type PostMarkState } from './post-marks';
 import { FLIP_LANDMARK_ID, sideFlipX, type BoardSide, type FlipState } from '../lib/board-side';
 import { HFU_COPY } from '../lib/strings';
 import { placeWitnesses } from '../lib/planet';
@@ -412,6 +414,8 @@ const Stage = ({ board }: { board: Board }) => {
   const visitedNewbsRef = useRef<Set<number>>(new Set());
   /** The quest's gem is awarded exactly once per board. */
   const newbAwardedRef = useRef(false);
+  /** The new-posts challenge: which posts have been met, and how (post-marks.ts). */
+  const postMarksRef = useRef<PostMarkState | null>(null);
   /** The planning grid overlay, toggled with G. ON by default while the
    *  game is in active build direction (Bryan's call); G hides it for
    *  recordings. */
@@ -540,6 +544,25 @@ const Stage = ({ board }: { board: Board }) => {
     rows.push({ label: t(`${k}.newbs`), value: `${visitedNewbsRef.current.size} / ${newbieNodes.size}` });
     return rows;
   };
+  /**
+   * What this round asks of you (lib/goals.ts), for the welcome. The HUD
+   * builds the same list every frame; this one is read whenever the welcome
+   * is on screen, so picking adventure mode is picking a stated job.
+   */
+  const roundGoals = (): Goal[] =>
+    adventureGoals({
+      postsMet: postMarksRef.current ? postsMet(postMarksRef.current) : 0,
+      postsTotal: board.houses.length,
+      newbsVisited: visitedNewbsRef.current.size,
+      newbsTotal: newbieNodes.size,
+      raceCarried: raceRef.current?.carried ?? 0,
+      raceLine: raceRef.current?.line ?? 0,
+      raceFunded: raceRef.current?.funded ?? false,
+      helmets: helmetsRef.current?.count ?? 0,
+      helmetTotal: HELMET_TOTAL,
+      keepReleased: keepRef.current?.released ?? false
+    });
+
   const toggleDashboard = () => {
     dashOpenRef.current = !dashOpenRef.current;
     setDashRows(dashOpenRef.current ? snapshotDashboard() : null);
@@ -607,6 +630,8 @@ const Stage = ({ board }: { board: Board }) => {
     visitedNewbsRef,
     visitedCommunitiesRef,
     newbAwardedRef,
+    postMarksRef,
+    playerHandle,
     atNodeTick,
     inCommunityTick,
     mKeyDownAt,
@@ -837,7 +862,7 @@ const Stage = ({ board }: { board: Board }) => {
       ) : null}
 
       {/* THE WELCOME AT BASECAMP: every round starts here (Bryan). */}
-      {mode === null ? <WelcomeRoom onPick={pickMode} /> : null}
+      {mode === null ? <WelcomeRoom onPick={pickMode} goals={roundGoals()} /> : null}
 
       <Controls
         labels={{ hop: t('hive_frontend_universe.controls.hop'), map: t('hive_frontend_universe.controls.map') }}

@@ -108,25 +108,32 @@ export const CLUSTERS: readonly Cluster[] = [
   // by a rail trail now. It was a hop, and it read as debris.
   { id: 'gateway', x: -7130, y: -600, link: 'trail', satellites: [[60, 430], [300, 430]] },
 
-  /* ---- EMPEROR J SON'S KEEP: the villain's home at the world's edge ---- */
-  // Moved to the NORTH-EAST (Bryan's grid order: W-4) and made VISITABLE:
-  // one long approach rail hangs off the hub toward the east blade, ending
-  // at a satellite whose gap to the mainland measures ~1.23x a bare hop, so
-  // TWO helmets buy the crossing. Not the easiest path, but a possible one,
-  // exactly as ordered. The gap is measured by the world stats, never
-  // assumed.
-  // The approach rail ends ~1030px from Mount Socko's node: TWO helmets buy
-  // the crossing, and the sock volcano is the launch point to the Emperor
-  // (get socked north, and you are standing at his gateway).
-  { id: 'json_keep', x: 6650, y: -6650, link: 'hop', satellites: [[150, 470], [215, 1400]] },
-  // MOUNT SOCKO'S ISLE: U-7 is open void, so the sock volcano floats on its
-  // own island, tied on by a rail trail. The sock-trip toll is the long
-  // ride home.
-  { id: 'socko_isle', x: 5250, y: -4550, link: 'trail', satellites: [[330, 430]] },
-  // THE SOUTH BAYS: new void moorings for Bryan's box orders. 'rose' holds
-  // the Rose Window at I-23; 'shipyard' holds both dApp ships at Q-23/T-23.
-  { id: 'rose', x: -2450, y: 7050, link: 'trail', satellites: [[200, 450]] },
-  { id: 'shipyard', x: 3850, y: 7050, link: 'trail', satellites: [[0, 430]] },
+  /* ---- EMPEROR J SON'S KEEP: the villain's home at the planet's rim ---- */
+  // On the planet (Bryan, 2026-09-12: the keep and Mount Socko "should both
+  // look like islands off on the globe", the way the citadels do), and now
+  // alone out there. It stood at W-4 in open space, then on the east rim at
+  // W-9, a helmet's throw from Mount Socko's isle, and the two big
+  // silhouettes read as one crowded corner. The sock moved west to E-9 and
+  // the keep took the room it left: U-7, the north-east void, with the whole
+  // corner to itself.
+  // Still VISITABLE the hard way: the approach rail hangs west off the hub
+  // toward the centre blade's north coast and ends where the gap to the
+  // living world's lines measures ~1.17x a bare hop, so TWO helmets buy the
+  // crossing. The launch point is the north coast now, not the sock. The gap
+  // is measured by the world stats, never assumed; checks/planet.ts holds it
+  // between one helmet and two.
+  { id: 'json_keep', x: 5250, y: -4550, link: 'hop', satellites: [[300, 470], [168, 940]] },
+  // MOUNT SOCKO'S ISLE: E-9, off the diamond's north-west coast, tied on by
+  // a rail trail (Bryan, 2026-09-12: the keep and the sock were too close to
+  // tell apart). The sock-trip toll is the long ride home, and it is longer
+  // now: the far side of the world from almost everywhere.
+  { id: 'socko_isle', x: -5950, y: -3150, link: 'trail', satellites: [[330, 430]] },
+  // THE SOUTH BAYS: void moorings for Bryan's box orders, out past the rim
+  // in the deep south (Bryan, 2026-09-12: the Rose Window's centre to I-26,
+  // the Hive dApps ship's centre to S-26). Each landmark stands 300 px south
+  // of its hub, so the hubs sit a row above the named boxes.
+  { id: 'rose', x: -3150, y: 8450, link: 'trail', satellites: [[200, 450]] },
+  { id: 'shipyard', x: 3850, y: 8450, link: 'trail', satellites: [[0, 430]] },
   // THE ARCADE BAY: the notch between the blades is void, so the arcade
   // moors on its own short rail. Hub lowered half a box (Bryan: "in map
   // view, arcade needs to come down exactly half a quadrant lower").
@@ -240,9 +247,10 @@ export const LANDMARKS: readonly Landmark[] = [
   // His link leads to the block explorer: the one place you can stare at the
   // raw JSON he hoards. BIG, so the silhouette is visible from the far coast.
   { id: 'json_keep', kind: 'explorer', path: '/', labelKey: 'hive_frontend_universe.landmarks.json_keep', category: 'dapp', icon: 'jsonboss', place: { in: 'cluster', cluster: 'json_keep', angleDeg: 30, dist: 520 }, big: true },
-  // Mount Socko stands on the very NORTH TIP of the logo: a sock-shaped
-  // mountain, visible from the pulled-out map, where a Socko-enveloped bug is
-  // flash-taken. Pure lore, no page behind it; the trip itself is the toll.
+  // Mount Socko stands off the diamond's NORTH-WEST coast: a sock-shaped
+  // mountain on its own isle, visible from the pulled-out map, where a
+  // Socko-enveloped bug is flash-taken. Pure lore, no page behind it; the
+  // trip itself is the toll.
   { id: 'mount_socko', kind: 'none', path: '', labelKey: 'hive_frontend_universe.landmarks.mount_socko', category: 'info', icon: 'sockmount', place: { in: 'cluster', cluster: 'socko_isle', angleDeg: 90, dist: 300 }, big: true },
   // THE ROSE WINDOW: the link cathedral, standing on the southern bridge of
   // the wider channel (the widest strait cell, dead center of the map). A
@@ -250,9 +258,11 @@ export const LANDMARKS: readonly Landmark[] = [
   // one place; its panel lists them, its oculus opens the home page. The
   // ferris wheel's twin: one hot wheel for play, one cool wheel for use.
   { id: 'rose_window', kind: 'internal', path: '/', labelKey: 'hive_frontend_universe.landmarks.rose_window', category: 'social', icon: 'rosewindow', place: { in: 'cluster', cluster: 'rose', angleDeg: 270, dist: 300 }, big: true },
-  // THE STEEM RUINS, reachable at last (Bryan: "would be cool"). A spoke off
-  // the anchorage hub lands exactly on STEEM_RUINS below; parking here FLIPS
-  // THE BOARD to its back side. The art is drawSteemRuins, not an icon.
+  // THE DOOR TO THE STEEM RUINS (Bryan: reaching them "would be cool"). A
+  // spoke off the anchorage hub lands exactly on STEEM_RUINS below; parking
+  // here TURNS THE PLANET to its back, where the ruins are (lib/steem-side.ts).
+  // On this side the spot is marked by the rubble that came round
+  // (drawSteemRubble), not by an icon.
   { id: 'steem_ruins', kind: 'external', path: 'https://hive.blog/communityfork/@hiveio/announcing-the-launch-of-hive-blockchain', labelKey: 'hive_frontend_universe.landmarks.steem_ruins', category: 'info', icon: 'ruins', place: { in: 'cluster', cluster: 'anchorage', angleDeg: 45, dist: 848.5 } }
 ];
 
@@ -343,8 +353,9 @@ export const TROLL_HOLES: readonly TrollHole[] = [
   { id: 'hole_centre', x: 150, y: -3700 },
   { id: 'hole_south', x: 1040, y: 2130 },
   { id: 'hole_east', x: 4000, y: 2260 },
-  // The keep itself: the final mouth, off the land entirely (now NE, W-4).
-  { id: 'json_keep', x: 6650, y: -6650 }
+  // The keep itself: the final mouth, off the land entirely, in the
+  // north-east void (the keep's cluster hub, U-7).
+  { id: 'json_keep', x: 5250, y: -4550 }
 ];
 
 /* --------------------------- the witness ring --------------------------- */
@@ -429,13 +440,13 @@ export function witnessPosts(count: number): WitnessPost[] {
  * rail spoke to it. Move a community by editing its line.
  */
 /**
- * THE STEEM RUINS: the old chain, drawn as a dead grey district out in the
- * western void, far across the world from Emperor J SON's keep (now in the
- * north-east at Bryan's order).
- * Environmental storytelling only: no node, no travel, nothing to collect.
- * Hover names it and the click leads to the REAL 2020 fork announcement post
- * (verified alive before this landed), so the one link out of the ruins is
- * the moment the community left them.
+ * THE STEEM RUINS are on the back of the planet now (lib/steem-side.ts): the
+ * old chain's land is the busted Steem mark, and the dead grey district
+ * stands on it. What stays in the western void on this side is the DOOR:
+ * the rubble that came round, at STEEM_RUINS below, where the steem_ruins
+ * landmark's spoke lands. Hover names it and the click leads to the REAL
+ * 2020 fork announcement post (verified alive before this landed), so the
+ * one link out of the ruins is the moment the community left them.
  */
 /**
  * FLOATING ISLAND CHIPS: the planet sheds magic fragments of itself into
@@ -511,7 +522,7 @@ export const WITNESS_OVERRIDES: Readonly<Record<string, { x: number; y: number }
   austinbank: { x: 4550, y: 5350 } // T-21 (order-sheet spelling)
 };
 
-/** Where the ruins art stands: the steem_ruins landmark's spoke end. */
+/** Where the door to the ruins stands: the steem_ruins landmark's spoke end. */
 export const STEEM_RUINS = {
   x: -6300,
   y: 1800,

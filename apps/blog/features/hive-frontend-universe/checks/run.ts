@@ -17,6 +17,7 @@ import { blockChecks } from './blocks';
 import { footprintChecks } from './footprints';
 import { keepChecks } from './keep';
 import { raceChecks } from './race';
+import { planetChecks } from './planet';
 import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
@@ -26,4 +27,5 @@ blockChecks();
 footprintChecks();
 keepChecks();
 raceChecks();
+planetChecks();
 report();

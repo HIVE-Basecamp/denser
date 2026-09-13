@@ -84,9 +84,12 @@ export function communityHref(name: string): string {
 
 /**
  * A post's page. Hive hands back a site-relative url like
- * `/hive-123/@alice/slug`; fall back to building one when it is missing.
+ * `/hive-123/@alice/slug` — the route is `/{category}/@{author}/{permlink}`,
+ * so a bare `/@author/permlink` (no category) 404s: that path shape has no
+ * page. There is no category to guess with here, so without a real url this
+ * says "no link" instead of building one that is guaranteed broken.
  */
-export function postHref(url: string | undefined, author: string, permlink: string): string {
+export function postHref(url: string | undefined): string | null {
   if (url && url.startsWith('/')) return `${BASE_PATH}${url}`;
-  return `${BASE_PATH}/@${author}/${permlink}`;
+  return null;
 }

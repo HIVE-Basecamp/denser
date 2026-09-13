@@ -71,6 +71,8 @@ lib/        Pure, DOM-free. The world's shape and rules.
   targets.ts      What every clickable thing links to. One mapping, one file.
   board.ts        Raw chain data -> the window's board (posts, tiers, counts).
   planet.ts       The planet's disc, and how the towers lean on it.
+  steem-side.ts   The back of the planet: the Steem mark's path data, what is
+                  broken off it, and where the ruins and the Blurt island stand.
 
 engine/     Canvas + game state. No React except canvas-map.tsx.
   world.ts        Welds mesh + clusters + communities into one graph, then
@@ -88,6 +90,8 @@ engine/     Canvas + game state. No React except canvas-map.tsx.
   ground.ts       The terrain paint: base, additive glass, halo. Built once
                   per window, only blitted per frame.
   planet.ts       The sphere's paint: sea, limb, night, sheen. Under the land.
+  steem-land.ts   The back's land: the busted Steem mark, vectors at every
+                  zoom, its shadow and glow baked once.
   render/         One draw pass over the whole scene, viewport-culled.
                   `scene.ts` sets the frame up and runs the layers in order;
                   each `layer-*.ts` is one band of that pass, reading the
@@ -161,33 +165,42 @@ answer.
 
 | Name | Kind | Count | Nature | What it does |
 |------|------|-------|--------|--------------|
-| Socko | sock puppet | 14 | trap | A mischievous sock with slanty eyes. Touch it and it envelops the bug and flash-posts it to Mount Socko on the far north tip: never fatal, always a detour. |
+| Socko | sock puppet | 14 | trap | A mischievous sock with slanty eyes. Touch it and it envelops the bug and flash-posts it to Mount Socko off the north-west coast: never fatal, always a detour. |
 | Blahgart | the word BLAH, walking | 16 | nuisance | Get close and it spits bright green slime; a slimed bug moves at less than half speed for a few seconds. Loud, sticky, avoidable. |
 | Sly Grin | scammer | 8 | thief | Golden head, black domino mask, gaucho hat. Snatches 3 carried tokens and dashes for a troll hole. Pounce on it within its getaway to take them back. |
 | Drainiac | extractor | 9 | thief | Half again bigger than anything else, four sucker snouts. Latches on and drains carried tokens at 2.4/s into a pouch of 4, then hauls the pouch home. Jump to break the latch. |
 | Copypasta | pasta octopus | 11 | nuisance | An octopus made of spaghetti, the same arm pasted eight times. Brush it and the noodles wrap the bug; three quick jumps tear it free. |
 
-All of them serve **Emperor J SON**, who squats in a black shard castle at
-the far south-east edge of the world, half fortress, half surfaced
-submarine, where the stolen tokens visibly spiral in. The reference is
-Hive's actual founding story: in 2020 a new owner tried to take over the
-old chain with a ninja-mined stake, and the community forked away and
-built Hive. The Emperor hoards; the chain routes around him. His keep sits
-deliberately beyond every jump: only a bug that has compiled all 21 oxygen
-helmets (one per consensus witness) can cross the last gap. Troll holes are
-his supply lines; whatever a thief drops down one is his.
+All of them serve **Emperor J SON**, a three-headed JSON hydra perched on a
+floating rock at the planet's east rim, where the stolen tokens visibly
+spiral in. The reference is Hive's actual founding story: in 2020 a new
+owner tried to take over the old chain with a ninja-mined stake, and the
+community forked away and built Hive. The Emperor hoards; the chain routes
+around him. His keep sits alone in the north-eastern void, deliberately
+beyond a bare jump: two oxygen helmets (one per consensus witness, 21 in
+all) buy the crossing from the rail-head on the northern coast, and all 21
+set his hoard loose. Troll holes are his supply lines; whatever a thief
+drops down one is his.
 
-**Mount Socko** stands on the north tip of the logo, a mountain that is
-unmistakably a sock: snow for a cuff, a darned heel, two slanted lights near
-the summit. It is where enveloped bugs get posted, visible from the full map
-so the displaced can see how far from home they are.
+**Mount Socko** stands on its own isle off the diamond's north-west coast,
+a mountain that is unmistakably a sock: a white tube, a darned heel, two
+mischievous eyes, the toe for a crater. It is where enveloped bugs get
+posted, visible from the full map so the displaced can see how far from
+home they are — and it is far: the sock and the keep used to share the
+north-east corner and read as one crowded shape, so the sock went west.
+On the pulled-out map the isle and the keep lean outward from the planet's
+centre like the citadels do: pins in a globe.
 
-**The Steem Ruins** lie in the western void, deliberately opposite the
-Emperor's keep: a dead grey district with a citadel snapped mid-height, dark
-houses that never light, and a rusted rail that runs toward the living world
-and simply stops. That break is the fork. The ruins' one link is the real
-2020 post announcing the launch of Hive: the game's history lesson, told as
-geography, with a receipt.
+**The Steem Ruins** are round the back of the planet, out of sight. Park at
+the rubble off the diamond's western coast and the planet turns over. The
+back is the old chain's land: the real Steem mark, in Steem's blue, busted,
+pieces missing, cracked to the sea, the rubble lying where it fell, with the
+dead grey district standing on its right stroke (a citadel snapped
+mid-height, houses that never light, a rusted rail that simply stops) and,
+off its coast, a small Blurt island. That break is the fork. Nothing lives
+on the back; the bug rides the rusted tracks alone. It is a banished land
+for later. The ruins' one link is the real 2020 post announcing the launch
+of Hive: the game's history lesson, told as geography, with a receipt.
 
 Rides are the friendly half of the same idea. One full rotation on the DHF
 ferris wheel earns a breath of **spare air** (a whole extra ring on one jump,
@@ -211,8 +224,10 @@ npx -y tsx --tsconfig tsconfig.json features/hive-frontend-universe/checks/run.t
 It builds the world from one fixed round start and holds it to the invariants
 above (zero crossings, max degree 4, 35 degrees at a junction, and the same
 world twice from the same round), then checks the movement integrator, the
-blocks on the lines, the footprints, the keep's ending, the 21 helmets and the
-DHF race line. One file per area, `run.ts` runs them all, and a failure exits
+blocks on the lines, the footprints, the keep's ending, the 21 helmets, the
+DHF race line and the planet (the isles on its rim, the keep's two-helmet
+gap, the back side inside the disc). One file per area, `run.ts` runs them
+all, and a failure exits
 non-zero. `lib/` and the world-building code are DOM-free, which is what makes
 this possible; `localStorage` is simply absent in Node and the storage helper
 tolerates that.
@@ -251,7 +266,8 @@ studied rather than guessed at:
   HUD tracks named places visited, persisted permanently. Parking at a
   landmark marks it forever.
 - **Environmental storytelling over exposition** (Hollow Knight): the Steem
-  Ruins say everything about the fork without a line of dialogue.
+  Ruins say everything about the fork without a line of dialogue, and the
+  busted Steem mark on the planet's back says it from orbit.
 
 Candidates deliberately left for later passes: visit-A-then-B destination
 tickets (Ticket to Ride), an HPUD festival on the 1st of each month, chain

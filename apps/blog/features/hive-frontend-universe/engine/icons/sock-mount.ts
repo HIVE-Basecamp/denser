@@ -1,11 +1,55 @@
 import { STICKER_OUTLINE } from './shared';
 
 /**
+ * THE ISLE under the sock: a chunk of cold rock with a snowy plateau, cut
+ * like the drifting chips but sized to the mountain, so from the pulled-out
+ * map Mount Socko reads as an island on the planet and not a sock on the
+ * sea (Bryan, 2026-09-12). The cuff is planted in the middle of the top.
+ */
+function drawSockIsle(ctx: CanvasRenderingContext2D, R: number, lw: number): void {
+  ctx.beginPath();
+  ctx.moveTo(-R * 1.45, R * 0.95);
+  ctx.lineTo(-R * 0.9, R * 1.75);
+  ctx.lineTo(-R * 0.1, R * 2.15);
+  ctx.lineTo(R * 0.7, R * 1.7);
+  ctx.lineTo(R * 1.45, R * 0.95);
+  ctx.closePath();
+  ctx.fillStyle = '#2a2338';
+  ctx.fill();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  // Facet lines down to the point.
+  ctx.strokeStyle = '#4a3a5e';
+  ctx.lineWidth = lw * 0.5;
+  ctx.beginPath();
+  ctx.moveTo(-R * 0.7, R * 1.1);
+  ctx.lineTo(-R * 0.1, R * 2.15);
+  ctx.moveTo(R * 0.6, R * 1.1);
+  ctx.lineTo(-R * 0.1, R * 2.15);
+  ctx.stroke();
+  // The plateau: cold and snowy, the way the mist already is.
+  ctx.beginPath();
+  ctx.ellipse(0, R * 0.95, R * 1.45, R * 0.38, 0, 0, 6.283);
+  ctx.fillStyle = '#8fa3c4';
+  ctx.fill();
+  ctx.strokeStyle = STICKER_OUTLINE;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(0, R * 0.9, R * 1.15, R * 0.22, 0, 0, 6.283);
+  ctx.fillStyle = '#c5d6f0';
+  ctx.globalAlpha = 0.7;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+}
+
+/**
  * MOUNT SOCKO, second design, to Bryan's spec: a WHITE sock volcano with
  * the TOE as the summit crater, zigzag stripes down the tube, and two
- * mischievous puppet eyes. Ominous but still laundry. It floats on its own
- * isle in the north-east void (U-7), where enveloped bugs get posted; the
- * toll is the long ride home.
+ * mischievous puppet eyes. Ominous but still laundry. It stands on its own
+ * isle at the planet's north-east rim (U-7), where enveloped bugs get
+ * posted; the toll is the long ride home.
  */
 export function drawSockMount(
   ctx: CanvasRenderingContext2D,
@@ -27,6 +71,7 @@ export function drawSockMount(
   ctx.beginPath();
   ctx.arc(0, R * 0.7, R * 1.9, 0, 6.283);
   ctx.fill();
+  drawSockIsle(ctx, R, lw);
   // THE SOCK, toe up: a wide cuff planted at the base, the tube rising and
   // leaning, the heel bulging on the right, and the rounded TOE as the
   // volcano's summit.

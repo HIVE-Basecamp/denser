@@ -22,13 +22,18 @@ interface RawReply {
   created: string;
 }
 
+/**
+ * `fresh` skips the cache and refreshes it: the footprints are happy with an
+ * hour-old answer, but "have I replied to this post yet" is not (lib/goals.ts).
+ */
 export async function fetchRepliers(
   author: string,
   permlink: string,
-  endpoint: string = configuredApiEndpoint
+  endpoint: string = configuredApiEndpoint,
+  fresh = false
 ): Promise<Replier[]> {
   const key = `${KEY_PREFIX}${author}/${permlink}`;
-  const cached = getStorageItem<Replier[]>(key);
+  const cached = fresh ? null : getStorageItem<Replier[]>(key);
   if (cached) return cached;
   const res = await fetch(endpoint, {
     method: 'POST',
