@@ -2,12 +2,18 @@
  * Hive Frontend Universe — observations (local judgements).
  *
  * An "observation" is the player's own opinion about another account (does this
- * profile look real, does it look like a bot). Per the design, these are
- * JUDGEMENTS and they stay OFF chain, on the player's own device only. This
- * file defines the record shape and stores it locally.
+ * profile look real, does it look like a bot). These are JUDGEMENTS, and they
+ * stay off chain on the player's own device FOR NOW. This file defines the
+ * record shape and stores it locally.
  *
  * Transport is intentionally UNBUILT in this pass — there is no broadcast, no
- * publish, no sync. Clearing the browser clears these, by design.
+ * publish, no sync. Clearing the browser clears these. That is the state of
+ * the build, not a promise about the design: ticket 15 settled that a label
+ * the project becomes sure of is meant to reach the chain one day, and that
+ * nothing reaches it before Bryan says we are ready to deploy. The reasons a
+ * player writes down are unpublished today; that is where the build stands,
+ * not a rule, and they may be published later if the player knows they will
+ * be.
  *
  * The word "observation" is used deliberately: `features/basecamp/lib/signals.ts`
  * already exists and means something else, so that word is not reused here.

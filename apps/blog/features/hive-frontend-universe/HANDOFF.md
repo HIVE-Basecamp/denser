@@ -105,8 +105,11 @@ mirrors.
 HARD RULES (human intent, keep enforcing)
 No new repos, forks, folders, or branches unless asked. Do not touch
 .claude/launch.json. Do not hardcode operation type ids. Do not call a signer
-directly. Do not build verify UI or trust logic, or any feature that flags
-real accounts, until the trust-model conversation happens. Do not build
+directly. Nothing the tool decides about a person goes on chain until Bryan
+says we are ready to go live (ticket 15, his correction of this rule on
+2026-09-14). Off the chain, judgement tools are the work itself and are not
+gated: build them. A player's own vote or reply is the player acting, not the
+tool judging, and was never gated. Do not build
 around Hive Communities tooling; communities exist on the map as places but
 nothing should depend on their tooling. Movement stays frozen when a pass
 says so. The game broadcasts nothing.
