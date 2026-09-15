@@ -64,3 +64,27 @@ One dated entry per idea. Never delete; mark "tried, pulled back" if so.
   have access to.
 - The surfboard changes: start with a real simple one, switch it out, get
   better ones by finding, earning or buying.
+
+## Bryan, 2026-09-14, answering ticket 16 — brainstorm, not decisions
+He was explicit that these are ideas, not rules: "I'm just kinda giving an
+idea. I'm trying to give mechanisms and fun elements to add to the game, and
+you're looking for rules... we're still in that fertile decision making the
+fun bit where you get to decide and create and brainstorm."
+
+- **The golden ticket.** One item, hidden behind one of the live posts in the
+  challenge. Only one exists. Everybody playing is hunting it. What it is,
+  defined later. The reach: to get it you have to actually act on the post —
+  a vote or a comment.
+- **Encounters you cannot always skip.** The game should be about running into
+  something. Maybe you can walk away; maybe you are approached and have to
+  battle. More interactions, not fewer.
+- **The JSON boxes need a purpose.** They are fine as things to jump around,
+  but "the boxes just currently have no purpose. You should open these boxes
+  or go into these boxes." Being pulled into one, as an encounter.
+- **Badge trails in curation mode**, once badges exist: a trail of posts by
+  people holding a certain badge. "All for the future."
+- **Rewards for curating.** Later, reasons to choose the curation trail at all.
+
+The frame around all of it, in his words: "build a world with many aspects,
+and, again, think Zelda. Think gameplay in explore adventure games... we're
+trying to match the lores." That matching is ticket 33, the match table.
