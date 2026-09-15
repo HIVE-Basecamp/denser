@@ -972,6 +972,7 @@
       "curation_blurb": "みんなの投稿に挨拶しに行こう。",
       "adventure": "アドベンチャー",
       "adventure_blurb": "ゲームの側。敵は噛むし、トークンは落ちる。",
+      "adventure_start": "アドベンチャーを開始",
       "frontend": "フロントエンド",
       "frontend_blurb": "hive.blogのツールが目立つ。地図をサイトのように使おう。",
       "change": "モード変更"

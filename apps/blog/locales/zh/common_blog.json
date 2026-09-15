@@ -972,6 +972,7 @@
       "curation_blurb": "去别人的帖子下打个招呼。",
       "adventure": "冒险",
       "adventure_blurb": "游戏的一面。敌人会咬，代币会掉。",
+      "adventure_start": "开始冒险",
       "frontend": "前端",
       "frontend_blurb": "hive.blog 的工具会突出显示。把地图当网站用。",
       "change": "切换模式"

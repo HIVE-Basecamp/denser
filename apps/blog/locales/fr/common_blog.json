@@ -972,6 +972,7 @@
       "curation_blurb": "Va dire bonjour aux gens sur leurs posts.",
       "adventure": "Aventure",
       "adventure_blurb": "Le côté jeu. Les ennemis mordent, les jetons tombent.",
+      "adventure_start": "Commencer l'aventure",
       "frontend": "Front end",
       "frontend_blurb": "Les outils hive.blog ressortent. Utilise la carte comme le site.",
       "change": "Changer de mode"

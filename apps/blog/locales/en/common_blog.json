@@ -1074,6 +1074,7 @@
       "curation_blurb": "Go say hi to people on their posts.",
       "adventure": "Adventure",
       "adventure_blurb": "The game side. Enemies bite, tokens drop.",
+      "adventure_start": "Start adventure",
       "frontend": "Front end",
       "frontend_blurb": "The hive.blog tools stand out. Use the map like the site.",
       "change": "Change mode"

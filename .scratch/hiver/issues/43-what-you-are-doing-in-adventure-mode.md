@@ -81,3 +81,45 @@ Judgement calls for Bryan:
   live every frame.
 - Explore mode is untouched, as you said it should be. Curation and front end
   get no goals either — curation's are ticket 32's question.
+
+## Comments
+
+Bryan, 2026-09-14: "this change that you made to the adventure mode now shows
+all of the, like, instructions on the same front page. I think that if you
+click adventure mode, that is when you should see those instructions. I do
+not believe that those instructions should be on that first page. It should
+be that you click, and then maybe you get the instructions... any of those
+instructions should be if you click adventure mode, not just sitting there
+taking up real estate and is like, you shouldn't see those words unless you
+click adventure."
+
+Built 2026-09-14. The welcome is now two steps, for adventure only.
+
+Step one is unchanged apart from the goal list being gone: title, round
+clock, four mode buttons, nothing about goals visible. Explore, curation and
+front end still start on one click, exactly as before.
+
+Clicking Adventure no longer starts the round. It swaps the panel to step
+two: an "Adventure" heading, the five goals with progress (the same list as
+before, just moved), a "Start adventure" button that calls the existing
+`onPick('adventure')`, and a "Change mode" button that goes back to the four
+modes without starting anything.
+
+Files: `card/welcome-room.tsx` rewritten (added `AdventureGoalsStep`, a
+`showAdventureGoals` state, kept `GoalList`). One new string,
+`hive_frontend_universe.modes.adventure_start` ("Start adventure"), added to
+all nine locale files with real translations. The back button reuses the
+existing `modes.change` string ("Change mode") rather than adding another
+key, since it does the same job as the mode-chip's reopen button.
+
+Did not build: the chooser for which single challenge to attempt. Bryan
+raised it in the same message and then said to leave it — "even if you don't
+wanna do that part because maybe it's not clarified well enough yet." Step
+two still shows all five goals together, no per-goal picker.
+
+Checked: type-check clean, 34 headless checks pass, lint clean on the
+changed file, translation lint clean for these keys. Played by hand in the
+browser: welcome shows four modes and no goal text; clicking Adventure shows
+the goals with Start and Change mode buttons; Change mode returns to the
+four modes; Start adventure actually starts the round (mode chip reads
+"Adventure", HUD shows the THIS ROUND block).
