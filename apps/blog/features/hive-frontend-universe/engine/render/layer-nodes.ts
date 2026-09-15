@@ -1,4 +1,5 @@
 import { blobPath } from './sky';
+import { drawConfettiPop } from './decor';
 import { avatarImage } from '../avatars';
 import { MONO, PALETTE } from './palette';
 import type { Pass } from './pass';
@@ -31,17 +32,29 @@ export function drawNodes(p: Pass): void {
       const col = scene.tierColors[h.tier];
       const rNode = Math.min(17 / Math.max(z, 0.35), 180);
       const rHalo = rNode * (2.1 + mapness * 1.6);
-      // CURATION MODE: every post breathes a faint ring, so "go engage with
-      // live posts" reads off the map. Newcomers keep their louder trail
-      // glow below.
-      if (scene.mode === 'curation' && !h.isNewcomer) {
+      // CURATION MODE marks what a post is still MISSING, not what it has.
+      // A post nobody has voted on wears the upvote's orange; a post nobody
+      // has answered wears the reply's cyan - the same two colours the feed
+      // puts on those counts, so the map and the postcard agree. A post with
+      // both has had its welcome and is left plain, which is the mode letting
+      // everything that is not its point fall back.
+      if (scene.mode === 'curation') {
         const cb = 0.5 + Math.sin(time * 1.6 + n.id * 0.7) * 0.5;
-        ctx.strokeStyle = '#9be8ff';
-        ctx.globalAlpha = 0.18 + cb * 0.3;
-        ctx.lineWidth = 2 / Math.max(z, 0.1);
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, rNode * 2.2 + cb * 6, 0, 6.283);
-        ctx.stroke();
+        ctx.lineWidth = 2.4 / Math.max(z, 0.1);
+        if (h.votes <= 0) {
+          ctx.strokeStyle = '#ff8a3d';
+          ctx.globalAlpha = 0.3 + cb * 0.5;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 2.2 + cb * 5, 0, 6.283);
+          ctx.stroke();
+        }
+        if (h.replies <= 0) {
+          ctx.strokeStyle = '#5ee9d5';
+          ctx.globalAlpha = 0.3 + (1 - cb) * 0.5;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, rNode * 2.9 + (1 - cb) * 5, 0, 6.283);
+          ctx.stroke();
+        }
         ctx.globalAlpha = 1;
       }
       // ADVENTURE MODE, the DHF race: a house whose vote is still there
@@ -99,6 +112,11 @@ export function drawNodes(p: Pass): void {
         ctx.arc(n.x, n.y, rNode * 2 + beat * 6, 0, 6.283);
         ctx.stroke();
         ctx.globalAlpha = 1;
+      }
+      // A FIRST EVER POST, on the curation trail: the same welcome the feed
+      // gives it, thrown over the house on the map.
+      if (scene.mode === 'curation' && h.firstPost) {
+        drawConfettiPop(ctx, n.x, n.y, rNode * 1.6, z, time, n.id);
       }
       ctx.globalAlpha = 0.22 + mapness * 0.3;
       ctx.fillStyle = col;

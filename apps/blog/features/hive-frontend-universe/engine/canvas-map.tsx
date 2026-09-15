@@ -230,7 +230,10 @@ const Stage = ({ board }: { board: Board }) => {
         isNewcomer: h.isNewcomer,
         bubble: h.bubble,
         glow: h.glow,
-        handle: h.handle
+        handle: h.handle,
+        votes: h.post.votes,
+        replies: h.post.comments,
+        firstPost: h.firstPost
       })),
     [board]
   );

@@ -46,6 +46,12 @@ export interface HouseVisual {
   bubble: number;
   glow: number;
   handle: string;
+  /** Votes on the post right now. Curation mode marks a post with none. */
+  votes: number;
+  /** Replies on the post right now. Curation mode marks a post with none. */
+  replies: number;
+  /** The author's first ever post. Curation mode pops confetti over it. */
+  firstPost: boolean;
 }
 
 export interface LandmarkVisual {

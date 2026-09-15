@@ -100,6 +100,15 @@ export interface BoardHouse {
   ageDays: number;
   tier: number;
   isNewcomer: boolean;
+  /**
+   * The account's first ever post, and so the loudest thing on the curation
+   * trail. The chain's own count of everything the account has published is
+   * one, so the post standing here is that one. This is the cheap half of the
+   * feed's rule (`features/basecamp/lib/first-post.ts`): the other half needs
+   * a history read per account, which the map cannot afford. It therefore
+   * misses some first posts and can never call one falsely.
+   */
+  firstPost: boolean;
   community: string | null;
   communityTitle: string | null;
   /** Translucent stake-fog radius, in world px. */
@@ -290,6 +299,7 @@ export function buildBoard(input: BuildBoardInput): Board {
       ageDays,
       tier: tierOf(hp),
       isNewcomer: ageDays < YEAR_DAYS,
+      firstPost: acc?.post_count === 1,
       community: post.community ?? null,
       communityTitle: post.community_title ?? null,
       bubble: clamp(22 * Math.pow(Math.max(hp, 1) / 100, 0.28), 20, 190),

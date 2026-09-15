@@ -12,6 +12,7 @@
  */
 
 import { worldChecks } from './world';
+import { boardChecks } from './board';
 import { movementChecks } from './movement';
 import { blockChecks } from './blocks';
 import { footprintChecks } from './footprints';
@@ -22,6 +23,7 @@ import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
 worldChecks();
+boardChecks();
 movementChecks();
 blockChecks();
 footprintChecks();
