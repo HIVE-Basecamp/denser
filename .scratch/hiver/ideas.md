@@ -88,3 +88,23 @@ fun bit where you get to decide and create and brainstorm."
 The frame around all of it, in his words: "build a world with many aspects,
 and, again, think Zelda. Think gameplay in explore adventure games... we're
 trying to match the lores." That matching is ticket 33, the match table.
+
+## Bryan, 2026-09-15, during the match table — fodder, not decisions
+Came out of talking about the fish ranks. Not a match, not a ticket.
+
+- **Whales can hurt you, and everyone knows it.** His words: there is "this
+  sense that you have to be careful that there are these whales that can just
+  like destroy you" — accounts with very high stake that, if you make them mad,
+  "can just kind of blast your rep and make it so your posts aren't really
+  visible in the same way... you get your posts hidden because you have a low
+  rep". He said there is "something that could be played with this".
+- **Fish in the water between the islands.** The board used to be the Hive mark
+  floating in space as its own planet. It is now a globe: the mark is land, with
+  islands, and a far side with the Steem Ruins on it. So the gaps can read as
+  water. The idea: fish in the spaces between. "If you jump out into space when
+  you got your helmet on... you get swallowed up by a whale or an orca." Another
+  danger to avoid.
+- Worth noting, not agreed: `research/02` has a real Hive truth that matched
+  nothing in the first match-table draft — your reputation can only be pushed
+  down by someone whose reputation is bigger than yours. The first idea above is
+  that truth, felt rather than explained.
