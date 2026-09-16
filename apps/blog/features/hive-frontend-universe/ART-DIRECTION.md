@@ -125,3 +125,95 @@ ALL TEN ANSWERED YES by Bryan on 2026-08-21; kept for the record.
 9. Control chrome redesign now or later? (later; resize shipped first)
 10. Coastal chip count: 5 per coast enough magic? (yes; scarcity is the
     magic)
+
+## The sea (2026-09-15, Bryan's order)
+
+"Maybe make the water look more like water. Right now it is a glowing, it
+just is sort of a glowing sphere. Both in the map and in the gameplay." So
+the planet's disc stopped being a glow and became a surface.
+
+Rules this adds, for anything drawn on the water later:
+
+- The sea holds its colour while you play (alpha 0.5, was 0.2) and the star
+  field glitters through it rather than being covered. This is a DELIBERATE
+  exception to the void's luminance ceiling: inside the planet's limb you are
+  looking at an ocean, not at space. Outside the limb the ceiling still
+  stands, untouched.
+- Everything on the surface is measured in SCREEN px and divided by the zoom,
+  never in world px. One set of numbers then reads as water at play zoom and
+  as an ocean on the pulled-out map, with no second art pass and no LOD
+  switch. Swell 118px, caustic net 61px, sampled every 26px and 34px.
+- The swell bows toward the limb in proportion to mapness, so the map reads
+  as water wrapping a ball rather than a flat pond.
+- Reserved hues are unchanged: the sea is teal through ocean blue to near
+  black, the crests are near-white, the caustics are a whisper of cyan at
+  alpha 0.05 to 0.10 — texture, never a line anyone could mistake for a lane.
+- Measured: 0.36ms a frame at play zoom, 1.44ms at map zoom, against the 12ms
+  law.
+
+And the creatures in it (engine/sea.ts, icons/sea-life.ts): chunky sticker,
+same as every other fictional thing — thick dark outline, flat fill, one pale
+belly, never mirrored upside down. They are drawn UNDER the land, so the
+coast crosses in front of them, and they are GONE from the pulled-out map on
+Bryan's order ("they don't need to be in the map view, just in the
+gameplay"). The one exception to drawing order is the creature with the bug
+in its mouth, which is drawn last, over everything, so the swallow reads.
+
+## The globe, and the ocean seen from it (2026-09-16, Bryan's order)
+
+"In the map form it's not clear that it's ocean and waves. I can see there's a
+line that's moving, it's supposed to represent waves, but it doesn't really do
+that." And: "Let's stop this flipping thing. Wherever the bug is, when you hit
+map you're always centred, and the map rotates."
+
+Two rules come out of this, and neither should be undone without asking him.
+
+**The land holds the world still.** The turn is how far past the landmass the
+bug has gone, not where the bug is: anywhere between the Hive mark's west and
+east ends the globe does not move at all. Bryan's words for why, and they are
+the test for anything added here: "everything looks wrong and stretched, which
+we don't want". The turn is for leaving the world behind, not for walking
+around on it.
+
+**The resting map is sacred.** The turn is built on the plain orthographic
+projection, which is the identity at rest, so the composition everyone has
+tuned by hand for eighteen passes is untouched when the globe is facing you.
+Anything added to the map has to keep that true: if a new element cannot be
+expressed as something standing on the ball (inside the limb) or as a pin
+above it (outside the limb), it does not belong on the map.
+
+**The light belongs to the viewer, the surface belongs to the ball.** This is
+the line that decides where a new piece of paint goes:
+
+- The body of the sea, the glitter path, the atmosphere, the night and the
+  sheen are LIGHT. They are painted straight onto the screen and never turn.
+  On the map the night now falls OVER the board rather than under it, so the
+  terminator darkens the land with the water it sits in; that crossfade is
+  held to `mapness`, so play zoom is exactly what it was.
+- The swell, the crests and the glints are SURFACE. They are painted on the
+  board and turn with the coasts, squeezing toward the limb.
+
+Waves, after the rework:
+
+- Never an unbroken line across the map. An unbroken line is a contour or a
+  route; the eye files it as information, not as water. Crests are SHORT
+  DASHES in staggered rows, each drawn twice — a dark trough under a bright
+  crest — because that pair is what makes a mark read as a wave.
+- Under them, wide soft bands of lighter water following the wave fronts. At
+  a distance this is what reads as ocean before any single wave does.
+- The dashes are LONG at play zoom and SHORT on the map, and the rows are 92
+  screen px apart at play zoom and 25 on the map. A wave has a real size: up
+  close you are among a few rollers, from orbit you see a whole sea of them.
+  Everything is still measured in SCREEN px and divided by the zoom.
+- The sea is OPAQUE on the map (alpha 0.99). The star field glittering
+  through the water was exactly what made the ball read as a glow. The play
+  zoom exception above still stands: at 0.5 the stars still show while you
+  play, and that stays.
+- NOTHING WIDE MAY BE PAINTED ON THE SURFACE. The two hemispheres come off
+  two different sheets and meet on a seam. Fine texture is squeezed to
+  nothing at that seam and crosses it invisibly; anything wide lands half on
+  each side and draws a hard edge down the ocean. The depth patches were
+  exactly that, so they now fade out as the map pulls back and the body's own
+  gradient does the large-scale shading from there.
+- Measured: 0.9ms a frame at play zoom, 2.3ms at map zoom (both boards
+  painted plus the warp), against the 12ms law.

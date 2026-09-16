@@ -11,14 +11,15 @@ import {
 } from '../../lib/modes';
 import {
   FLIP_LANDMARK_ID,
-  FLIP_SECONDS,
-  flipView,
+  TURN_SECONDS,
   otherSide,
   sideAt,
-  sideFlipX,
+  sideLongitude,
+  turnEase,
   type BoardSide,
-  type FlipState
+  type TurnState
 } from '../../lib/board-side';
+import { LAND_HOLD, turnToward, unproject, wrapPi } from '../../lib/globe';
 import { MAP_FIT, towerLean, towerPoint } from '../../lib/planet';
 import { TIERS, type Board } from '../../lib/board';
 import { LANDMARKS, LANDMARK_ACCOUNTS, TROLL_HOLES, ROSE_WINDOW_PANES } from '../../lib/fixed-world';
@@ -32,6 +33,7 @@ import { createCoins, updateCoins, type CoinState } from '../coins';
 import { createHelmets, updateHelmets, o2Multiplier, HELMET_TOTAL, type HelmetState } from '../helmets';
 import { createHazards, updateHazards, hazardHolds, GOO_SLOW, type HazardState } from '../hazards';
 import { createGems, updateGems, type GemState } from '../gems';
+import { createSea, updateSea, seaHolds, inOpenWater, type SeaState } from '../sea';
 import { placeBlocks, blockPlayer, type BlockState } from '../blocks';
 import { createFootprints, addReplyTracks, type FootprintState } from '../footprints';
 import { fetchRepliers } from '../../data/fetch-replies';
@@ -86,7 +88,6 @@ interface FrameLoopArgs {
   /** Translation, and the two small helpers the loop borrows. */
   t: (key: string, options?: Record<string, unknown>) => string;
   steer: () => Vec2;
-  viewFlipX: () => number;
   firePlayerShot: () => void;
   hopWithO2: () => void;
   toggleDashboard: () => void;
@@ -107,12 +108,16 @@ interface FrameLoopArgs {
   blocksRef: MutableRefObject<BlockState | null>;
   footprintsRef: MutableRefObject<FootprintState | null>;
   gemsRef: MutableRefObject<GemState | null>;
+  seaRef: MutableRefObject<SeaState | null>;
   raceRef: MutableRefObject<RaceState | null>;
   keepRef: MutableRefObject<KeepState | null>;
   projectilesRef: MutableRefObject<ProjectileState | null>;
   combatRef: MutableRefObject<CombatState | null>;
   rideRef: MutableRefObject<RideState>;
-  flipRef: MutableRefObject<FlipState | null>;
+  /** A crossing to the other side in progress: the world rolling round. */
+  turnRef: MutableRefObject<TurnState | null>;
+  /** How far the globe has turned right now, radians (lib/globe.ts). */
+  spinRef: MutableRefObject<number>;
 
   /** Session and view flags the loop reads and writes. */
   playerHandleRef: MutableRefObject<string | undefined>;
@@ -185,7 +190,6 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     canvasRef,
     t,
     steer,
-    viewFlipX,
     firePlayerShot,
     hopWithO2,
     toggleDashboard,
@@ -204,12 +208,14 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     blocksRef,
     footprintsRef,
     gemsRef,
+    seaRef,
     raceRef,
     keepRef,
     projectilesRef,
     combatRef,
     rideRef,
-    flipRef,
+    turnRef,
+    spinRef,
     playerHandleRef,
     modeRef,
     sideRef,
@@ -258,6 +264,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     blocksRef.current = placeBlocks(world, board.windowStart);
     footprintsRef.current = createFootprints(world, board.houses);
     gemsRef.current = createGems(world, board.windowStart);
+    // The water is stocked fresh every round, from the same window seed.
+    seaRef.current = createSea(board.windowStart);
     raceRef.current = createRace(board.houses.map((h) => h.tier));
     keepRef.current = createKeep(world, BIG_SIZE.jsonboss ?? 300);
     projectilesRef.current = createProjectiles();
@@ -391,8 +399,15 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     const targetAt = (clientX: number, clientY: number): MapTarget | null => {
       const rect = canvas.getBoundingClientRect();
       const cam = camRef.current;
-      const wx = (clientX - rect.left - W / 2) / (cam.z * viewFlipX()) + cam.x;
       const wy = (clientY - rect.top - H / 2) / cam.z + cam.y;
+      // THE GLOBE HAS TURNED (lib/globe.ts), so the cursor has to be rolled
+      // back onto the board before anything can be under it. At rest this is
+      // the identity, so play zoom hit-tests exactly as it always did.
+      const on = unproject((clientX - rect.left - W / 2) / cam.z + cam.x, wy, spinRef.current);
+      if (!on) return null;
+      // A spot on the face that has turned away belongs to the other board.
+      if ((on.base === 0) !== (sideRef.current === 'hive')) return null;
+      const wx = on.x;
       const z = cam.z;
       let best: MapTarget | null = null;
       let bestD = Infinity;
@@ -665,8 +680,9 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // Which grid box the cursor is over, for the big hover label.
       if (gridRef.current) {
         const cam = camRef.current;
-        const gwx = (e.clientX - rect.left - W / 2) / (cam.z * viewFlipX()) + cam.x;
         const gwy = (e.clientY - rect.top - H / 2) / cam.z + cam.y;
+        const g = unproject((e.clientX - rect.left - W / 2) / cam.z + cam.x, gwy, spinRef.current);
+        const gwx = g ? g.x : NaN;
         const ci = Math.floor((gwx + 9100) / 700);
         const ri = Math.floor((gwy + 9100) / 700);
         hoverGridRef.current = ci >= 0 && ci < 26 && ri >= 0 && ri < 26 ? { ci, ri } : null;
@@ -805,7 +821,9 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     let overlayPos: Vec2 | null = null;
     const camUpdate = (dt: number) => {
       const cam = camRef.current;
-      const out = mapHeldRef.current || fullMapRef.current;
+      // The crossing is watched from the map: the camera pulls out, the
+      // world rolls round, and it drops back in on the far side.
+      const out = mapHeldRef.current || fullMapRef.current || turnRef.current !== null;
       const targetZ = out ? fitZ() : playZ();
       const follow = overlayPos ?? p;
       const tx = out ? 0 : follow.x;
@@ -833,7 +851,11 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // movement.ts untouched.
       const riding = rideRef.current !== null;
       const hazardHeld = hz ? hazardHolds(hz) : false;
-      if (!fullMapRef.current && !riding && !hazardHeld) {
+      // A creature with the bug in its mouth holds it exactly the way a sock
+      // does: the integrator simply does not run while the jaws close.
+      const sea = seaRef.current;
+      const seaHeld = sea ? seaHolds(sea) : false;
+      if (!fullMapRef.current && !riding && !hazardHeld && !seaHeld && !turnRef.current) {
         const pdt = hz && hz.gooT > 0 ? dt * GOO_SLOW : dt;
         if (p.mode === 'rail') {
           railUpdate(p, edges, incident, steer(), pdt);
@@ -852,25 +874,36 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       if (blocksRef.current && blockPlayer(blocksRef.current, p, edges, dt)) shake = Math.max(shake, 5);
       if (shake > 0) shake = Math.max(0, shake - dt * 40);
       if (warpFxRef.current > 0) warpFxRef.current = Math.max(0, warpFxRef.current - dt * 1.6);
-      // THE FLIP: the board turns over; at the midpoint the side changes.
-      let flipX = sideFlipX(sideRef.current);
-      let flipSkew = 0;
-      const flip = flipRef.current;
-      if (flip) {
-        flip.t = Math.min(1, flip.t + dt / FLIP_SECONDS);
-        const view = flipView(flip);
-        flipX = view.flipX;
-        flipSkew = view.flipSkew;
-        const showing = sideAt(flip);
+      // THE TURN (lib/globe.ts). The board is not a card any more: the
+      // whole world is a ball, and the map turns it so that wherever the bug
+      // is standing comes round to face you. Crossing to the old chain is
+      // the same turn, carried half way round.
+      const crossing = turnRef.current;
+      if (crossing) {
+        crossing.start ??= spinRef.current;
+        crossing.t = Math.min(1, crossing.t + dt / TURN_SECONDS);
+        spinRef.current = crossing.start + crossing.dir * Math.PI * turnEase(crossing.t);
+        const showing = sideAt(crossing);
         if (showing !== sideRef.current) {
           sideRef.current = showing;
           setSide(showing);
         }
-        if (flip.t >= 1) {
-          flipRef.current = null;
-          flipX = sideFlipX(sideRef.current);
-          flipSkew = 0;
-        }
+        // No snap at the end: half a turn from where the roll started is
+        // the far side's face give or take where the bug was standing, and
+        // the easing below closes that last bit as the camera drops back in.
+        if (crossing.t >= 1) turnRef.current = null;
+      } else {
+        // Wherever the bug stands is what the map turns to face, EXCEPT over
+        // the land, where it holds dead still (LAND_HOLD, Bryan's order: the
+        // resting map is the map he already knows, and it is only leaving the
+        // landmass east or west that turns the world). At play zoom the turn
+        // is nothing at all either way, so nothing warps and the world is
+        // painted flat, exactly as before.
+        const lookAt = overlayPos ?? p;
+        const want =
+          sideLongitude(sideRef.current) +
+          mapnessAt(camRef.current.z) * turnToward(lookAt.x, lookAt.y, LAND_HOLD[sideRef.current]);
+        spinRef.current += wrapPi(want - spinRef.current) * Math.min(1, dt * 9);
       }
 
       updateTraffic(dt);
@@ -925,6 +958,29 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
       if (alive && keepRef.current) updateKeep(keepRef.current, dt);
       if (alive && gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
+      // THE WATER (engine/sea.ts). Only a bug adrift in the open sea is on
+      // the menu: on a rail, over land, riding something or reading the map,
+      // nothing out there can reach it.
+      if (alive && sea) {
+        const adrift =
+          p.mode === 'drift' && !fullMapRef.current && !riding && !hazardHeld && inOpenWater(p.x, p.y);
+        updateSea(sea, p, adrift, dt);
+        if (sea.tripped) {
+          sea.tripped = false;
+          // Spat back to the last shore the bug stood on, stunned. Priced
+          // like every other setback in this game: EXPLORE MODE costs
+          // nothing but the trip, and every other mode drops what was being
+          // carried. Not a death; the toll is the walk back.
+          if (modeHasConsequences(modeRef.current)) {
+            if (coinsRef.current) coinsRef.current.carried = 0;
+            if (raceRef.current) dropVotes(raceRef.current);
+          }
+          placeAt(p, edges, incident, p.lastNode);
+          p.stuck = 1.4;
+          warpFxRef.current = 1;
+          shake = 14;
+        }
+      }
       requestNearbyAvatars(dt);
       camUpdate(dt);
 
@@ -975,8 +1031,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         }
         // THE RUINS ARE THE DOOR: park there and the board turns over, from
         // either side. Not while a turn is already under way.
-        if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === FLIP_LANDMARK_ID && !flipRef.current) {
-          flipRef.current = { t: 0, to: otherSide(sideRef.current) };
+        if (vn?.kind === 'landmark' && LANDMARKS[vn.ref]?.id === FLIP_LANDMARK_ID && !turnRef.current) {
+          turnRef.current = { t: 0, to: otherSide(sideRef.current), dir: 1 };
         }
         // THE KEEP: park there wearing all 21 helmets and his hoard is set
         // loose (engine/keep.ts). Fewer, and you only get to look.
@@ -1208,11 +1264,11 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         projectiles: alive ? projectilesRef.current : null,
         combat: combatRef.current,
         gems: alive ? gemsRef.current : null,
+        sea: alive ? seaRef.current : null,
         blocks: blocksRef.current,
         footprints: alive ? footprintsRef.current : null,
         side: sideRef.current,
-        flipX,
-        flipSkew,
+        turn: spinRef.current,
         visitedCommunities: visitedCommunitiesRef.current,
         wheelTrophies: wheelTrophiesRef.current,
         debugGrid: gridRef.current,
@@ -1296,7 +1352,29 @@ export function useFrameLoop(a: FrameLoopArgs): void {
           dbg.mode = modeRef.current;
           dbg.race = raceRef.current;
           dbg.atNode = p.atNode;
-        dbg.side = sideRef.current;
+          // Where the bug is, in world px: the number to read when placing
+          // anything by grid box, and the one the sea checks are read against.
+          dbg.player = { x: Math.round(p.x), y: Math.round(p.y), mode: p.mode };
+          dbg.side = sideRef.current;
+          dbg.turn = Math.round(((wrapPi(spinRef.current) * 180) / Math.PI) * 10) / 10;
+          // The water: what is in it, what is hunting, and how close the
+          // nearest creature is. Readable from the console while directing.
+          const sw = seaRef.current;
+          if (sw) {
+            let near = Infinity;
+            let kind = '';
+            for (const c of sw.creatures) {
+              const d = Math.hypot(c.x - p.x, c.y - p.y);
+              if (d < near) {
+                near = d;
+                kind = c.kind;
+              }
+            }
+            // The live state, like the race, plus the one number that is
+            // hard to read off it: how close the nearest creature is.
+            dbg.sea = sw;
+            dbg.seaNearest = { px: Math.round(near), kind };
+          }
         }
         frameAcc = 0;
         frameN = 0;

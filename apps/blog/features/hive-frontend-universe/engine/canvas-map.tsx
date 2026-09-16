@@ -27,7 +27,7 @@ import { ModeChip } from '../card/mode-chip';
 import { PlayerDashboard, type DashboardRow } from '../card/player-dashboard';
 import { adventureGoals, type Goal } from '../lib/goals';
 import { postsMet, type PostMarkState } from './post-marks';
-import { FLIP_LANDMARK_ID, sideFlipX, type BoardSide, type FlipState } from '../lib/board-side';
+import { FLIP_LANDMARK_ID, sideLongitude, type BoardSide, type TurnState } from '../lib/board-side';
 import { HFU_COPY } from '../lib/strings';
 import { placeWitnesses } from '../lib/planet';
 import { windowStartFor, type Board } from '../lib/board';
@@ -47,6 +47,7 @@ import { type CoinState } from './coins';
 import { o2Multiplier, HELMET_TOTAL, type HelmetState } from './helmets';
 import { fightWrap, type HazardState } from './hazards';
 import { type GemState } from './gems';
+import { type SeaState } from './sea';
 import { type BlockState } from './blocks';
 import { type FootprintState } from './footprints';
 import { type RaceState } from './dhf-race';
@@ -136,8 +137,10 @@ const Stage = ({ board }: { board: Board }) => {
    *  state drives the panels. */
   const sideRef = useRef<BoardSide>('hive');
   const [side, setSide] = useState<BoardSide>('hive');
-  /** The turn in progress, or null when the board is at rest. */
-  const flipRef = useRef<FlipState | null>(null);
+  /** A crossing to the far side in progress, or null when nobody is rolling. */
+  const turnRef = useRef<TurnState | null>(null);
+  /** How far the globe has turned, radians. The map's whole geometry (lib/globe.ts). */
+  const spinRef = useRef(sideLongitude('hive'));
   /** The pop-up dashboard's rows while it is open; null when closed. */
   const [dashRows, setDashRows] = useState<DashboardRow[] | null>(null);
   const dashOpenRef = useRef(false);
@@ -357,17 +360,10 @@ const Stage = ({ board }: { board: Board }) => {
   const camRef = useRef<Camera>({ x: 0, y: 0, z: 0.6 });
   const inputRef = useRef<Vec2>({ x: 0, y: 0 });
   const stickRef = useRef<Vec2>({ x: 0, y: 0 });
-  /** On the back of the board the view is mirrored, so left is right: the
-   *  steering is mirrored to match. Movement itself never knows. */
-  const mirroredInputRef = useRef<Vec2>({ x: 0, y: 0 });
-  const steer = (): Vec2 => {
-    if (sideRef.current !== 'steem') return inputRef.current;
-    mirroredInputRef.current.x = -inputRef.current.x;
-    mirroredInputRef.current.y = inputRef.current.y;
-    return mirroredInputRef.current;
-  };
-  /** The resting view mirror for pointer maths: 1 front, -1 back. */
-  const viewFlipX = () => sideFlipX(sideRef.current);
+  /** The far side used to be seen mirrored, so its steering was mirrored to
+   *  match. The world is a ball now (lib/globe.ts) and you turn it to face
+   *  the far coast, so left is left there like everywhere else. */
+  const steer = (): Vec2 => inputRef.current;
   const keysRef = useRef<Record<string, boolean>>({});
   const mapHeldRef = useRef(false);
   const fullMapRef = useRef(false);
@@ -397,6 +393,7 @@ const Stage = ({ board }: { board: Board }) => {
   const footprintsRef = useRef<FootprintState | null>(null);
   /** Colorful collectible gems, reseeded every board. */
   const gemsRef = useRef<GemState | null>(null);
+  const seaRef = useRef<SeaState | null>(null);
   /** The DHF race (adventure mode); rebuilt with every round. */
   const raceRef = useRef<RaceState | null>(null);
   /** The keep's ending; the hoard re-forms with every round (engine/keep.ts). */
@@ -592,7 +589,6 @@ const Stage = ({ board }: { board: Board }) => {
     canvasRef,
     t,
     steer,
-    viewFlipX,
     firePlayerShot,
     hopWithO2,
     toggleDashboard,
@@ -611,12 +607,14 @@ const Stage = ({ board }: { board: Board }) => {
     blocksRef,
     footprintsRef,
     gemsRef,
+    seaRef,
     raceRef,
     keepRef,
     projectilesRef,
     combatRef,
     rideRef,
-    flipRef,
+    turnRef,
+    spinRef,
     playerHandleRef,
     modeRef,
     sideRef,

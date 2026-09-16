@@ -19,6 +19,8 @@ import { footprintChecks } from './footprints';
 import { keepChecks } from './keep';
 import { raceChecks } from './race';
 import { planetChecks } from './planet';
+import { globeChecks } from './globe';
+import { seaChecks } from './sea';
 import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
@@ -30,4 +32,6 @@ footprintChecks();
 keepChecks();
 raceChecks();
 planetChecks();
+globeChecks();
+seaChecks();
 report();

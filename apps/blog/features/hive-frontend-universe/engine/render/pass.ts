@@ -1,6 +1,7 @@
 import type { WorldEdge, WorldNode } from '../world';
 import type { PlayerState } from '../movement';
 import type { Camera, RenderScene } from './types';
+import type { BoardSide } from '../../lib/board-side';
 
 /**
  * One frame's shared working set, handed to every layer below.
@@ -27,7 +28,12 @@ export interface Pass {
   sx: number;
   sy: number;
   z: number;
-  flipX: number;
+  /**
+   * WHICH BOARD this pass is painting. With the globe turned, both are
+   * painted in the same frame, each onto its own sheet: `scene.side` is
+   * where the bug is standing, `side` is what is under the brush.
+   */
+  side: BoardSide;
   pad: number;
   zx: number;
   /** The viewport box in world space, padded. */

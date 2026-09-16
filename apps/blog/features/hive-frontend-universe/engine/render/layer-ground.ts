@@ -4,23 +4,28 @@ import { hash2 } from './util';
 import type { Pass } from './pass';
 
 /**
- * The sea floor and the land: the tier fish in the open water, the filled
- * landmasses, the curvature dim at the rim, the honeycomb grid, and the rock
- * formations standing on the terrain.
+ * The sea floor and the land: the far schools of small fish in the open
+ * water, the filled landmasses, the curvature dim at the rim, the honeycomb
+ * grid, and the rock formations standing on the terrain. The creatures big
+ * enough to matter swim in their own layer (layer-sea.ts).
  */
 export function drawGroundLayer(p: Pass): void {
   const { scene, ctx, time, mapness, z, vx0, vx1, vy0, vy1, vis } = p;
 
-  // The tier fish, out in the open water: plankton through whale, dim
-  // silhouettes so the sea-in-space theme reads while playing.
+  // FAR SCHOOLS: the little rungs of the ladder, scattered on a grid so the
+  // water is never empty wherever you look. The big rungs used to be drawn
+  // here too, as the same flat silhouette blown up; they are real creatures
+  // now, with their own steering and their own appetite (engine/sea.ts), so
+  // this keeps only plankton and the smallest redfish and stays what it
+  // always was: cheap, stateless background.
   if (mapness < 0.5) {
     const FCELL = 1400;
-    const FISH_SIZE = [14, 26, 48, 105, 240];
+    const FISH_SIZE = [14, 26, 40];
     for (let cx = Math.floor(vx0 / FCELL); cx <= Math.floor(vx1 / FCELL); cx++) {
       for (let cy = Math.floor(vy0 / FCELL); cy <= Math.floor(vy1 / FCELL); cy++) {
         const h = hash2(cx * 19, cy * 23);
         if (h > 0.72) continue;
-        const tier = h < 0.28 ? 0 : h < 0.42 ? 1 : h < 0.5 ? 2 : h < 0.535 ? 3 : 4;
+        const tier = h < 0.34 ? 0 : h < 0.56 ? 1 : 2;
         const fx = cx * FCELL + hash2(cx * 29, cy * 31) * FCELL;
         const fy =
           cy * FCELL +

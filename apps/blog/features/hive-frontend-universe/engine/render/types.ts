@@ -16,6 +16,7 @@ import type { CombatState } from '../combat';
 import type { Ground } from '../ground';
 import type { BlockState } from '../blocks';
 import type { FootprintState } from '../footprints';
+import type { SeaState } from '../sea';
 
 /** One named line of the transit map, drawn casing then glow then core. */
 export interface RouteLayer {
@@ -135,10 +136,13 @@ export interface RenderScene {
    * alive (layer-steem.ts).
    */
   side?: BoardSide;
-  /** Horizontal view scale: 1 front, -1 back, passing through 0 mid-flip. */
-  flipX?: number;
-  /** A little vertical shear while flipping, so the turn reads as 3D. */
-  flipSkew?: number;
+  /**
+   * HOW FAR THE GLOBE HAS TURNED, radians. 0 looks the living chain in the
+   * face and PI looks at the old chain behind it; everything between is the
+   * world rolling under you (lib/globe.ts). The board is no longer a card
+   * that flips over.
+   */
+  turn?: number;
   /**
    * The top 21 witnesses, ringing the world in rank order. Scenery: no mesh
    * node, nothing to collide with, nothing to travel to.
@@ -165,6 +169,11 @@ export interface RenderScene {
   combat?: CombatState | null;
   /** Colorful collectible gems: eye candy with no economy yet, by design. */
   gems?: GemState | null;
+  /**
+   * WHAT SWIMS IN THE WATER (engine/sea.ts): the stake ladder made literal.
+   * Drawn at play zoom only, and only on the living side of the board.
+   */
+  sea?: SeaState | null;
   /** Blocks parked on the lines: hop over or route around (engine/blocks.ts). */
   blocks?: BlockState | null;
   /** Tracks from the accounts that voted or replied this round (engine/footprints.ts). */
