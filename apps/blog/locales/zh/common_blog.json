@@ -767,6 +767,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "评论",
+        "hint": "点击查看最近 {{limit}} 条评论",
+        "title": "最近 {{limit}} 条评论",
+        "subtitle": "@{{account}} 最近写的全部内容，完整显示。",
+        "loading": "正在读取链上数据…",
+        "error": "无法读取他们的评论。请稍后再试。",
+        "empty": "@{{account}} 还没有写过评论。",
+        "replying_to": "回复 @{{author}}",
+        "standalone": "这是帖子，不是回复",
+        "open": "打开这条评论",
+        "blank_body": "没有正文。"
       }
     },
     "title": "Basecamp",
@@ -866,6 +879,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "一次看一个账号。看完之后说说你的判断。",
+        "position": "第 {{current}} 个，共 {{total}} 个",
+        "bot": "是机器人",
+        "not": "不是",
+        "why_label": "你为什么认为它是机器人？",
+        "why_placeholder": "哪里让你起疑？",
+        "why_optional": "写不写都行——留空也可以保存。",
+        "save": "保存",
+        "cancel": "取消",
+        "skip": "跳过",
+        "said_bot": "你的判断：是机器人",
+        "said_not": "你的判断：不是机器人",
+        "where_it_goes": "目前只保存在这台设备上，不会发布到 Hive。",
+        "loading": "正在读取链上数据…",
+        "gone": "无法加载这篇帖子，可能已被删除。",
+        "card_heading": "他的明信片",
+        "their_blog": "他的博客",
+        "their_posts": "他的帖子",
+        "their_comments": "他的回复",
+        "reputation": "声望",
+        "age_days": "注册天数",
+        "posts": "帖子数",
+        "research_hint": "在下判断之前可以尽情查看：链接、明信片和回复都在这里。",
+        "empty_title": "还没有人被标记为机器人",
+        "empty_body": "在明信片上点红色的 SUS 按钮并勾选「机器人」。这样标记过的账号会出现在这里。",
+        "done_title": "已经看完了",
+        "done_body": "所有被标记为机器人的账号你都看过了。用 SUS 按钮继续标记，或者再看一轮。",
+        "start_again": "重新开始"
       }
     },
     "signals": {

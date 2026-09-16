@@ -767,6 +767,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "Commentaires",
+        "hint": "Cliquez pour voir les {{limit}} derniers commentaires",
+        "title": "Les {{limit}} derniers commentaires",
+        "subtitle": "Tout ce que @{{account}} a écrit le plus récemment, en entier.",
+        "loading": "Lecture de la chaîne…",
+        "error": "Impossible de lire ses commentaires. Réessayez dans un instant.",
+        "empty": "@{{account}} n'a encore écrit aucun commentaire.",
+        "replying_to": "En réponse à @{{author}}",
+        "standalone": "Une publication, pas une réponse",
+        "open": "Ouvrir ce commentaire",
+        "blank_body": "Pas de texte."
       }
     },
     "title": "Basecamp",
@@ -866,6 +879,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "Un compte à la fois. Regardez-le, puis dites ce que vous en pensez.",
+        "position": "{{current}} sur {{total}}",
+        "bot": "BOT",
+        "not": "NON",
+        "why_label": "Pourquoi pensez-vous que c'est un bot ?",
+        "why_placeholder": "Qu'est-ce qui vous a mis la puce à l'oreille ?",
+        "why_optional": "L'écrire est facultatif : vous pouvez enregistrer avec la case vide.",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "skip": "Passer",
+        "said_bot": "Vous avez dit : c'est un bot",
+        "said_not": "Vous avez dit : ce n'est pas un bot",
+        "where_it_goes": "Conservé sur cet appareil pour l'instant, et rien n'est publié sur Hive.",
+        "loading": "Lecture de la chaîne…",
+        "gone": "Ce billet n'a pas pu être chargé. Il a peut-être été supprimé.",
+        "card_heading": "Sa carte postale",
+        "their_blog": "Son blog",
+        "their_posts": "Ses billets",
+        "their_comments": "Ses réponses",
+        "reputation": "Réputation",
+        "age_days": "Jours d'ancienneté",
+        "posts": "Billets",
+        "research_hint": "Fouillez autant que vous voulez avant de décider : les liens, la carte postale et les réponses sont tous là.",
+        "empty_title": "Personne n'a encore été signalé comme bot",
+        "empty_body": "Utilisez le bouton rouge SUS sur une carte postale et cochez « bot ». Les comptes ainsi signalés apparaîtront ici.",
+        "done_title": "C'est tout le monde",
+        "done_body": "Vous avez passé en revue tous les comptes signalés comme bots. Signalez-en d'autres avec le bouton SUS, ou recommencez.",
+        "start_again": "Recommencer"
       }
     },
     "signals": {

@@ -767,6 +767,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "Commenti",
+        "hint": "Clicca per vedere gli ultimi {{limit}} commenti",
+        "title": "Ultimi {{limit}} commenti",
+        "subtitle": "Tutto ciò che @{{account}} ha scritto di recente, per intero.",
+        "loading": "Lettura della catena…",
+        "error": "Non è stato possibile leggere i suoi commenti. Riprova tra un momento.",
+        "empty": "@{{account}} non ha ancora scritto commenti.",
+        "replying_to": "In risposta a @{{author}}",
+        "standalone": "Un post, non una risposta",
+        "open": "Apri questo commento",
+        "blank_body": "Nessun testo."
       }
     },
     "title": "Basecamp",
@@ -866,6 +879,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "Un account alla volta. Guardalo, poi di' cosa ne pensi.",
+        "position": "{{current}} di {{total}}",
+        "bot": "BOT",
+        "not": "NO",
+        "why_label": "Perché pensi che sia un bot?",
+        "why_placeholder": "Cosa te l'ha fatto capire?",
+        "why_optional": "Scriverlo è facoltativo: puoi salvare con il riquadro vuoto.",
+        "save": "Salva",
+        "cancel": "Annulla",
+        "skip": "Salta",
+        "said_bot": "Hai detto: è un bot",
+        "said_not": "Hai detto: non è un bot",
+        "where_it_goes": "Per ora resta su questo dispositivo e non viene pubblicato nulla su Hive.",
+        "loading": "Lettura della catena…",
+        "gone": "Non è stato possibile caricare questo post. Potrebbe essere stato eliminato.",
+        "card_heading": "La sua cartolina",
+        "their_blog": "Il suo blog",
+        "their_posts": "I suoi post",
+        "their_comments": "Le sue risposte",
+        "reputation": "Reputazione",
+        "age_days": "Giorni di vita",
+        "posts": "Post",
+        "research_hint": "Indaga quanto vuoi prima di decidere: i link, la cartolina e le risposte sono tutti qui.",
+        "empty_title": "Nessuno è ancora stato segnalato come bot",
+        "empty_body": "Usa il pulsante rosso SUS su una cartolina e spunta «bot». Gli account segnalati così compariranno qui.",
+        "done_title": "Sono finiti",
+        "done_body": "Hai esaminato tutti gli account segnalati come bot. Segnalane altri con il pulsante SUS, oppure ricomincia.",
+        "start_again": "Ricomincia"
       }
     },
     "signals": {

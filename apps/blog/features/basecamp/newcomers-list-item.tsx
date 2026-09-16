@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import CircleReadout from './postcard/circle-readout';
+import CommentsButton from './postcard/comments-button';
 import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
 import IdentityStrip from './postcard/identity-strip';
@@ -39,6 +40,9 @@ export const POSTCARD_CLASS =
  * the card's own border takes the sign's colour so the two read as one.
  */
 const FIRST_POST_CLASS = 'my-7 border-[#FF6FB1]/50 hover:border-[#FF6FB1]/80';
+
+/** The one readout that carries a control: the replies drawing gets the way into the replies. */
+const REPLY_MIX_READOUT_ID = 'reply_mix';
 
 /** Stacked, the post shares the first line with the flower and may grow past the usual cap to meet it. */
 function postZoneStyle(tier: PostcardTier): CSSProperties {
@@ -159,6 +163,15 @@ const NewcomersListItem = ({
               boxHeight={tier.hero}
               minColumnWidth={tier.column}
               captionSize={tier.caption}
+              // The reply mix says what their replies are made of; the button
+              // under it opens the replies themselves. It sits in that
+              // column's own dead space, so no other column moves and the
+              // card keeps its height.
+              action={
+                readout.id === REPLY_MIX_READOUT_ID
+                  ? (fit) => <CommentsButton account={post.author} fit={fit} />
+                  : undefined
+              }
             />
           ))}
         </div>

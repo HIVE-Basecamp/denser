@@ -814,6 +814,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "التعليقات",
+        "hint": "انقر لعرض آخر {{limit}} تعليقًا",
+        "title": "آخر {{limit}} تعليقًا",
+        "subtitle": "كل ما كتبه @{{account}} مؤخرًا، بالكامل.",
+        "loading": "جارٍ قراءة السلسلة…",
+        "error": "تعذّرت قراءة تعليقاته. حاول مرة أخرى بعد قليل.",
+        "empty": "لم يكتب @{{account}} أي تعليق بعد.",
+        "replying_to": "ردًا على @{{author}}",
+        "standalone": "منشور، وليس ردًا",
+        "open": "افتح هذا التعليق",
+        "blank_body": "لا يوجد نص."
       }
     },
     "title": "Basecamp",
@@ -913,6 +926,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "حساب واحد في كل مرة. انظر إليه ثم قل رأيك.",
+        "position": "{{current}} من {{total}}",
+        "bot": "روبوت",
+        "not": "ليس روبوتًا",
+        "why_label": "لماذا تظن أنه روبوت؟",
+        "why_placeholder": "ما الذي أثار شكّك؟",
+        "why_optional": "الكتابة اختيارية — يمكنك الحفظ والمربع فارغ.",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "skip": "تخطي",
+        "said_bot": "حكمك: روبوت",
+        "said_not": "حكمك: ليس روبوتًا",
+        "where_it_goes": "يُحفظ على هذا الجهاز في الوقت الحالي، ولا يُنشر شيء على Hive.",
+        "loading": "جارٍ قراءة السلسلة…",
+        "gone": "تعذّر تحميل هذه التدوينة. ربما حُذفت.",
+        "card_heading": "بطاقته",
+        "their_blog": "مدونته",
+        "their_posts": "تدويناته",
+        "their_comments": "ردوده",
+        "reputation": "السمعة",
+        "age_days": "عمر الحساب بالأيام",
+        "posts": "التدوينات",
+        "research_hint": "ابحث كما تشاء قبل أن تقرر: الروابط والبطاقة والردود كلها هنا.",
+        "empty_title": "لم يُوسم أحد بأنه روبوت بعد",
+        "empty_body": "اضغط زر SUS الأحمر على إحدى البطاقات وحدّد «روبوت». ستظهر هنا الحسابات التي توسمها بهذا.",
+        "done_title": "هذا كل من لدينا",
+        "done_body": "لقد راجعت كل الحسابات الموسومة بأنها روبوتات. وسِم المزيد بزر SUS، أو ابدأ جولة جديدة.",
+        "start_again": "ابدأ من جديد"
       }
     },
     "signals": {

@@ -869,6 +869,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "Comments",
+        "hint": "Click to see the last {{limit}} comments",
+        "title": "Last {{limit}} comments",
+        "subtitle": "Everything @{{account}} wrote most recently, in full.",
+        "loading": "Reading the chain…",
+        "error": "Their comments could not be read. Try again in a moment.",
+        "empty": "@{{account}} has not written any comments yet.",
+        "replying_to": "Replying to @{{author}}",
+        "standalone": "A post, not a reply",
+        "open": "Open this comment",
+        "blank_body": "No text."
       }
     },
     "title": "Basecamp",
@@ -968,6 +981,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "One account at a time. Look at them, then say what you think.",
+        "position": "{{current}} of {{total}}",
+        "bot": "BOT",
+        "not": "NOT",
+        "why_label": "Why do you think it's a bot?",
+        "why_placeholder": "What gave it away?",
+        "why_optional": "Writing this is optional — you can save with the box empty.",
+        "save": "Save",
+        "cancel": "Cancel",
+        "skip": "Skip",
+        "said_bot": "You said: bot",
+        "said_not": "You said: not a bot",
+        "where_it_goes": "Kept on this device for now, and nothing is posted to Hive.",
+        "loading": "Reading the chain…",
+        "gone": "This post could not be loaded. It may have been deleted.",
+        "card_heading": "Their postcard",
+        "their_blog": "Their blog",
+        "their_posts": "Their posts",
+        "their_comments": "Their replies",
+        "reputation": "Reputation",
+        "age_days": "Days old",
+        "posts": "Posts",
+        "research_hint": "Dig as much as you like before deciding — the links, the postcard and the replies are all here.",
+        "empty_title": "Nobody has been labelled a bot yet",
+        "empty_body": "Use the red SUS button on a postcard and tick 'bot'. Accounts you mark that way turn up here.",
+        "done_title": "That's everyone",
+        "done_body": "You have been through every account labelled a bot. Mark more with the SUS button, or go round again.",
+        "start_again": "Start again"
       }
     },
     "signals": {

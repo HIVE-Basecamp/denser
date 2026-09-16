@@ -773,6 +773,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "Комментарии",
+        "hint": "Нажмите, чтобы увидеть последние {{limit}} комментариев",
+        "title": "Последние {{limit}} комментариев",
+        "subtitle": "Всё, что @{{account}} написал(а) недавно, полностью.",
+        "loading": "Чтение блокчейна…",
+        "error": "Не удалось прочитать комментарии. Попробуйте ещё раз через мгновение.",
+        "empty": "@{{account}} пока не написал(а) ни одного комментария.",
+        "replying_to": "В ответ @{{author}}",
+        "standalone": "Запись, а не ответ",
+        "open": "Открыть этот комментарий",
+        "blank_body": "Без текста."
       }
     },
     "title": "Basecamp",
@@ -872,6 +885,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "По одному аккаунту за раз. Посмотрите и скажите, что думаете.",
+        "position": "{{current}} из {{total}}",
+        "bot": "БОТ",
+        "not": "НЕТ",
+        "why_label": "Почему вы считаете, что это бот?",
+        "why_placeholder": "Что вас насторожило?",
+        "why_optional": "Писать необязательно — можно сохранить с пустым полем.",
+        "save": "Сохранить",
+        "cancel": "Отмена",
+        "skip": "Пропустить",
+        "said_bot": "Ваша оценка: бот",
+        "said_not": "Ваша оценка: не бот",
+        "where_it_goes": "Пока хранится на этом устройстве, в Hive ничего не публикуется.",
+        "loading": "Читаем цепочку…",
+        "gone": "Не удалось загрузить этот пост. Возможно, он удалён.",
+        "card_heading": "Его открытка",
+        "their_blog": "Его блог",
+        "their_posts": "Его посты",
+        "their_comments": "Его ответы",
+        "reputation": "Репутация",
+        "age_days": "Дней от роду",
+        "posts": "Посты",
+        "research_hint": "Копайте сколько угодно, прежде чем решать: ссылки, открытка и ответы — всё здесь.",
+        "empty_title": "Пока никто не отмечен как бот",
+        "empty_body": "Нажмите красную кнопку SUS на открытке и отметьте «бот». Отмеченные так аккаунты появятся здесь.",
+        "done_title": "Это все",
+        "done_body": "Вы просмотрели все аккаунты, отмеченные как боты. Отметьте ещё кнопкой SUS или пройдите круг заново.",
+        "start_again": "Начать заново"
       }
     },
     "signals": {

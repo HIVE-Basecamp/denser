@@ -767,6 +767,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "コメント",
+        "hint": "クリックすると直近{{limit}}件のコメントを表示します",
+        "title": "直近{{limit}}件のコメント",
+        "subtitle": "@{{account}} が最近書いたものすべてを、全文で表示します。",
+        "loading": "チェーンを読み込んでいます…",
+        "error": "コメントを読み込めませんでした。しばらくしてからもう一度お試しください。",
+        "empty": "@{{account}} はまだコメントを書いていません。",
+        "replying_to": "@{{author}} への返信",
+        "standalone": "返信ではなく投稿",
+        "open": "このコメントを開く",
+        "blank_body": "本文なし。"
       }
     },
     "title": "Basecamp",
@@ -866,6 +879,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "一度に一つのアカウントを見て、どう思うか答えてください。",
+        "position": "{{total}} 件中 {{current}} 件目",
+        "bot": "ボット",
+        "not": "違う",
+        "why_label": "なぜボットだと思いますか？",
+        "why_placeholder": "どこが気になりましたか？",
+        "why_optional": "記入は任意です。空のままでも保存できます。",
+        "save": "保存",
+        "cancel": "キャンセル",
+        "skip": "スキップ",
+        "said_bot": "あなたの判断：ボット",
+        "said_not": "あなたの判断：ボットではない",
+        "where_it_goes": "今のところこの端末に保存されるだけで、Hive には何も投稿されません。",
+        "loading": "チェーンを読み込み中…",
+        "gone": "この投稿を読み込めませんでした。削除された可能性があります。",
+        "card_heading": "このアカウントのポストカード",
+        "their_blog": "ブログ",
+        "their_posts": "投稿",
+        "their_comments": "返信",
+        "reputation": "評判",
+        "age_days": "経過日数",
+        "posts": "投稿数",
+        "research_hint": "決める前に好きなだけ調べてください。リンクもポストカードも返信も、すべてここにあります。",
+        "empty_title": "まだボットとして印を付けられたアカウントはありません",
+        "empty_body": "ポストカードの赤い SUS ボタンを押して「ボット」にチェックを入れてください。印を付けたアカウントがここに並びます。",
+        "done_title": "これで全員です",
+        "done_body": "ボットとして印を付けられたアカウントをすべて見終わりました。SUS ボタンでさらに印を付けるか、もう一周してください。",
+        "start_again": "最初から"
       }
     },
     "signals": {

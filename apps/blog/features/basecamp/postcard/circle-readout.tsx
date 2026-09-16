@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import Bubble from '../viz/bubble';
@@ -26,6 +27,18 @@ const MIN_COLUMN_WIDTH = 52;
 /** Under this width the half-moon's four numbers drop a point and close ranks, so they stay inside their column. */
 const HALF_MOON_SMALL_WIDTH = 72;
 
+/**
+ * The hollow inside the half-moon — the U the arc encloses — as shares of the
+ * drawing's width. The arc is a band, so the half-disc it encloses is dead
+ * space on every card; a control put there costs the card no height at all.
+ *
+ * These are the hollow itself, not a shape sitting in it: the radius is the
+ * arc's inner edge less half a unit, and the base is where the arc's two ends
+ * sit. A control given this box fills the U to its edges.
+ */
+const HOLLOW_RADIUS_SHARE = 0.355;
+const HOLLOW_BASE_SHARE = 0.5;
+
 interface CircleReadoutProps {
   readout: Readout;
   /** Diameter, or width for the half-moon. */
@@ -40,6 +53,17 @@ interface CircleReadoutProps {
   minColumnWidth?: number;
   /** Type size of the name under the drawing, when the feed's tier wants it smaller than usual. */
   captionSize?: number;
+  /**
+   * Something to do with this readout — a small control that belongs to it.
+   *
+   * It is rendered INSIDE the drawing's own hollow, not under it and not
+   * under the caption. The card's height is capped and the column already
+   * stands as tall as the card allows, so anything added below makes every
+   * card taller; the hollow was empty to begin with. It is given the box it
+   * has to fit in, because only this component knows how big the drawing was
+   * actually drawn.
+   */
+  action?: (fit: { width: number; height: number }) => ReactNode;
 }
 
 /**
@@ -47,7 +71,14 @@ interface CircleReadoutProps {
  * drawing leaves room and under it where it does not, its name under that,
  * and a popover that says what it counts.
  */
-const CircleReadout = ({ readout, size, boxHeight, minColumnWidth = MIN_COLUMN_WIDTH, captionSize }: CircleReadoutProps) => {
+const CircleReadout = ({
+  readout,
+  size,
+  boxHeight,
+  minColumnWidth = MIN_COLUMN_WIDTH,
+  captionSize,
+  action
+}: CircleReadoutProps) => {
   const { t } = useTranslation('common_blog');
   const viz: ReadoutViz = readout.viz ?? 'bubble';
   const label = t(`basecamp.card.labels.${readout.id}`);
@@ -129,42 +160,68 @@ const CircleReadout = ({ readout, size, boxHeight, minColumnWidth = MIN_COLUMN_W
     </span>
   ) : null;
 
+  // The same popover twice, over the drawing and over its name. It used to
+  // wrap the whole column, but a control inside the column would then be a
+  // trigger inside a trigger and two popovers would open at once; the reader
+  // still gets the explanation from anywhere they are likely to point.
+  const hintProps = { title: label, body: hint, value: insideShare ? valueText() : undefined, rows };
+
   return (
-    <Hint title={label} body={hint} value={insideShare ? valueText() : undefined} rows={rows}>
-      <div
-        className="flex shrink-0 cursor-default flex-col items-center gap-1"
-        style={{ width: Math.max(size, minColumnWidth) }}
-        data-testid={`readout-${readout.id}`}
-        data-readout-known={readout.known ? 'true' : 'false'}
-        data-readout-ratio={readout.ratio.toFixed(3)}
-      >
-        <div className="flex flex-col items-center justify-center gap-0.5" style={{ height: boxHeight ?? height }}>
-          <div className="relative" style={{ width: size, height }}>
-            {drawing()}
-            {insideShare ? (
-              <span
-                className={cn(
-                  'pointer-events-none absolute inset-0 flex items-center justify-center font-semibold tabular-nums',
-                  valueClass
-                )}
-                style={{
-                  fontSize: Math.round(size * insideShare),
-                  // The orb's number sits on the liquid, so it carries its own shadow.
-                  textShadow: viz === 'orb' ? '0 1px 6px rgba(0, 0, 0, 0.55)' : undefined
-                }}
-                data-testid={`readout-value-${readout.id}`}
-              >
-                {valueText()}
-              </span>
-            ) : null}
-          </div>
+    <div
+      className="flex shrink-0 flex-col items-center gap-1"
+      style={{ width: Math.max(size, minColumnWidth) }}
+      data-testid={`readout-${readout.id}`}
+      data-readout-known={readout.known ? 'true' : 'false'}
+      data-readout-ratio={readout.ratio.toFixed(3)}
+    >
+      <div className="flex flex-col items-center justify-center gap-0.5" style={{ height: boxHeight ?? height }}>
+        <div className="relative flex flex-col items-center gap-0.5">
+          <Hint {...hintProps}>
+            <div className="relative cursor-default" style={{ width: size, height }}>
+              {drawing()}
+              {insideShare ? (
+                <span
+                  className={cn(
+                    'pointer-events-none absolute inset-0 flex items-center justify-center font-semibold tabular-nums',
+                    valueClass
+                  )}
+                  style={{
+                    fontSize: Math.round(size * insideShare),
+                    // The orb's number sits on the liquid, so it carries its own shadow.
+                    textShadow: viz === 'orb' ? '0 1px 6px rgba(0, 0, 0, 0.55)' : undefined
+                  }}
+                  data-testid={`readout-value-${readout.id}`}
+                >
+                  {valueText()}
+                </span>
+              ) : null}
+            </div>
+          </Hint>
+          {/* The drawing's own hollow, filled — not a shape under it or inside it. */}
+          {action ? (
+            <div
+              className="absolute left-1/2 -translate-x-1/2"
+              style={{
+                top: size * (HOLLOW_BASE_SHARE - HOLLOW_RADIUS_SHARE),
+                width: size * HOLLOW_RADIUS_SHARE * 2,
+                height: size * HOLLOW_RADIUS_SHARE
+              }}
+            >
+              {action({ width: size * HOLLOW_RADIUS_SHARE * 2, height: size * HOLLOW_RADIUS_SHARE })}
+            </div>
+          ) : null}
           {valueRow}
         </div>
-        <span className={cn(BASECAMP_MICRO_LABEL, 'whitespace-nowrap text-center')} style={{ fontSize: captionSize }}>
+      </div>
+      <Hint {...hintProps}>
+        <span
+          className={cn(BASECAMP_MICRO_LABEL, 'cursor-default whitespace-nowrap text-center')}
+          style={{ fontSize: captionSize }}
+        >
           {caption}
         </span>
-      </div>
-    </Hint>
+      </Hint>
+    </div>
   );
 };
 

@@ -772,6 +772,19 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published."
+      },
+      "comments": {
+        "button": "Komentarze",
+        "hint": "Kliknij, aby zobaczyć ostatnie {{limit}} komentarzy",
+        "title": "Ostatnie {{limit}} komentarzy",
+        "subtitle": "Wszystko, co @{{account}} napisał(a) ostatnio, w całości.",
+        "loading": "Odczytywanie łańcucha…",
+        "error": "Nie udało się odczytać komentarzy. Spróbuj ponownie za chwilę.",
+        "empty": "@{{account}} nie napisał(a) jeszcze żadnego komentarza.",
+        "replying_to": "W odpowiedzi do @{{author}}",
+        "standalone": "Wpis, nie odpowiedź",
+        "open": "Otwórz ten komentarz",
+        "blank_body": "Brak tekstu."
       }
     },
     "title": "Basecamp",
@@ -871,6 +884,36 @@
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
         "hive_frontend_universe": "Hive Frontend Universe"
+      },
+      "bot_or_not": {
+        "intro": "Jedno konto naraz. Przyjrzyj się i powiedz, co o nim myślisz.",
+        "position": "{{current}} z {{total}}",
+        "bot": "BOT",
+        "not": "NIE",
+        "why_label": "Dlaczego uważasz, że to bot?",
+        "why_placeholder": "Co cię zaniepokoiło?",
+        "why_optional": "Pisanie jest opcjonalne — możesz zapisać z pustym polem.",
+        "save": "Zapisz",
+        "cancel": "Anuluj",
+        "skip": "Pomiń",
+        "said_bot": "Twoja ocena: to bot",
+        "said_not": "Twoja ocena: to nie bot",
+        "where_it_goes": "Na razie zostaje na tym urządzeniu i nic nie trafia na Hive.",
+        "loading": "Odczytywanie łańcucha…",
+        "gone": "Nie udało się wczytać tego wpisu. Mógł zostać usunięty.",
+        "card_heading": "Jego pocztówka",
+        "their_blog": "Jego blog",
+        "their_posts": "Jego wpisy",
+        "their_comments": "Jego odpowiedzi",
+        "reputation": "Reputacja",
+        "age_days": "Dni istnienia",
+        "posts": "Wpisy",
+        "research_hint": "Sprawdzaj, ile chcesz, zanim zdecydujesz — linki, pocztówka i odpowiedzi są tutaj.",
+        "empty_title": "Nikt nie został jeszcze oznaczony jako bot",
+        "empty_body": "Użyj czerwonego przycisku SUS na pocztówce i zaznacz „bot”. Tak oznaczone konta pojawią się tutaj.",
+        "done_title": "To wszyscy",
+        "done_body": "Przejrzałeś wszystkie konta oznaczone jako boty. Oznacz kolejne przyciskiem SUS albo zacznij od nowa.",
+        "start_again": "Zacznij od nowa"
       }
     },
     "signals": {
