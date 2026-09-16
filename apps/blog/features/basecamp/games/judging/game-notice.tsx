@@ -14,7 +14,7 @@ interface GameNoticeProps {
 const GameNotice = ({ title, body, action }: GameNoticeProps) => (
   <div
     className={cn(BASECAMP_PANEL, 'mt-3 flex flex-col items-center gap-2 py-10 text-center')}
-    data-testid="bot-or-not-notice"
+    data-testid="judging-notice"
   >
     <span className="text-base font-semibold">{title}</span>
     <span className={cn(BASECAMP_MUTED, 'max-w-[440px] text-sm leading-snug')}>{body}</span>
@@ -23,7 +23,7 @@ const GameNotice = ({ title, body, action }: GameNoticeProps) => (
         type="button"
         onClick={action.onClick}
         className="mt-2 rounded-full bg-[#B79CFF] px-4 py-1.5 text-[12px] font-bold text-[#160B2E] transition-all hover:bg-[#C9B4FF]"
-        data-testid="bot-or-not-notice-action"
+        data-testid="judging-notice-action"
       >
         {action.label}
       </button>

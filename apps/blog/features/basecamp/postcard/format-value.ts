@@ -113,3 +113,15 @@ export function formatPetalValue(
       return formatReadoutValue(t, readout);
   }
 }
+
+/**
+ * A plain token amount — HIVE, HBD or HP — with as many decimals as its size
+ * warrants. Large sums stay readable at a glance and a small one keeps its
+ * digits. The unit name is added by the caller's translation, not here.
+ */
+export function formatTokenAmount(value: number): string {
+  if (!Number.isFinite(value)) return '';
+  const size = Math.abs(value);
+  const decimals = size >= 1000 ? 0 : size >= 1 ? 2 : 3;
+  return value.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}

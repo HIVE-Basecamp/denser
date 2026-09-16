@@ -75,6 +75,19 @@ export function hbdPerRshare(input: VoteValueInput): number | null {
   return Number.isFinite(rate) && rate > 0 ? rate : null;
 }
 
+/**
+ * HBD per HIVE, straight off the median price feed — what one HIVE is worth in
+ * HBD right now. Null when the feed is missing or nonsense, never a 1: a
+ * made-up parity would silently price HBD five times too cheap.
+ */
+export function hbdPerHive(base: NaiAmount | null | undefined, quote: NaiAmount | null | undefined): number | null {
+  const baseValue = naiToNumber(base);
+  const quoteValue = naiToNumber(quote);
+  if (baseValue === null || quoteValue === null || quoteValue <= 0) return null;
+  const rate = baseValue / quoteValue;
+  return Number.isFinite(rate) && rate > 0 ? rate : null;
+}
+
 /** A pile of rshares in HBD, or null while the rate is unknown. */
 export function hbdFromRshares(rshares: number, rate: number | null): number | null {
   if (rate === null || !Number.isFinite(rshares)) return null;

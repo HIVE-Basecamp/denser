@@ -35,7 +35,7 @@ const SuspectProfile = ({ account, reputation, accountAgeDays, postCount }: Susp
   const { t } = useTranslation('common_blog');
 
   return (
-    <div className="flex flex-wrap items-center gap-4" data-testid="bot-or-not-profile">
+    <div className="flex flex-wrap items-center gap-4" data-testid="judging-profile">
       <Link href={`/@${account}`} className="shrink-0">
         <span
           className="block h-16 w-16 rounded-full bg-cover bg-no-repeat ring-2 ring-[#B79CFF]/45 transition-shadow hover:ring-[#B79CFF]"
@@ -47,38 +47,38 @@ const SuspectProfile = ({ account, reputation, accountAgeDays, postCount }: Susp
         <Link
           href={`/@${account}`}
           className={cn(BASECAMP_LINK, 'text-[20px] font-bold leading-none')}
-          data-testid="bot-or-not-account"
+          data-testid="judging-account"
         >
           {account}
         </Link>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
           <Link href={`/@${account}`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
-            {t('basecamp.games.bot_or_not.their_blog')}
+            {t('basecamp.games.judging.their_blog')}
           </Link>
           <Link href={`/@${account}/posts`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
-            {t('basecamp.games.bot_or_not.their_posts')}
+            {t('basecamp.games.judging.their_posts')}
           </Link>
           <Link href={`/@${account}/comments`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
-            {t('basecamp.games.bot_or_not.their_comments')}
+            {t('basecamp.games.judging.their_comments')}
           </Link>
           <CommentsButton account={account} />
         </div>
       </div>
 
       <div className="ml-auto flex items-center gap-6">
-        <Stat label={t('basecamp.games.bot_or_not.reputation')} value={String(accountReputation(reputation))} />
+        <Stat label={t('basecamp.games.judging.reputation')} value={String(accountReputation(reputation))} />
         <Stat
-          label={t('basecamp.games.bot_or_not.age_days')}
+          label={t('basecamp.games.judging.age_days')}
           value={accountAgeDays >= 0 ? String(accountAgeDays) : '—'}
         />
         <Stat
-          label={t('basecamp.games.bot_or_not.posts')}
+          label={t('basecamp.games.judging.posts')}
           value={postCount === null ? '—' : String(postCount)}
         />
       </div>
 
       <p className={cn(BASECAMP_MUTED, 'w-full text-[11px] leading-snug')}>
-        {t('basecamp.games.bot_or_not.research_hint')}
+        {t('basecamp.games.judging.research_hint')}
       </p>
     </div>
   );

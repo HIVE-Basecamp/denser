@@ -8,7 +8,7 @@ import { StaleTime } from '@/blog/lib/react-query';
 import { DEFAULT_OBSERVER } from '@/blog/lib/utils';
 import { parseIsoMs, type SignalAccountInput } from '../../lib/signals';
 import type { Newcomer } from '../../hooks/use-newcomers';
-import type { BotSuspect } from './use-bot-queue';
+import type { Suspect } from './use-suspect-queue';
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -48,7 +48,7 @@ export interface SuspectDetail {
   reputation: number;
 }
 
-async function fetchSuspect(suspect: BotSuspect): Promise<SuspectDetail | null> {
+async function fetchSuspect(suspect: Suspect): Promise<SuspectDetail | null> {
   const [post, accounts] = await Promise.all([
     getPost(suspect.account, suspect.permlink, DEFAULT_OBSERVER),
     getAccounts([suspect.account])
@@ -69,10 +69,10 @@ async function fetchSuspect(suspect: BotSuspect): Promise<SuspectDetail | null> 
  * and the card waits for the pair. A post that has since been deleted comes
  * back null, and the game says so rather than drawing an empty card.
  */
-export function useSuspect(suspect: BotSuspect | null) {
+export function useSuspect(suspect: Suspect | null) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['basecampBotSuspect', suspect?.account, suspect?.permlink],
-    queryFn: () => fetchSuspect(suspect as BotSuspect),
+    queryKey: ['basecampSuspect', suspect?.account, suspect?.permlink],
+    queryFn: () => fetchSuspect(suspect as Suspect),
     enabled: suspect !== null,
     staleTime: StaleTime.MEDIUM
   });

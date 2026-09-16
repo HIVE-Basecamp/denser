@@ -1,18 +1,14 @@
 'use client';
 
-import { useTranslation } from '@/blog/i18n/client';
-import GameComingSoon from './game-coming-soon';
+import SockOrNotGame from './sock-or-not/sock-or-not-game';
 
 /**
  * Sock or Not.
  *
- * Not playable yet. To ship the real game, replace the <GameComingSoon /> below
- * with the gameplay — the registry entry, the section layout and the selection
- * logic all stay exactly as they are.
+ * The registry entry, the section layout and the selection logic are all
+ * untouched; this file is still the one thing the registry points at. The
+ * game itself lives in `sock-or-not/`.
  */
-const SockOrNotGame = () => {
-  const { t } = useTranslation('common_blog');
-  return <GameComingSoon title={t('basecamp.games.titles.sock_or_not')} accent="cyan" />;
-};
+const SockOrNotEntry = () => <SockOrNotGame />;
 
-export default SockOrNotGame;
+export default SockOrNotEntry;
