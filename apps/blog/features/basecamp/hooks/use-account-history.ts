@@ -285,7 +285,13 @@ export const useAccountHistory = (username: string, enabled = true) => {
     queryFn: () => fetchAccountHistory(username),
     enabled: isEnabled,
     staleTime: StaleTime.MEDIUM,
-    retry: false
+    // ONE retry, not none. This is the heaviest read on the card - a whole
+    // account's history in one page - and public Hive nodes go slow under
+    // load. Without a retry, a single timeout leaves that one card's HOURS,
+    // REPLY MIX, week activity and reply targets blank until the feed is
+    // reloaded, which reads as a broken card rather than a slow node. Bryan
+    // hit exactly that on 2026-09-14: "the hours arent all showing".
+    retry: 1
   });
 
   let status: HistoryStatus;
