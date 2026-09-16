@@ -712,7 +712,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} 或更多",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -738,7 +740,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "收到的投票"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -765,8 +768,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "关于该账户使用方式的六项读数，每片花瓣一项。将鼠标悬停在花瓣上可查看它统计的内容；中心是创建该账户的账户。",
+        "posted": "When this post was published.",
+        "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁给这个账户带来最多的钱、各自投了多少票以及价值多少。"
       },
       "comments": {
         "button": "评论",
@@ -780,6 +784,30 @@
         "standalone": "这是帖子，不是回复",
         "open": "打开这条评论",
         "blank_body": "没有正文。"
+      },
+      "top_voters": {
+        "title": "前 {{limit}} 名投票者",
+        "subtitle": "谁给 @{{account}} 投过票，按投票价值排序。",
+        "received_label": "收到的投票",
+        "people_label": "投票者",
+        "total_label": "价值",
+        "votes_label": "票",
+        "worth_label": "价值",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "正在读取链上数据…",
+        "error": "无法读取该账户收到的投票。请稍后再试。",
+        "empty": "还没有其他人给 @{{account}} 投过票。",
+        "reading": "正在读取其余部分…",
+        "reading_left": "约剩 {{seconds}} 秒",
+        "stop": "停止",
+        "window_lifetime": "该账户有史以来收到的全部投票：{{votes}} 条。",
+        "window_reading": "目前 {{votes}} 条，仍在回溯读取其历史。",
+        "window_stopped": "已在 {{votes}} 条处停止。还有更早的未读取。",
+        "window_failed": "读取在 {{votes}} 条处中断。更早的投票缺失。",
+        "window_capped": "读取自该账户最近的 {{limit}} 条投票。",
+        "value_note": "金额为按当前奖励池和 HIVE 价格计算这些票的价值。"
       }
     },
     "title": "Basecamp",
@@ -1000,6 +1028,10 @@
       "gems": "宝石",
       "newbs": "新人",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "全屏",
+      "exit": "退出全屏"
     },
     "map": {
       "hint": "点按地标即可前往",

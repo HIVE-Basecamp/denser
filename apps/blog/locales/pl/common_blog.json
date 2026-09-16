@@ -717,7 +717,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} lub więcej",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -743,7 +745,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "Otrzymane głosy"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -770,8 +773,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "Sześć odczytów tego, jak używano tego konta, każdy na osobnym płatku. Najedź na płatek, aby zobaczyć, co liczy; w środku jest konto, które utworzyło to konto.",
+        "posted": "When this post was published.",
+        "votes_received": "Głosy oddane przez inne osoby na posty tego konta — nie głosy, które ono oddało. Kliknij, aby zobaczyć, kto wnosi na to konto najwięcej pieniędzy, ile głosów oddał każdy i ile były warte."
       },
       "comments": {
         "button": "Komentarze",
@@ -785,6 +789,30 @@
         "standalone": "Wpis, nie odpowiedź",
         "open": "Otwórz ten komentarz",
         "blank_body": "Brak tekstu."
+      },
+      "top_voters": {
+        "title": "Najaktywniejszych głosujących: {{limit}}",
+        "subtitle": "Kto głosował na @{{account}}, według wartości oddanych głosów.",
+        "received_label": "Otrzymane głosy",
+        "people_label": "Głosujący",
+        "total_label": "Wartość",
+        "votes_label": "głosy",
+        "worth_label": "wartość",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Odczytywanie łańcucha…",
+        "error": "Nie udało się odczytać głosów na to konto. Spróbuj ponownie za chwilę.",
+        "empty": "Nikt inny jeszcze nie zagłosował na @{{account}}.",
+        "reading": "Odczytywanie reszty…",
+        "reading_left": "Około {{seconds}} s",
+        "stop": "Zatrzymaj",
+        "window_lifetime": "Wszystkie głosy, jakie to konto kiedykolwiek otrzymało: {{votes}}.",
+        "window_reading": "Na razie {{votes}} głosów, trwa odczyt historii.",
+        "window_stopped": "Zatrzymano na {{votes}} głosach. Są starsze, których nie odczytano.",
+        "window_failed": "Odczyt przerwał się na {{votes}} głosach. Brakuje starszych.",
+        "window_capped": "Odczytano z {{limit}} najnowszych głosów na to konto.",
+        "value_note": "Wartości to tyle, ile te głosy byłyby warte przy obecnej puli nagród i cenie HIVE."
       }
     },
     "title": "Basecamp",
@@ -1005,6 +1033,10 @@
       "gems": "KLEJNOTY",
       "newbs": "NOWI",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "Pełny ekran",
+      "exit": "Wyjdź z pełnego ekranu"
     },
     "map": {
       "hint": "Dotknij miejsca, aby tam podróżować",

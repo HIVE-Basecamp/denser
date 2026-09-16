@@ -819,6 +819,23 @@ export interface GetOperationsByAccountParams {
   'to-block'?: string;
 }
 
+/**
+ * HAfAH's copy of the account-operations read. Same shape as the hivemind one
+ * plus the two parameters that split an account's operations by who started
+ * them: `transacting-account-name` names the account to judge, and
+ * `participation-mode` keeps ('include') or drops ('exclude') the operations
+ * that account began. For a vote the account that begins it is the voter, so
+ * 'exclude' is "votes this account was given" and 'include' is "votes it gave".
+ *
+ * `total_operations` is exact up to 10,000 and saturates there; older
+ * operations are reached by moving `to-block` back to the oldest timestamp
+ * already seen. `page-size` is capped at 1000 by the node.
+ */
+export interface GetHafahOperationsByAccountParams extends GetOperationsByAccountParams {
+  'transacting-account-name'?: string;
+  'participation-mode'?: 'include' | 'exclude';
+}
+
 export interface IGetOperationsByAccountResponse {
   total_operations: number;
   total_pages: number;
@@ -880,21 +897,31 @@ export type ExtendedNodeApi = {
   market_history_api: {
     get_ticker: TWaxApiRequest<Record<string, never>, IMarketStatistics>;
     get_order_book: TWaxApiRequest<{ limit: number }, IOrdersData>;
-    get_trade_history: TWaxApiRequest<{ start: string; end: string; limit: number }, { trades: IRecentTradesData[] }>;
+    get_trade_history: TWaxApiRequest<
+      { start: string; end: string; limit: number },
+      { trades: IRecentTradesData[] }
+    >;
     get_recent_trades: TWaxApiRequest<{ limit: number }, { trades: IRecentTradesData[] }>;
   };
   rc_api: {
     find_rc_accounts: TWaxApiRequest<string[], { rc_accounts: RcAccount[] }>;
     list_rc_direct_delegations: TWaxApiRequest<{ limit: number; start: [string, string] }, IDirectDelegation>;
   };
-  condenser_api: { /* XXX: Temporary until we resolve follow_api not working for those methods: */
-    get_reblogged_by: TWaxApiRequest<[ /* author: */ string /*; permlink: */, string ], string[]>;
+  condenser_api: {
+    /* XXX: Temporary until we resolve follow_api not working for those methods: */
+    get_reblogged_by: TWaxApiRequest<[/* author: */ string /*; permlink: */, string], string[]>;
+    /**
+     * Also declared on database_api below, but hived only answers it here:
+     * database_api.get_reward_fund is not a registered method and returns
+     * "Could not find method get_reward_fund".
+     */
+    get_reward_fund: TWaxApiRequest<string[], IRewardFund>;
     get_followers: TWaxApiRequest<
-      [ /* account: */ string /*; start: */, string /*; type: */, string /*; limit: */, number ],
+      [/* account: */ string /*; start: */, string /*; type: */, string /*; limit: */, number],
       IFollow[]
     >;
     get_following: TWaxApiRequest<
-      [ /* account: */ string /*; start: */, string /*; type: */, string /*; limit: */, number ],
+      [/* account: */ string /*; start: */, string /*; type: */, string /*; limit: */, number],
       IFollow[]
     >;
   };
@@ -919,7 +946,11 @@ export type ExtendedNodeApi = {
     get_collateralized_conversion_requests: TWaxApiRequest<string[], ICollateralizedConversionRequest[]>;
     list_witness_votes: TWaxApiRequest<{ start: string[]; limit: number; order: string }, IListWitnessVotes>;
     list_witnesses: TWaxApiRequest<
-      { start: [number, string] | [string] | string; limit: number; order: 'by_name' | 'by_vote_name' | 'by_schedule_time' },
+      {
+        start: [number, string] | [string] | string;
+        limit: number;
+        order: 'by_name' | 'by_vote_name' | 'by_schedule_time';
+      },
       { witnesses: IWitness[] }
     >;
     list_votes: TWaxApiRequest<
@@ -1166,6 +1197,10 @@ Together with the author name, it uniquely identifies the post.
     'operation-types': {
       params: undefined;
       result: HiveOpTypeSchema[];
+    };
+    accountsOperations: {
+      params: GetHafahOperationsByAccountParams;
+      result: IGetOperationsByAccountResponse;
     };
   };
 };

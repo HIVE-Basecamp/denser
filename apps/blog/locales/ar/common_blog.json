@@ -759,7 +759,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} أو أكثر",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -785,7 +787,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "الأصوات المستلمة"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -812,8 +815,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "ستّ قراءات لكيفية استخدام هذا الحساب، واحدة لكل بتلة. مرّر المؤشر فوق بتلة لمعرفة ما تحصيه؛ وفي المنتصف الحساب الذي أنشأ هذا الحساب.",
+        "posted": "When this post was published.",
+        "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يضخّ أكبر قدر من المال في هذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها."
       },
       "comments": {
         "button": "التعليقات",
@@ -827,6 +831,30 @@
         "standalone": "منشور، وليس ردًا",
         "open": "افتح هذا التعليق",
         "blank_body": "لا يوجد نص."
+      },
+      "top_voters": {
+        "title": "أفضل {{limit}} مصوّتين",
+        "subtitle": "من صوّت لـ @{{account}}، مرتّبين حسب قيمة أصواتهم.",
+        "received_label": "الأصوات المستلمة",
+        "people_label": "المصوّتون",
+        "total_label": "القيمة",
+        "votes_label": "أصوات",
+        "worth_label": "القيمة",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "جارٍ قراءة السلسلة…",
+        "error": "تعذّرت قراءة الأصوات على هذا الحساب. حاول مرة أخرى بعد قليل.",
+        "empty": "لم يصوّت أحد آخر لـ @{{account}} بعد.",
+        "reading": "جارٍ قراءة البقية…",
+        "reading_left": "يتبقى نحو {{seconds}} ثانية",
+        "stop": "إيقاف",
+        "window_lifetime": "كل صوت تلقّاه هذا الحساب على الإطلاق: {{votes}}.",
+        "window_reading": "{{votes}} صوتًا حتى الآن، وما زالت القراءة ترجع عبر سجلّه.",
+        "window_stopped": "توقّفت عند {{votes}} صوتًا. هناك أصوات أقدم لم تُقرأ.",
+        "window_failed": "توقّفت القراءة مبكرًا عند {{votes}} صوتًا. هناك أصوات أقدم ناقصة.",
+        "window_capped": "قُرئت من أحدث {{limit}} صوتًا على هذا الحساب.",
+        "value_note": "القيم هي ما تساويه تلك الأصوات وفق مجمّع المكافآت وسعر HIVE الحاليين."
       }
     },
     "title": "Basecamp",
@@ -1047,6 +1075,10 @@
       "gems": "جواهر",
       "newbs": "الجدد",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "ملء الشاشة",
+      "exit": "إنهاء ملء الشاشة"
     },
     "map": {
       "hint": "انقر على معلم للسفر إليه",

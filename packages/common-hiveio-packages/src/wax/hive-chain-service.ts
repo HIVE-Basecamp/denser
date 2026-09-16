@@ -37,7 +37,7 @@ const getDefaultClientOptions = (): IWaxOptionsChain => {
     chainId: siteConfig.chainId,
     apiEndpoint: jsonRpcNode || siteConfig.endpoint,
     apiTimeout: 5_000, // To be adjusted
-    restApiEndpoint: restNode || jsonRpcNode || siteConfig.endpoint,
+    restApiEndpoint: restNode || jsonRpcNode || siteConfig.endpoint
   };
 };
 
@@ -70,10 +70,12 @@ let hiveChain: HiveChain | undefined = undefined;
 export const isWasmMemoryError = (error: unknown): boolean => {
   if (error instanceof Error) {
     const msg = error.message.toLowerCase();
-    return msg.includes('memory access out of bounds') ||
-           msg.includes('unreachable') ||
-           (error.name === 'RuntimeError' && msg.includes('wasm')) ||
-           (error.name === 'WaxError' && msg.includes('wasm'));
+    return (
+      msg.includes('memory access out of bounds') ||
+      msg.includes('unreachable') ||
+      (error.name === 'RuntimeError' && msg.includes('wasm')) ||
+      (error.name === 'WaxError' && msg.includes('wasm'))
+    );
   }
   return false;
 };
@@ -139,92 +141,100 @@ const setChainClient = (options: Partial<IWaxOptionsChain> = {}): Promise<HiveCh
   };
   logger.info('Creating instance of Wax Chain with options: %o', clientOptions);
 
-  hiveChainPromise = createHiveChain(clientOptions).then((hiveChainInitialized) => {
-    const extended = hiveChainInitialized.extend<ExtendedNodeApi>().extendRest<ExtendedRestApi>({
-      'hivesense-api': {
-        posts: {
-          urlPath: "posts",
-          search: {
-            urlPath: "search",
-            method: "GET"
-          },
-          author: {
-            urlPath: "{author}",
-            permlink: {
-              urlPath: "{permlink}",
-              similar: {
-                urlPath: "similar",
-                method: "GET"
+  hiveChainPromise = createHiveChain(clientOptions)
+    .then((hiveChainInitialized) => {
+      const extended = hiveChainInitialized.extend<ExtendedNodeApi>().extendRest<ExtendedRestApi>({
+        'hivesense-api': {
+          posts: {
+            urlPath: 'posts',
+            search: {
+              urlPath: 'search',
+              method: 'GET'
+            },
+            author: {
+              urlPath: '{author}',
+              permlink: {
+                urlPath: '{permlink}',
+                similar: {
+                  urlPath: 'similar',
+                  method: 'GET'
+                }
               }
+            },
+            byIds: {
+              urlPath: 'by-ids',
+              method: 'POST'
+            },
+            byIdsQuery: {
+              urlPath: 'by-ids-query',
+              method: 'GET'
             }
           },
-          byIds: {
-            urlPath: "by-ids",
-            method: "POST"
+          authors: {
+            urlPath: 'authors',
+            search: {
+              urlPath: 'search',
+              method: 'GET'
+            }
+          }
+        },
+        method: 'GET',
+        'hivemind-api': {
+          accountsOperations: {
+            urlPath: 'accounts/{account-name}/operations'
+          }
+        },
+        'hafah-api': {
+          'operation-types': {
+            urlPath: 'operation-types'
           },
-          byIdsQuery: {
-            urlPath: "by-ids-query",
-            method: "GET"
+          // The same path hivemind serves, but HAfAH's copy takes
+          // `transacting-account-name` and `participation-mode`, which split an
+          // account's operations by who started them. For a vote that is the
+          // difference between the votes an account gave and the votes it was
+          // given, and no other endpoint on the node can tell the two apart.
+          accountsOperations: {
+            urlPath: 'accounts/{account-name}/operations'
           }
-        },
-        authors: {
-          urlPath: "authors",
-          search: {
-            urlPath: "search",
-            method: "GET"
-          }
-        },
-      },
-      method: "GET",
-      'hivemind-api': {
-        "accountsOperations": {
-          urlPath: 'accounts/{account-name}/operations',
         }
-      },
-      'hafah-api': {
-        'operation-types': {
-          urlPath: 'operation-types'
-        }
+      });
+
+      hiveChain = extended;
+
+      // Initialize asset constants from wax's chain.ASSETS
+      initializeAssetConstants(hiveChain.ASSETS);
+
+      const aiEndpoint = getAIDefaultEndpoint();
+
+      // Always use the same endpoint as the main API for hivesense-api
+      hiveChain.restApi['hivesense-api'].endpointUrl = aiEndpoint || clientOptions.restApiEndpoint;
+      if (aiEndpoint) {
+        hiveChain.api['search-api'].find_text.endpointUrl = aiEndpoint;
       }
+
+      return hiveChain;
+    })
+    .catch((error) => {
+      hiveChainPromise = undefined; // Clear cache so next call retries
+      hiveChain = undefined;
+      throw error;
     });
-
-    hiveChain = extended;
-
-    // Initialize asset constants from wax's chain.ASSETS
-    initializeAssetConstants(hiveChain.ASSETS);
-
-    const aiEndpoint = getAIDefaultEndpoint();
-
-    // Always use the same endpoint as the main API for hivesense-api
-    hiveChain.restApi['hivesense-api'].endpointUrl = aiEndpoint || clientOptions.restApiEndpoint;
-    if (aiEndpoint) {
-      hiveChain.api['search-api'].find_text.endpointUrl = aiEndpoint;
-    }
-
-    return hiveChain;
-  }).catch((error) => {
-    hiveChainPromise = undefined; // Clear cache so next call retries
-    hiveChain = undefined;
-    throw error;
-  });
 
   return hiveChainPromise;
 };
 
 export const initChain = (): Promise<HiveChain> => {
-  if (hiveChainPromise)
-    return hiveChainPromise;
+  if (hiveChainPromise) return hiveChainPromise;
 
   return setChainClient();
-}
+};
 
 export const reuseHiveChain = (): HiveChain | undefined => {
   return hiveChain;
 };
 
 export const getChain = (): Promise<HiveChain> => {
-  if (hiveChainPromise)
-    return hiveChainPromise;
+  if (hiveChainPromise) return hiveChainPromise;
 
   return initChain();
 };

@@ -712,7 +712,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} o más",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -738,7 +740,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "Votos recibidos"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -765,8 +768,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "Seis lecturas de cómo se ha usado esta cuenta, un pétalo cada una. Pasa el cursor sobre un pétalo para ver qué cuenta; en el centro está la cuenta que creó esta.",
+        "posted": "When this post was published.",
+        "votes_received": "Votos que otras personas han emitido en las publicaciones de esta cuenta, no los votos que ella emitió. Haz clic para ver quién aporta más dinero a esta cuenta, cuántos votos ha dado cada uno y cuánto valían."
       },
       "comments": {
         "button": "Comentarios",
@@ -780,6 +784,30 @@
         "standalone": "Una publicación, no una respuesta",
         "open": "Abrir este comentario",
         "blank_body": "Sin texto."
+      },
+      "top_voters": {
+        "title": "Los {{limit}} principales votantes",
+        "subtitle": "Quién ha votado a @{{account}}, ordenado por el valor de sus votos.",
+        "received_label": "Votos recibidos",
+        "people_label": "Votantes",
+        "total_label": "Valor",
+        "votes_label": "votos",
+        "worth_label": "valor",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Leyendo la cadena…",
+        "error": "No se pudieron leer los votos de esta cuenta. Inténtalo de nuevo en un momento.",
+        "empty": "Nadie más ha votado a @{{account}} todavía.",
+        "reading": "Leyendo el resto…",
+        "reading_left": "Quedan unos {{seconds}} s",
+        "stop": "Detener",
+        "window_lifetime": "Todos los votos que ha recibido esta cuenta: {{votes}}.",
+        "window_reading": "{{votes}} votos hasta ahora; aún leyendo su historial.",
+        "window_stopped": "Detenido en {{votes}} votos. Hay votos más antiguos sin leer.",
+        "window_failed": "La lectura se detuvo antes de tiempo con {{votes}} votos. Faltan votos más antiguos.",
+        "window_capped": "Leído de los {{limit}} votos más recientes de esta cuenta.",
+        "value_note": "Los valores son lo que valdrían esos votos con el fondo de recompensas y el precio de HIVE actuales."
       }
     },
     "title": "Basecamp",
@@ -1000,6 +1028,10 @@
       "gems": "GEMAS",
       "newbs": "NOVATOS",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "Pantalla completa",
+      "exit": "Salir de pantalla completa"
     },
     "map": {
       "hint": "Toca un lugar para viajar allí",

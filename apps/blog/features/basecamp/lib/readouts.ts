@@ -8,7 +8,7 @@
  * needs that a bare number does not: where the value sits on its own scale.
  *
  * Five things are drawn, because in each case the shape says something the
- * number cannot; one is a row of dots; five are petals of one flower, each
+ * number cannot; one is a row of dots; six are petals of one flower, each
  * opening as far as its own number, with the account's creator in the middle.
  * Every scale here is a product choice, not a chain limit; it decides how full
  * a shape looks, never what the number means.
@@ -17,6 +17,7 @@
 import type { CommentPatterns } from './patterns';
 import { PROFILE_FIELD_COUNT, type SignalUnit, type SignalValue } from './signals';
 import type { BasecampVividKey } from './theme';
+import type { VotesReceived } from './voters';
 
 /**
  * 'circle': one of the five drawings. 'petal': one petal of the flower, a
@@ -62,6 +63,12 @@ export interface Readout {
   drain?: boolean;
   /** False when the lookup never produced an answer. Never rendered as zero. */
   known: boolean;
+  /**
+   * The value is a floor rather than a total: the read was capped before it
+   * reached the beginning, so the true number is this one or higher. Printed
+   * with a "+" and spelled out in the popover; never quietly rounded away.
+   */
+  floor?: boolean;
   value: number | null;
   unit: SignalUnit;
   /** 0-1 position on this readout's own scale, for the drawing only. */
@@ -101,7 +108,8 @@ export const PETAL_SCALE_MAX = {
   actions_per_day: 10,
   week_activity: 20,
   reply_targets: 30,
-  gap_before_post: 30
+  gap_before_post: 30,
+  votes_received: 10000
 } as const;
 
 function clamp01(value: number): number {
@@ -121,13 +129,21 @@ export function logRatio(value: number | null, max: number): number {
   return clamp01(Math.log10(1 + Math.max(value, 0)) / Math.log10(1 + max));
 }
 
-function signalOf(signals: Record<string, SignalValue>, id: string): { known: boolean; value: number | null; unit: SignalUnit } {
+function signalOf(
+  signals: Record<string, SignalValue>,
+  id: string
+): { known: boolean; value: number | null; unit: SignalUnit } {
   const signal: SignalValue | undefined = signals[id];
   const known = Boolean(signal?.known) && signal?.value !== null;
   return { known, value: known && signal ? signal.value : null, unit: signal?.unit ?? 'none' };
 }
 
-function percentSegment(id: string, value: number | null, known: boolean, color: BasecampVividKey): ReadoutSegment {
+function percentSegment(
+  id: string,
+  value: number | null,
+  known: boolean,
+  color: BasecampVividKey
+): ReadoutSegment {
   const isKnown = known && value !== null && Number.isFinite(value);
   return {
     id,
@@ -142,7 +158,15 @@ function percentSegment(id: string, value: number | null, known: boolean, color:
 
 function stakeSegment(id: string, hp: number | null, color: BasecampVividKey): ReadoutSegment {
   const known = hp !== null && Number.isFinite(hp) && hp >= 0;
-  return { id, ratio: 1, weight: known ? hp : 0, value: known ? Math.round(hp) : null, unit: 'hive_power', known, color };
+  return {
+    id,
+    ratio: 1,
+    weight: known ? hp : 0,
+    value: known ? Math.round(hp) : null,
+    unit: 'hive_power',
+    known,
+    color
+  };
 }
 
 function petal(
@@ -172,14 +196,17 @@ export function buildReadouts(
   signals: Record<string, SignalValue>,
   patterns: CommentPatterns,
   createdBy: string | null,
-  stake: StakeInput
+  stake: StakeInput,
+  votes: VotesReceived
 ): Readout[] {
   const ke = signalOf(signals, 'ke_score');
   const age = signalOf(signals, 'account_age_days');
   const profile = signalOf(signals, 'profile_completeness');
   const activeHp = signalOf(signals, 'active_hive_power');
   const profileFilled =
-    profile.known && profile.value !== null ? Math.round((profile.value / PERCENT_MAX) * PROFILE_FIELD_COUNT) : 0;
+    profile.known && profile.value !== null
+      ? Math.round((profile.value / PERCENT_MAX) * PROFILE_FIELD_COUNT)
+      : 0;
 
   return [
     // When they write. The best drawing on the card, and drawn largest.
@@ -307,7 +334,30 @@ export function buildReadouts(
       ratio: patterns.known ? linearRatio(patterns.distinctReplyTargets, PETAL_SCALE_MAX.reply_targets) : 0,
       colors: ['cyan', 'cyan']
     },
-    petal('gap_before_post', signals, 'orange', (value) => linearRatio(value, PETAL_SCALE_MAX.gap_before_post)),
+    petal('gap_before_post', signals, 'orange', (value) =>
+      linearRatio(value, PETAL_SCALE_MAX.gap_before_post)
+    ),
+    // Votes other people have cast on this account's posts — not the votes it
+    // cast, which are a different thing the chain keeps in the same place. The
+    // one petal that opens onto something else: the heaviest voters, ranked,
+    // with what their votes were worth. A count on a log scale like
+    // total_actions, so the first hundred votes move the shape and the next
+    // nine thousand nudge it.
+    //
+    // `lifetime` is what the chain was willing to count; where it stopped, the
+    // number printed is what has actually been read and the petal says so with
+    // a "+" rather than pretending to a total.
+    {
+      id: 'votes_received',
+      display: 'petal',
+      weight: 'plain',
+      known: votes.known,
+      floor: votes.known && votes.lifetime === null,
+      value: votes.known ? votes.atLeast : null,
+      unit: 'count',
+      ratio: votes.known ? logRatio(votes.atLeast, PETAL_SCALE_MAX.votes_received) : 0,
+      colors: ['blue', 'blue']
+    },
     {
       id: 'created_by',
       display: 'core',

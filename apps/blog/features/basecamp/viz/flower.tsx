@@ -19,6 +19,9 @@ const LIT_MAX_RADIUS = 58;
 /** Once the lit part reaches past here it sits under the number, and the number turns dark to stay readable. */
 const NUMBER_COVERED_RADIUS = NUMBER_RADIUS + 6;
 const HALO_WIDTH = 2.5;
+/** The edge drawn round a petal that opens something, so a reader can see it is a door. */
+const INTERACTIVE_RIM = 'rgba(255, 255, 255, 0.6)';
+const INTERACTIVE_RIM_WIDTH = 1;
 /**
  * One petal pointing at twelve o'clock: base tucked under the middle at
  * radius 13, tip at 58, and a broad shoulder about thirty-four units wide
@@ -26,6 +29,21 @@ const HALO_WIDTH = 2.5;
  * purpose — five of these read as a flower, five lopsided ones as a pinwheel.
  */
 const PETAL_PATH = 'M60,47 C42,37 36,18 51,5 C54,0.5 66,0.5 69,5 C84,18 78,37 60,47 Z';
+/**
+ * The petal above is about 62 degrees wide, which is what five of them need to
+ * sit side by side without touching. Add a sixth and they would overlap, and
+ * two half-lit tracks crossing read as a bright wedge that belongs to neither.
+ * So past five petals each one is squeezed horizontally by exactly as much as
+ * the ring lost, and the flower keeps the same gaps it always had.
+ */
+const PETAL_SPACING_DEGREES = 72;
+
+/** How much narrower a petal has to be drawn for `count` of them to fit the ring. */
+export function petalWidthScale(count: number): number {
+  if (count <= 0) return 1;
+  const spacing = 360 / count;
+  return spacing >= PETAL_SPACING_DEGREES ? 1 : spacing / PETAL_SPACING_DEGREES;
+}
 
 function clamp01(value: number): number {
   if (!Number.isFinite(value) || value <= 0) return 0;
@@ -59,6 +77,14 @@ export interface PetalProps extends SVGProps<SVGGElement> {
   text: string;
   /** A blur filter defined by the flower, shared by every petal. */
   glowId: string;
+  /** Horizontal squeeze about the petal's own axis, so more of them still fit the ring. */
+  widthScale?: number;
+  /**
+   * This petal opens something when it is clicked. It is drawn with its edge
+   * lit in its own colour, so a reader can see which petal is a door before
+   * they have hovered anything.
+   */
+  interactive?: boolean;
 }
 
 /**
@@ -68,46 +94,74 @@ export interface PetalProps extends SVGProps<SVGGElement> {
  * part reaches under it. The group takes a ref and any props, so a popover
  * can use it as its trigger.
  */
-const Petal = forwardRef<SVGGElement, PetalProps>(({ angle, ratio, color, known, text, glowId, ...rest }, ref) => {
-  const clipId = `petal-clip-${useId().replace(/:/g, '')}`;
-  const reach = litRadius(ratio);
-  const covered = known && reach >= NUMBER_COVERED_RADIUS;
-  const numberY = FLOWER_CENTER - NUMBER_RADIUS;
-  const numberFill = covered ? FLOWER_GROUND : known ? color : 'rgba(255, 255, 255, 0.45)';
+const Petal = forwardRef<SVGGElement, PetalProps>(
+  ({ angle, ratio, color, known, text, glowId, widthScale = 1, interactive = false, ...rest }, ref) => {
+    const clipId = `petal-clip-${useId().replace(/:/g, '')}`;
+    const reach = litRadius(ratio);
+    const covered = known && reach >= NUMBER_COVERED_RADIUS;
+    const numberY = FLOWER_CENTER - NUMBER_RADIUS;
+    const numberFill = covered ? FLOWER_GROUND : known ? color : 'rgba(255, 255, 255, 0.45)';
+    // Squeezed about the flower's vertical axis, which the petal is already
+    // centred on, so the tip stays at twelve o'clock and the base stays under the
+    // middle. The clip circle is not scaled with it: the lit part must still be
+    // measured from the centre outwards.
+    const squeeze =
+      widthScale === 1
+        ? undefined
+        : `translate(${FLOWER_CENTER} 0) scale(${widthScale} 1) translate(${-FLOWER_CENTER} 0)`;
 
-  return (
-    <g ref={ref} transform={`rotate(${angle} ${FLOWER_CENTER} ${FLOWER_CENTER})`} {...rest}>
-      <clipPath id={clipId}>
-        <circle cx={FLOWER_CENTER} cy={FLOWER_CENTER} r={reach} />
-      </clipPath>
-      <path d={PETAL_PATH} fill={color} opacity={known ? 0.3 : 0.15} pointerEvents="all" />
-      {known ? (
-        <g clipPath={`url(#${clipId})`} pointerEvents="none">
-          <path d={PETAL_PATH} fill={color} opacity={0.55} filter={`url(#${glowId})`} />
-          <path d={PETAL_PATH} fill={color} />
-        </g>
-      ) : null}
-      <text
-        x={FLOWER_CENTER}
-        y={numberY}
-        transform={`rotate(${-angle} ${FLOWER_CENTER} ${numberY})`}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={fontSizeFor(text)}
-        fontWeight={known ? 600 : 500}
-        fill={numberFill}
-        stroke={covered ? 'none' : FLOWER_GROUND}
-        strokeWidth={HALO_WIDTH}
-        strokeLinejoin="round"
-        paintOrder="stroke"
-        pointerEvents="none"
-        style={{ fontVariantNumeric: 'tabular-nums' }}
-      >
-        {text}
-      </text>
-    </g>
-  );
-});
+    return (
+      <g ref={ref} transform={`rotate(${angle} ${FLOWER_CENTER} ${FLOWER_CENTER})`} {...rest}>
+        <clipPath id={clipId}>
+          <circle cx={FLOWER_CENTER} cy={FLOWER_CENTER} r={reach} />
+        </clipPath>
+        <path
+          d={PETAL_PATH}
+          transform={squeeze}
+          fill={color}
+          opacity={known ? 0.3 : 0.15}
+          pointerEvents="all"
+        />
+        {known ? (
+          <g clipPath={`url(#${clipId})`} pointerEvents="none" transform={squeeze}>
+            <path d={PETAL_PATH} fill={color} opacity={0.55} filter={`url(#${glowId})`} />
+            <path d={PETAL_PATH} fill={color} />
+          </g>
+        ) : null}
+        {/* The rim goes on last, over the lit part. In the petal's own colour it
+            would vanish the moment the petal opened far enough to reach it. */}
+        {interactive ? (
+          <path
+            d={PETAL_PATH}
+            transform={squeeze}
+            fill="none"
+            stroke={INTERACTIVE_RIM}
+            strokeWidth={INTERACTIVE_RIM_WIDTH}
+            pointerEvents="none"
+          />
+        ) : null}
+        <text
+          x={FLOWER_CENTER}
+          y={numberY}
+          transform={`rotate(${-angle} ${FLOWER_CENTER} ${numberY})`}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={fontSizeFor(text)}
+          fontWeight={known ? 600 : 500}
+          fill={numberFill}
+          stroke={covered ? 'none' : FLOWER_GROUND}
+          strokeWidth={HALO_WIDTH}
+          strokeLinejoin="round"
+          paintOrder="stroke"
+          pointerEvents="none"
+          style={{ fontVariantNumeric: 'tabular-nums' }}
+        >
+          {text}
+        </text>
+      </g>
+    );
+  }
+);
 Petal.displayName = 'Petal';
 
 export default Petal;

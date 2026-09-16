@@ -718,7 +718,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} или больше",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -744,7 +746,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "Голоса получены"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -771,8 +774,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "Шесть показателей того, как использовался этот аккаунт, по одному на лепесток. Наведите курсор на лепесток, чтобы увидеть, что он считает; в центре — аккаунт, создавший этот.",
+        "posted": "When this post was published.",
+        "votes_received": "Голоса, отданные другими людьми за посты этого аккаунта, а не голоса, которые он отдал. Нажмите, чтобы увидеть, кто приносит этому аккаунту больше всего денег, сколько голосов отдал каждый и сколько они стоили."
       },
       "comments": {
         "button": "Комментарии",
@@ -786,6 +790,30 @@
         "standalone": "Запись, а не ответ",
         "open": "Открыть этот комментарий",
         "blank_body": "Без текста."
+      },
+      "top_voters": {
+        "title": "Топ {{limit}} голосующих",
+        "subtitle": "Кто голосовал за @{{account}} — по стоимости их голосов.",
+        "received_label": "Голосов получено",
+        "people_label": "Голосующие",
+        "total_label": "Стоимость",
+        "votes_label": "голосов",
+        "worth_label": "стоимость",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Чтение цепочки…",
+        "error": "Не удалось прочитать голоса по этому аккаунту. Попробуйте ещё раз через момент.",
+        "empty": "За @{{account}} пока никто больше не голосовал.",
+        "reading": "Читаем остальное…",
+        "reading_left": "Осталось около {{seconds}} с",
+        "stop": "Остановить",
+        "window_lifetime": "Все голоса, полученные этим аккаунтом: {{votes}}.",
+        "window_reading": "Пока {{votes}} голосов, чтение истории продолжается.",
+        "window_stopped": "Остановлено на {{votes}} голосах. Более старые не прочитаны.",
+        "window_failed": "Чтение прервалось на {{votes}} голосах. Более старые отсутствуют.",
+        "window_capped": "Прочитано из {{limit}} последних голосов по этому аккаунту.",
+        "value_note": "Значения — сколько эти голоса стоили бы при текущем фонде вознаграждений и цене HIVE."
       }
     },
     "title": "Basecamp",
@@ -1006,6 +1034,10 @@
       "gems": "САМОЦВЕТЫ",
       "newbs": "НОВИЧКИ",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "Полный экран",
+      "exit": "Выйти из полноэкранного режима"
     },
     "map": {
       "hint": "Нажмите на место, чтобы отправиться туда",

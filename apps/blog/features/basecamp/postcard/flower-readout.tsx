@@ -11,7 +11,8 @@ import Petal, {
   FLOWER_CORE_RADIUS,
   FLOWER_GROUND,
   FLOWER_HAZE_RADIUS,
-  petalAngle
+  petalAngle,
+  petalWidthScale
 } from '../viz/flower';
 import type { Readout } from '../lib/readouts';
 import { BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
@@ -72,19 +73,27 @@ interface FlowerReadoutProps {
   core?: Readout;
   /** Rendered width and height in px. */
   size: number;
+  /**
+   * What a petal does when it is clicked, or null for the petals that are only
+   * a reading. The flower does not know what any petal means, so the card is
+   * the one that says which of them is a door and where it goes.
+   */
+  petalAction?: (readout: Readout) => (() => void) | null;
 }
 
 /**
- * The five numbers about how the account is used, as one flower: a petal
- * each, in its own colour, opening as far as its own number, with the number
- * printed on it. No names on the card — every petal explains itself in a
- * popover — and the account's creator sits in the middle.
+ * Every number about how the account is used, as one flower: a petal each, in
+ * its own colour, opening as far as its own number, with the number printed on
+ * it. No names on the card — every petal explains itself in a popover — and the
+ * account's creator sits in the middle. The petals are squeezed to fit however
+ * many there are, so adding one never costs the flower its shape.
  */
-const FlowerReadout = ({ petals, core, size }: FlowerReadoutProps) => {
+const FlowerReadout = ({ petals, core, size, petalAction }: FlowerReadoutProps) => {
   const { t } = useTranslation('common_blog');
   const idBase = useId().replace(/:/g, '');
   const glowId = `flower-glow-${idBase}`;
   const hazeId = `flower-haze-${idBase}`;
+  const widthScale = petalWidthScale(petals.length);
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }} data-testid="postcard-flower">
@@ -105,12 +114,19 @@ const FlowerReadout = ({ petals, core, size }: FlowerReadoutProps) => {
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0} />
           </radialGradient>
         </defs>
-        <circle cx={FLOWER_CENTER} cy={FLOWER_CENTER} r={FLOWER_HAZE_RADIUS} fill={`url(#${hazeId})`} pointerEvents="none" />
+        <circle
+          cx={FLOWER_CENTER}
+          cy={FLOWER_CENTER}
+          r={FLOWER_HAZE_RADIUS}
+          fill={`url(#${hazeId})`}
+          pointerEvents="none"
+        />
         {petals.map((readout, index) => {
           const label = t(`basecamp.card.labels.${readout.id}`);
           const full = readout.pair
             ? t('basecamp.card.values.pair', { first: readout.pair[0], second: readout.pair[1] })
             : formatReadoutValue(t, readout);
+          const action = petalAction?.(readout) ?? null;
           return (
             <Hint key={readout.id} title={label} value={full} body={t(`basecamp.card.hints.${readout.id}`)}>
               <Petal
@@ -120,10 +136,24 @@ const FlowerReadout = ({ petals, core, size }: FlowerReadoutProps) => {
                 known={readout.known}
                 text={formatPetalValue(t, readout)}
                 glowId={glowId}
+                widthScale={widthScale}
+                interactive={action !== null}
                 tabIndex={0}
-                role="img"
+                role={action ? 'button' : 'img'}
                 aria-label={`${label}: ${full}`}
-                className="cursor-default outline-none"
+                onClick={action ?? undefined}
+                // A petal is a shape, not a button element, so the keyboard
+                // behaviour a button would have for free is spelled out here.
+                onKeyDown={
+                  action
+                    ? (event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        action();
+                      }
+                    : undefined
+                }
+                className={cn('outline-none', action ? 'cursor-pointer' : 'cursor-default')}
                 data-testid={`readout-${readout.id}`}
                 data-readout-known={readout.known ? 'true' : 'false'}
                 data-readout-ratio={readout.ratio.toFixed(3)}
@@ -131,7 +161,13 @@ const FlowerReadout = ({ petals, core, size }: FlowerReadoutProps) => {
             </Hint>
           );
         })}
-        <circle cx={FLOWER_CENTER} cy={FLOWER_CENTER} r={FLOWER_CORE_RADIUS} fill={FLOWER_GROUND} pointerEvents="none" />
+        <circle
+          cx={FLOWER_CENTER}
+          cy={FLOWER_CENTER}
+          r={FLOWER_CORE_RADIUS}
+          fill={FLOWER_GROUND}
+          pointerEvents="none"
+        />
       </svg>
       {core ? (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">

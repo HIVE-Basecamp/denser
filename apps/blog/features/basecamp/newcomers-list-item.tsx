@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
@@ -10,13 +10,20 @@ import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
 import IdentityStrip from './postcard/identity-strip';
 import PostCard from './postcard/post-card';
+import TopVotersDialog from './postcard/top-voters-dialog';
 import { useAccountCreator } from './hooks/use-account-creator';
 import { useAccountHistory } from './hooks/use-account-history';
 import { useVestsToHivePowerRate } from './hooks/use-vests-rate';
+import { useVotesReceived } from './hooks/use-votes-received';
 import { isFirstEverPost } from './lib/first-post';
-import { buildReadouts, type ReadoutDisplay, type StakeInput } from './lib/readouts';
-import { DEFAULT_DRAWING_SIZE, POST_MAX_WIDTH, POSTCARD_TIERS, type PostcardTier } from './lib/postcard-sizes';
-import { BASECAMP_SIGNALS, type SignalInput, type SignalValue } from './lib/signals';
+import { buildReadouts, type Readout, type ReadoutDisplay, type StakeInput } from './lib/readouts';
+import {
+  DEFAULT_DRAWING_SIZE,
+  POST_MAX_WIDTH,
+  POSTCARD_TIERS,
+  type PostcardTier
+} from './lib/postcard-sizes';
+import { BASECAMP_SIGNALS, parseIsoMs, type SignalInput, type SignalValue } from './lib/signals';
 import { hivePowerFromAmount } from './lib/stake';
 import { BASECAMP_POSTCARD_STYLE } from './lib/theme';
 import type { Newcomer } from './hooks/use-newcomers';
@@ -43,6 +50,8 @@ const FIRST_POST_CLASS = 'my-7 border-[#FF6FB1]/50 hover:border-[#FF6FB1]/80';
 
 /** The one readout that carries a control: the replies drawing gets the way into the replies. */
 const REPLY_MIX_READOUT_ID = 'reply_mix';
+/** The one petal that opens something: the votes they were given get the way into who gave them. */
+const VOTES_RECEIVED_READOUT_ID = 'votes_received';
 
 /** Stacked, the post shares the first line with the flower and may grow past the usual cap to meet it. */
 function postZoneStyle(tier: PostcardTier): CSSProperties {
@@ -82,6 +91,11 @@ const NewcomersListItem = ({
   const { patterns, status } = useAccountHistory(post.author, inView);
   const createdBy = useAccountCreator(post.author, inView);
   const vestsToHivePowerRate = useVestsToHivePowerRate();
+  // The votes this account has been given, and who gave them: one read that
+  // serves both the petal's number and the panel behind it, so opening the
+  // panel costs nothing.
+  const { votes, status: votesStatus } = useVotesReceived(post.author, inView);
+  const [votersOpen, setVotersOpen] = useState(false);
 
   const signalInput: SignalInput = {
     account,
@@ -115,9 +129,12 @@ const NewcomersListItem = ({
     signalValues,
     status === 'ready' ? patterns : { ...patterns, known: false },
     createdBy,
-    stake
+    stake,
+    votes
   );
   const shown = (display: ReadoutDisplay) => readouts.filter((readout) => readout.display === display);
+  const petalAction = (readout: Readout) =>
+    readout.id === VOTES_RECEIVED_READOUT_ID ? () => setVotersOpen(true) : null;
   const firstPost = isFirstEverPost(account.postCount, status === 'ready' ? patterns : null);
 
   return (
@@ -176,8 +193,24 @@ const NewcomersListItem = ({
           ))}
         </div>
 
-        <FlowerReadout petals={shown('petal')} core={shown('core')[0]} size={tier.flower} />
+        <FlowerReadout
+          petals={shown('petal')}
+          core={shown('core')[0]}
+          size={tier.flower}
+          petalAction={petalAction}
+        />
       </div>
+      {votersOpen ? (
+        <TopVotersDialog
+          open={votersOpen}
+          onOpenChange={setVotersOpen}
+          account={post.author}
+          votes={votes}
+          createdMs={parseIsoMs(account.createdIso)}
+          loading={votesStatus === 'loading'}
+          failed={votesStatus === 'unavailable'}
+        />
+      ) : null}
     </li>
   );
 };

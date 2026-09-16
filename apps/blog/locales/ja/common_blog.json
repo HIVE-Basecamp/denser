@@ -712,7 +712,9 @@
           "week": "{{value}}w",
           "month": "{{value}}mo",
           "year": "{{value}}y"
-        }
+        },
+        "at_least": "{{value}} 以上",
+        "at_least_short": "{{value}}+"
       },
       "labels": {
         "profile_completeness": "Profile",
@@ -738,7 +740,8 @@
         "stake_out": "Lent out",
         "stake_in": "Lent in",
         "flower": "Activity flower",
-        "posted": "Posted"
+        "posted": "Posted",
+        "votes_received": "受けた投票"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -765,8 +768,9 @@
         "stake_out": "Hive Power they own but have lent to somebody else.",
         "stake_in": "Hive Power somebody else has lent to them.",
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
-        "flower": "Five readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
-        "posted": "When this post was published."
+        "flower": "このアカウントの使われ方に関する6つの読み取り。花びら1枚につき1つです。花びらにカーソルを合わせると何を数えているかがわかります。中央はこのアカウントを作成したアカウントです。",
+        "posted": "When this post was published.",
+        "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も多くのお金を入れているか、それぞれの投票数とその価値が表示されます。"
       },
       "comments": {
         "button": "コメント",
@@ -780,6 +784,30 @@
         "standalone": "返信ではなく投稿",
         "open": "このコメントを開く",
         "blank_body": "本文なし。"
+      },
+      "top_voters": {
+        "title": "上位 {{limit}} 人の投票者",
+        "subtitle": "@{{account}} に投票したのは誰か。投票の価値順です。",
+        "received_label": "受けた投票",
+        "people_label": "投票者",
+        "total_label": "価値",
+        "votes_label": "票",
+        "worth_label": "価値",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "チェーンを読み込み中…",
+        "error": "このアカウントへの投票を読み取れませんでした。少ししてからもう一度お試しください。",
+        "empty": "@{{account}} にはまだ他の誰も投票していません。",
+        "reading": "残りを読み込み中…",
+        "reading_left": "残り約 {{seconds}} 秒",
+        "stop": "停止",
+        "window_lifetime": "このアカウントがこれまでに受けたすべての投票: {{votes}} 件。",
+        "window_reading": "現在 {{votes}} 件。履歴をさかのぼって読み込み中です。",
+        "window_stopped": "{{votes}} 件で停止しました。まだ読み込んでいない古い投票があります。",
+        "window_failed": "{{votes}} 件で読み込みが中断しました。古い投票が抜けています。",
+        "window_capped": "このアカウントの最新 {{limit}} 件の投票から読み取っています。",
+        "value_note": "金額は現在の報酬プールと HIVE 価格でその投票が持つ価値です。"
       }
     },
     "title": "Basecamp",
@@ -1000,6 +1028,10 @@
       "gems": "ジェム",
       "newbs": "新入り",
       "side": "SIDE"
+    },
+    "fullscreen": {
+      "enter": "全画面表示",
+      "exit": "全画面表示を終了"
     },
     "map": {
       "hint": "ランドマークをタップして移動",
