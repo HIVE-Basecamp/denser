@@ -916,10 +916,10 @@
         "why_placeholder": "¿Qué te hizo sospechar?",
         "said_bot": "Dijiste: es un bot",
         "said_not": "Dijiste: no es un bot",
-        "empty_title": "Todavía nadie ha sido marcado como bot",
-        "empty_body": "Usa el botón rojo SUS en una postal y marca «bot». Las cuentas que marques así aparecerán aquí.",
+        "empty_title": "No hay nada que mirar ahora mismo",
+        "empty_body": "Ninguna cuenta está marcada como «bot» y el feed no tiene a nadie nuevo que mostrar. Marca a alguien con el botón rojo SUS, o vuelve dentro de un rato.",
         "done_title": "Eso es todo",
-        "done_body": "Has revisado todas las cuentas marcadas como bot. Marca más con el botón SUS o vuelve a empezar."
+        "done_body": "Has revisado todas las cuentas de la lista. Marca más con el botón SUS, o vuelve a empezar."
       },
       "judging": {
         "position": "{{current}} de {{total}}",
@@ -938,14 +938,15 @@
         "cancel": "Cancelar",
         "skip": "Saltar",
         "where_it_goes": "Por ahora se guarda en este dispositivo y no se publica nada en Hive.",
-        "start_again": "Empezar de nuevo"
+        "start_again": "Empezar de nuevo",
+        "from_feed": "Todavía no hay nada marcado con el botón SUS, así que estas son cuentas nuevas directamente del feed: nadie las ha acusado de nada."
       },
       "sock_or_not": {
         "also_made_it": "Creó esta cuenta",
-        "done_body": "Has revisado todas las cuentas marcadas como títeres. Marca más con el botón SUS, o vuelve a empezar.",
+        "done_body": "Has revisado todas las cuentas de la lista. Marca más con el botón SUS, o vuelve a empezar.",
         "done_title": "Eso es todo",
-        "empty_body": "Usa el botón rojo SUS en una postal y marca «títere». Las cuentas que marques así aparecerán aquí.",
-        "empty_title": "Todavía nadie ha sido marcado como títere",
+        "empty_body": "Ninguna cuenta está marcada como «títere» y el feed no tiene a nadie nuevo que mostrar. Marca a alguien con el botón rojo SUS, o vuelve dentro de un rato.",
+        "empty_title": "No hay nada que mirar ahora mismo",
         "intro": "Una cuenta a la vez. Mira de dónde viene su dinero y luego di lo que piensas.",
         "lent_hp": "{{value}} HP prestados",
         "made_by": "Cuenta creada por",

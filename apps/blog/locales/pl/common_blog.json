@@ -921,10 +921,10 @@
         "why_placeholder": "Co cię zaniepokoiło?",
         "said_bot": "Twoja ocena: to bot",
         "said_not": "Twoja ocena: to nie bot",
-        "empty_title": "Nikt nie został jeszcze oznaczony jako bot",
-        "empty_body": "Użyj czerwonego przycisku SUS na pocztówce i zaznacz „bot”. Tak oznaczone konta pojawią się tutaj.",
+        "empty_title": "Na razie nie ma czego oglądać",
+        "empty_body": "Żadne konto nie jest oznaczone jako bot, a kanał nie ma nikogo nowego do pokazania. Oznacz kogoś czerwonym przyciskiem SUS albo wróć za jakiś czas.",
         "done_title": "To wszyscy",
-        "done_body": "Przejrzałeś wszystkie konta oznaczone jako boty. Oznacz kolejne przyciskiem SUS albo zacznij od nowa."
+        "done_body": "Przejrzałeś wszystkie konta z kolejki. Oznacz więcej przyciskiem SUS albo zacznij od nowa."
       },
       "judging": {
         "position": "{{current}} z {{total}}",
@@ -943,14 +943,15 @@
         "cancel": "Anuluj",
         "skip": "Pomiń",
         "where_it_goes": "Na razie zostaje na tym urządzeniu i nic nie trafia na Hive.",
-        "start_again": "Zacznij od nowa"
+        "start_again": "Zacznij od nowa",
+        "from_feed": "Nic nie zostało jeszcze oznaczone przyciskiem SUS, więc to nowe konta prosto z kanału — nikt ich o nic nie oskarżył."
       },
       "sock_or_not": {
         "also_made_it": "Założył to konto",
-        "done_body": "Przejrzałeś wszystkie konta oznaczone jako kukiełki. Oznacz więcej przyciskiem SUS albo zacznij od nowa.",
+        "done_body": "Przejrzałeś wszystkie konta z kolejki. Oznacz więcej przyciskiem SUS albo zacznij od nowa.",
         "done_title": "To wszyscy",
-        "empty_body": "Użyj czerwonego przycisku SUS na pocztówce i zaznacz „kukiełka”. Tak oznaczone konta pojawią się tutaj.",
-        "empty_title": "Nikt nie został jeszcze oznaczony jako kukiełka",
+        "empty_body": "Żadne konto nie jest oznaczone jako kukiełka, a kanał nie ma nikogo nowego do pokazania. Oznacz kogoś czerwonym przyciskiem SUS albo wróć za jakiś czas.",
+        "empty_title": "Na razie nie ma czego oglądać",
         "intro": "Jedno konto naraz. Zobacz, skąd pochodzą jego pieniądze, a potem powiedz, co myślisz.",
         "lent_hp": "pożyczono {{value}} HP",
         "made_by": "Konto założone przez",

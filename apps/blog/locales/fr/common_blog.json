@@ -916,10 +916,10 @@
         "why_placeholder": "Qu'est-ce qui vous a mis la puce à l'oreille ?",
         "said_bot": "Vous avez dit : c'est un bot",
         "said_not": "Vous avez dit : ce n'est pas un bot",
-        "empty_title": "Personne n'a encore été signalé comme bot",
-        "empty_body": "Utilisez le bouton rouge SUS sur une carte postale et cochez « bot ». Les comptes ainsi signalés apparaîtront ici.",
+        "empty_title": "Rien à regarder pour le moment",
+        "empty_body": "Aucun compte n'est signalé comme bot, et le fil n'a personne de nouveau à montrer. Signalez quelqu'un avec le bouton rouge SUS, ou revenez plus tard.",
         "done_title": "C'est tout le monde",
-        "done_body": "Vous avez passé en revue tous les comptes signalés comme bots. Signalez-en d'autres avec le bouton SUS, ou recommencez."
+        "done_body": "Vous avez passé en revue tous les comptes de la file. Marquez-en d'autres avec le bouton SUS, ou recommencez."
       },
       "judging": {
         "position": "{{current}} sur {{total}}",
@@ -938,14 +938,15 @@
         "cancel": "Annuler",
         "skip": "Passer",
         "where_it_goes": "Conservé sur cet appareil pour l'instant, et rien n'est publié sur Hive.",
-        "start_again": "Recommencer"
+        "start_again": "Recommencer",
+        "from_feed": "Rien n'est encore signalé avec le bouton SUS, donc ce sont de nouveaux comptes venus directement du fil — personne ne les a accusés de quoi que ce soit."
       },
       "sock_or_not": {
         "also_made_it": "A créé ce compte",
-        "done_body": "Vous avez passé en revue tous les comptes signalés comme faux-nez. Marquez-en d'autres avec le bouton SUS, ou recommencez.",
+        "done_body": "Vous avez passé en revue tous les comptes de la file. Marquez-en d'autres avec le bouton SUS, ou recommencez.",
         "done_title": "C'est tout le monde",
-        "empty_body": "Utilisez le bouton rouge SUS sur une carte postale et cochez « faux-nez ». Les comptes marqués ainsi apparaissent ici.",
-        "empty_title": "Personne n'a encore été signalé comme faux-nez",
+        "empty_body": "Aucun compte n'est signalé comme faux-nez, et le fil n'a personne de nouveau à montrer. Signalez quelqu'un avec le bouton rouge SUS, ou revenez plus tard.",
+        "empty_title": "Rien à regarder pour le moment",
         "intro": "Un compte à la fois. Regardez d'où vient son argent, puis dites ce que vous en pensez.",
         "lent_hp": "{{value}} HP prêtés",
         "made_by": "Compte créé par",

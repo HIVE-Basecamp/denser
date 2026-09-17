@@ -76,6 +76,32 @@ another's money is also what a parent funding a child, a project paying a
 contributor and a community onboarding someone look like. The reader decides
 (ETHOS.md).
 
+## Follow-up, same day
+
+Bryan: "I want both games to just pick an account if 1 hasn't been selected in
+games."
+
+Done, for Bot or Not and Sock or Not both. The queue still prefers accounts
+ticked with the SUS button — that is the whole point of the games — but where
+nothing is ticked it falls back to the Basecamp feed instead of sitting there
+empty. New accounts, in feed order, minus any this game has already been
+answered on, so going back in does not hand you the same person again. It is
+the same feed query the page below is already running, so it costs no extra
+reading.
+
+The screen says where the account came from: "Nothing is marked with the SUS
+button yet, so these are new accounts straight from the feed — nobody has
+accused them of anything." An account that turned up on its own has had no
+accusation made against it, and a player should know that before answering.
+The "That's everyone" and "Nothing to look at" notices were reworded for the
+same reason — they used to claim things had been labelled when nothing had.
+
+One bug caught on the way in. The game holds the account it is on in an effect
+keyed on that object; a feed queue rebuilt on every render gave it a new object
+every time, which on an account already answered was a loop that never settled.
+The queue is memoised now. Reproduced and confirmed fixed with Start again on a
+judged account: zero renders in two seconds.
+
 ## Open, not decided
 
 - Whether the money panel belongs on the postcard too, or stays in the game.

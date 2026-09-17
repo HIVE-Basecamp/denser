@@ -7,6 +7,7 @@ import { BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_PANEL } from '../../lib/
 import {
   BOT_OR_NOT_CHOICES,
   findBotOrNotVerdict,
+  readBotOrNotVerdicts,
   saveBotOrNotVerdict,
   type BotOrNotChoice,
   type BotOrNotVerdict
@@ -19,6 +20,9 @@ import { useSuspectQueue } from '../judging/use-suspect-queue';
 import { useSuspect } from '../judging/use-suspect';
 
 const [ACCUSE, CLEAR] = BOT_OR_NOT_CHOICES;
+
+/** Module scope so the queue's effect does not re-run on every render. */
+const judgedAccounts = () => readBotOrNotVerdicts().map((verdict) => verdict.account);
 
 /**
  * Bot or Not: one account at a time, with everything needed to judge it.
@@ -35,7 +39,7 @@ const [ACCUSE, CLEAR] = BOT_OR_NOT_CHOICES;
  */
 const BotOrNotGame = () => {
   const { t } = useTranslation('common_blog');
-  const { queue, loaded } = useSuspectQueue('bot');
+  const { queue, loaded, source } = useSuspectQueue('bot', judgedAccounts);
   const [index, setIndex] = useState(0);
   const [verdict, setVerdict] = useState<BotOrNotVerdict | null>(null);
 
@@ -93,6 +97,12 @@ const BotOrNotGame = () => {
           {t('basecamp.games.judging.position', { current: index + 1, total: queue.length })}
         </span>
       </div>
+
+      {source === 'feed' ? (
+        <p className={cn(BASECAMP_MUTED, 'text-[11px] leading-snug')} data-testid="judging-from-feed">
+          {t('basecamp.games.judging.from_feed')}
+        </p>
+      ) : null}
 
       {isError || (!isLoading && !detail) ? (
         <p className={cn(BASECAMP_MUTED, 'text-sm')}>{t('basecamp.games.judging.gone')}</p>

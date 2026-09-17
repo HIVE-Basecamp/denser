@@ -916,10 +916,10 @@
         "why_placeholder": "Cosa te l'ha fatto capire?",
         "said_bot": "Hai detto: è un bot",
         "said_not": "Hai detto: non è un bot",
-        "empty_title": "Nessuno è ancora stato segnalato come bot",
-        "empty_body": "Usa il pulsante rosso SUS su una cartolina e spunta «bot». Gli account segnalati così compariranno qui.",
+        "empty_title": "Non c'è niente da guardare in questo momento",
+        "empty_body": "Nessun account è segnato come bot e il feed non ha nessuno di nuovo da mostrare. Segna qualcuno con il pulsante rosso SUS, oppure torna tra un po'.",
         "done_title": "Sono finiti",
-        "done_body": "Hai esaminato tutti gli account segnalati come bot. Segnalane altri con il pulsante SUS, oppure ricomincia."
+        "done_body": "Hai passato in rassegna tutti gli account in coda. Segnane altri con il pulsante SUS, oppure ricomincia."
       },
       "judging": {
         "position": "{{current}} di {{total}}",
@@ -938,14 +938,15 @@
         "cancel": "Annulla",
         "skip": "Salta",
         "where_it_goes": "Per ora resta su questo dispositivo e non viene pubblicato nulla su Hive.",
-        "start_again": "Ricomincia"
+        "start_again": "Ricomincia",
+        "from_feed": "Niente è ancora segnato con il pulsante SUS, quindi questi sono account nuovi presi dal feed: nessuno li ha accusati di niente."
       },
       "sock_or_not": {
         "also_made_it": "Ha creato questo account",
-        "done_body": "Hai passato in rassegna tutti gli account segnalati come fantocci. Segnane altri con il pulsante SUS, oppure ricomincia.",
+        "done_body": "Hai passato in rassegna tutti gli account in coda. Segnane altri con il pulsante SUS, oppure ricomincia.",
         "done_title": "Sono tutti",
-        "empty_body": "Usa il pulsante rosso SUS su una cartolina e spunta «fantoccio». Gli account segnati così compaiono qui.",
-        "empty_title": "Nessuno è stato ancora segnalato come fantoccio",
+        "empty_body": "Nessun account è segnato come fantoccio e il feed non ha nessuno di nuovo da mostrare. Segna qualcuno con il pulsante rosso SUS, oppure torna tra un po'.",
+        "empty_title": "Non c'è niente da guardare in questo momento",
         "intro": "Un account alla volta. Guarda da dove arrivano i suoi soldi, poi di' cosa ne pensi.",
         "lent_hp": "{{value}} HP prestati",
         "made_by": "Account creato da",

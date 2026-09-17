@@ -1018,10 +1018,10 @@
         "why_placeholder": "What gave it away?",
         "said_bot": "You said: bot",
         "said_not": "You said: not a bot",
-        "empty_title": "Nobody has been labelled a bot yet",
-        "empty_body": "Use the red SUS button on a postcard and tick 'bot'. Accounts you mark that way turn up here.",
+        "empty_title": "Nothing to look at right now",
+        "empty_body": "No accounts are marked 'bot', and the feed has nobody new to show. Mark someone with the red SUS button, or come back in a bit.",
         "done_title": "That's everyone",
-        "done_body": "You have been through every account labelled a bot. Mark more with the SUS button, or go round again."
+        "done_body": "You have been through every account in the queue. Mark more with the SUS button, or go round again."
       },
       "judging": {
         "position": "{{current}} of {{total}}",
@@ -1040,14 +1040,15 @@
         "cancel": "Cancel",
         "skip": "Skip",
         "where_it_goes": "Kept on this device for now, and nothing is posted to Hive.",
-        "start_again": "Start again"
+        "start_again": "Start again",
+        "from_feed": "Nothing is marked with the SUS button yet, so these are new accounts straight from the feed — nobody has accused them of anything."
       },
       "sock_or_not": {
         "also_made_it": "Made this account",
-        "done_body": "You have been through every account labelled a sock. Mark more with the SUS button, or go round again.",
+        "done_body": "You have been through every account in the queue. Mark more with the SUS button, or go round again.",
         "done_title": "That's everyone",
-        "empty_body": "Use the red SUS button on a postcard and tick 'sock'. Accounts you mark that way turn up here.",
-        "empty_title": "Nobody has been labelled a sock yet",
+        "empty_body": "No accounts are marked 'sock', and the feed has nobody new to show. Mark someone with the red SUS button, or come back in a bit.",
+        "empty_title": "Nothing to look at right now",
         "intro": "One account at a time. Look at where its money comes from, then say what you think.",
         "lent_hp": "{{value}} HP lent",
         "made_by": "Account made by",

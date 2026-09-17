@@ -7,6 +7,7 @@ import { parseIsoMs } from '../../lib/signals';
 import { BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_PANEL } from '../../lib/theme';
 import {
   findSockOrNotVerdict,
+  readSockOrNotVerdicts,
   saveSockOrNotVerdict,
   SOCK_OR_NOT_CHOICES,
   type SockOrNotChoice,
@@ -21,6 +22,9 @@ import { useSuspect } from '../judging/use-suspect';
 import PaidByPanel from './paid-by-panel';
 
 const [ACCUSE, CLEAR] = SOCK_OR_NOT_CHOICES;
+
+/** Module scope so the queue's effect does not re-run on every render. */
+const judgedAccounts = () => readSockOrNotVerdicts().map((verdict) => verdict.account);
 
 /**
  * Sock or Not: one account at a time, and a money question about it.
@@ -41,7 +45,7 @@ const [ACCUSE, CLEAR] = SOCK_OR_NOT_CHOICES;
  */
 const SockOrNotGame = () => {
   const { t } = useTranslation('common_blog');
-  const { queue, loaded } = useSuspectQueue('sock');
+  const { queue, loaded, source } = useSuspectQueue('sock', judgedAccounts);
   const [index, setIndex] = useState(0);
   const [verdict, setVerdict] = useState<SockOrNotVerdict | null>(null);
 
@@ -99,6 +103,12 @@ const SockOrNotGame = () => {
           {t('basecamp.games.judging.position', { current: index + 1, total: queue.length })}
         </span>
       </div>
+
+      {source === 'feed' ? (
+        <p className={cn(BASECAMP_MUTED, 'text-[11px] leading-snug')} data-testid="judging-from-feed">
+          {t('basecamp.games.judging.from_feed')}
+        </p>
+      ) : null}
 
       {isError || (!isLoading && !detail) ? (
         <p className={cn(BASECAMP_MUTED, 'text-sm')}>{t('basecamp.games.judging.gone')}</p>
