@@ -1041,7 +1041,9 @@
         "skip": "Skip",
         "where_it_goes": "Kept on this device for now, and nothing is posted to Hive.",
         "start_again": "Start again",
-        "from_feed": "Nothing is marked with the SUS button yet, so these are new accounts straight from the feed — nobody has accused them of anything."
+        "from_feed": "Nothing is marked with the SUS button yet, so these are new accounts straight from the feed — nobody has accused them of anything.",
+        "finding_title": "Finding somebody else",
+        "finding_body": "Reading the feed for the next new account."
       },
       "sock_or_not": {
         "also_made_it": "Made this account",

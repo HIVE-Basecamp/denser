@@ -939,7 +939,9 @@
         "skip": "Salta",
         "where_it_goes": "Per ora resta su questo dispositivo e non viene pubblicato nulla su Hive.",
         "start_again": "Ricomincia",
-        "from_feed": "Niente è ancora segnato con il pulsante SUS, quindi questi sono account nuovi presi dal feed: nessuno li ha accusati di niente."
+        "from_feed": "Niente è ancora segnato con il pulsante SUS, quindi questi sono account nuovi presi dal feed: nessuno li ha accusati di niente.",
+        "finding_title": "Sto cercando qualcun altro",
+        "finding_body": "Sto leggendo il feed per trovare il prossimo account nuovo."
       },
       "sock_or_not": {
         "also_made_it": "Ha creato questo account",

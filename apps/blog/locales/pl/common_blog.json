@@ -944,7 +944,9 @@
         "skip": "Pomiń",
         "where_it_goes": "Na razie zostaje na tym urządzeniu i nic nie trafia na Hive.",
         "start_again": "Zacznij od nowa",
-        "from_feed": "Nic nie zostało jeszcze oznaczone przyciskiem SUS, więc to nowe konta prosto z kanału — nikt ich o nic nie oskarżył."
+        "from_feed": "Nic nie zostało jeszcze oznaczone przyciskiem SUS, więc to nowe konta prosto z kanału — nikt ich o nic nie oskarżył.",
+        "finding_title": "Szukam kogoś innego",
+        "finding_body": "Czytam kanał w poszukiwaniu następnego nowego konta."
       },
       "sock_or_not": {
         "also_made_it": "Założył to konto",

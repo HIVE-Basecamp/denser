@@ -23,6 +23,9 @@ import PaidByPanel from './paid-by-panel';
 
 const [ACCUSE, CLEAR] = SOCK_OR_NOT_CHOICES;
 
+/** How few are left before the game goes and asks the feed for more. */
+const TOP_UP_AT = 5;
+
 /** Module scope so the queue's effect does not re-run on every render. */
 const judgedAccounts = () => readSockOrNotVerdicts().map((verdict) => verdict.account);
 
@@ -39,13 +42,15 @@ const judgedAccounts = () => readSockOrNotVerdicts().map((verdict) => verdict.ac
  * account, who has sent or lent it anything, and a way into who has been
  * voting it up. Nothing there says what any of it means (ETHOS.md).
  *
- * The queue is seeded from the SUS button: accounts already ticked `sock`. Its
- * own queue and its own record — a player may well think an account is a sock
- * and not a bot, and neither answer touches the other.
+ * The queue puts accounts ticked `sock` with the SUS button first and new
+ * accounts from the feed behind them, and never offers one this game has
+ * already been answered on. Its own queue and its own record — a player may
+ * well think an account is a sock and not a bot, and neither answer touches
+ * the other.
  */
 const SockOrNotGame = () => {
   const { t } = useTranslation('common_blog');
-  const { queue, loaded, source } = useSuspectQueue('sock', judgedAccounts);
+  const { queue, loaded, loadMore, hasMore } = useSuspectQueue('sock', judgedAccounts);
   const [index, setIndex] = useState(0);
   const [verdict, setVerdict] = useState<SockOrNotVerdict | null>(null);
 
@@ -56,6 +61,12 @@ const SockOrNotGame = () => {
   useEffect(() => {
     setVerdict(suspect ? findSockOrNotVerdict(suspect.account) : null);
   }, [suspect]);
+
+  // Ask the feed for more before the last few are used up, so the game never
+  // arrives at an empty screen mid-play.
+  useEffect(() => {
+    if (index >= queue.length - TOP_UP_AT) loadMore();
+  }, [index, queue.length, loadMore]);
 
   const advance = useCallback(() => setIndex((current) => current + 1), []);
 
@@ -85,6 +96,17 @@ const SockOrNotGame = () => {
     );
   }
 
+  // Run off the end while the feed still has people: that is a wait, not the
+  // end of the game, and it must never read as one.
+  if (!suspect && hasMore) {
+    return (
+      <GameNotice
+        title={t('basecamp.games.judging.finding_title')}
+        body={t('basecamp.games.judging.finding_body')}
+      />
+    );
+  }
+
   if (!suspect) {
     return (
       <GameNotice
@@ -104,7 +126,7 @@ const SockOrNotGame = () => {
         </span>
       </div>
 
-      {source === 'feed' ? (
+      {suspect.source === 'feed' ? (
         <p className={cn(BASECAMP_MUTED, 'text-[11px] leading-snug')} data-testid="judging-from-feed">
           {t('basecamp.games.judging.from_feed')}
         </p>

@@ -102,6 +102,38 @@ every time, which on an account already answered was a loop that never settled.
 The queue is memoised now. Reproduced and confirmed fixed with Start again on a
 judged account: zero renders in two seconds.
 
+## The queue rule, settled
+
+Bryan, after playing it: "You were meant to pick any post if there were no
+selections from the game. So just pick the most recent post from the new users
+feed. Never let it be blank, and never show me the old queue of already decided
+bot entries. Only uncompleted from game or a new post from new user feed. Both
+games should have that rule."
+
+Two rules now, and they hold for both games:
+
+**Never an account this game has already been answered on.** That includes the
+ones marked with the SUS button — a verdict is finished work, and handing it
+back is busywork. Marked-and-answered used to come round again on every visit,
+which was the first thing wrong with it.
+
+**Never empty.** Marked-and-unanswered come first; behind them, and the moment
+they run out, new accounts from the Basecamp feed, newest post first. One
+queue, not two modes: playing rolls straight from the last marked account into
+the feed with no wall in between. The line saying where the account came from
+now follows the account on the slab rather than the whole queue, because a
+single queue holds both kinds.
+
+The feed is asked for another page five accounts before the end, so it does not
+run dry mid-play. Measured: a queue of 12 grew to 34 while being played, and to
+32 while being skipped through at sixteen a second. Where a player does outrun
+the chain the screen says "Finding somebody else", never "That's everyone" —
+the finished notice only appears when the feed really has nothing left.
+
+Checked: an account decided in Bot or Not but not in Sock or Not disappeared
+from one game and stayed in the other; two accounts answered in a session were
+gone after a reload; walking the whole queue never turned up either of them.
+
 ## Open, not decided
 
 - Whether the money panel belongs on the postcard too, or stays in the game.

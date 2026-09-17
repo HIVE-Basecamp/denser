@@ -939,7 +939,9 @@
         "skip": "Saltar",
         "where_it_goes": "Por ahora se guarda en este dispositivo y no se publica nada en Hive.",
         "start_again": "Empezar de nuevo",
-        "from_feed": "Todavía no hay nada marcado con el botón SUS, así que estas son cuentas nuevas directamente del feed: nadie las ha acusado de nada."
+        "from_feed": "Todavía no hay nada marcado con el botón SUS, así que estas son cuentas nuevas directamente del feed: nadie las ha acusado de nada.",
+        "finding_title": "Buscando a alguien más",
+        "finding_body": "Leyendo el feed para encontrar la siguiente cuenta nueva."
       },
       "sock_or_not": {
         "also_made_it": "Creó esta cuenta",

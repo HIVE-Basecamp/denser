@@ -939,7 +939,9 @@
         "skip": "Passer",
         "where_it_goes": "Conservé sur cet appareil pour l'instant, et rien n'est publié sur Hive.",
         "start_again": "Recommencer",
-        "from_feed": "Rien n'est encore signalé avec le bouton SUS, donc ce sont de nouveaux comptes venus directement du fil — personne ne les a accusés de quoi que ce soit."
+        "from_feed": "Rien n'est encore signalé avec le bouton SUS, donc ce sont de nouveaux comptes venus directement du fil — personne ne les a accusés de quoi que ce soit.",
+        "finding_title": "Recherche de quelqu'un d'autre",
+        "finding_body": "Lecture du fil pour trouver le prochain nouveau compte."
       },
       "sock_or_not": {
         "also_made_it": "A créé ce compte",

@@ -21,6 +21,9 @@ import { useSuspect } from '../judging/use-suspect';
 
 const [ACCUSE, CLEAR] = BOT_OR_NOT_CHOICES;
 
+/** How few are left before the game goes and asks the feed for more. */
+const TOP_UP_AT = 5;
+
 /** Module scope so the queue's effect does not re-run on every render. */
 const judgedAccounts = () => readBotOrNotVerdicts().map((verdict) => verdict.account);
 
@@ -33,13 +36,14 @@ const judgedAccounts = () => readBotOrNotVerdicts().map((verdict) => verdict.acc
  * curator already knows. Nothing here tells the player what the readouts mean
  * (ETHOS.md) — it puts them in one place and gets out of the way.
  *
- * The queue is seeded from the SUS button: accounts already ticked `bot`.
- * A random account would be a game; these are accounts somebody already
- * wondered about, which is the point.
+ * The queue puts accounts ticked `bot` with the SUS button first — somebody
+ * already wondered about those, which is the point — and new accounts from the
+ * feed behind them, so there is always somebody to look at. An account this
+ * game has already been answered on never comes back.
  */
 const BotOrNotGame = () => {
   const { t } = useTranslation('common_blog');
-  const { queue, loaded, source } = useSuspectQueue('bot', judgedAccounts);
+  const { queue, loaded, loadMore, hasMore } = useSuspectQueue('bot', judgedAccounts);
   const [index, setIndex] = useState(0);
   const [verdict, setVerdict] = useState<BotOrNotVerdict | null>(null);
 
@@ -50,6 +54,12 @@ const BotOrNotGame = () => {
   useEffect(() => {
     setVerdict(suspect ? findBotOrNotVerdict(suspect.account) : null);
   }, [suspect]);
+
+  // Ask the feed for more before the last few are used up, so the game never
+  // arrives at an empty screen mid-play.
+  useEffect(() => {
+    if (index >= queue.length - TOP_UP_AT) loadMore();
+  }, [index, queue.length, loadMore]);
 
   const advance = useCallback(() => setIndex((current) => current + 1), []);
 
@@ -79,6 +89,17 @@ const BotOrNotGame = () => {
     );
   }
 
+  // Run off the end while the feed still has people: that is a wait, not the
+  // end of the game, and it must never read as one.
+  if (!suspect && hasMore) {
+    return (
+      <GameNotice
+        title={t('basecamp.games.judging.finding_title')}
+        body={t('basecamp.games.judging.finding_body')}
+      />
+    );
+  }
+
   if (!suspect) {
     return (
       <GameNotice
@@ -98,7 +119,7 @@ const BotOrNotGame = () => {
         </span>
       </div>
 
-      {source === 'feed' ? (
+      {suspect.source === 'feed' ? (
         <p className={cn(BASECAMP_MUTED, 'text-[11px] leading-snug')} data-testid="judging-from-feed">
           {t('basecamp.games.judging.from_feed')}
         </p>
