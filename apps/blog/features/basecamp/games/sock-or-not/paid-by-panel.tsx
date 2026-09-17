@@ -13,6 +13,7 @@ import { TOP_PAYERS_COUNT } from '../../lib/payers';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../../lib/theme';
 import { formatTokenAmount } from '../../postcard/format-value';
 import TopVotersDialog from '../../postcard/top-voters-dialog';
+import { RESEARCH_LINK } from '../judging/research-link';
 import PayerRow from './payer-row';
 
 const AMBER = BASECAMP_VIVID.orange;
@@ -78,7 +79,7 @@ const PaidByPanel = ({ account, createdMs }: PaidByPanelProps) => {
         {creator ? (
           <>
             <span className={BASECAMP_MUTED}>{t('basecamp.games.sock_or_not.made_by')}</span>{' '}
-            <Link href={`/@${creator}`} className={cn(BASECAMP_LINK, 'font-semibold')}>
+            <Link href={`/@${creator}`} className={cn(BASECAMP_LINK, 'font-semibold')} {...RESEARCH_LINK}>
               @{creator}
             </Link>
           </>

@@ -134,6 +134,38 @@ Checked: an account decided in Bot or Not but not in Sock or Not disappeared
 from one game and stayed in the other; two accounts answered in a session were
 gone after a reload; walking the whole queue never turned up either of them.
 
+## Research leaves in a new tab
+
+Bryan: "If you click in doing research to any of the things — like post or blog
+or comments — it should only ever open a new tab, so that the original tab and
+place is still there. Currently when you click it changes the same tab I'm
+playing Sock or Not or Spot the Bot in, then I try to go back and I need to
+re-enter. Better that the tab stay untouched so you can go off researching and
+get back to the game on the same tab."
+
+Everything that leaves a judging game now opens beside it: the avatar and name,
+their blog, their posts, their replies, the account that made this one, every
+payer in the money table, every comment in the comments panel, every voter in
+the voters panel, and every link on the postcard underneath.
+
+Three of those were one attribute each. The postcard was not: it is the feed's
+own component, and on the feed following a link in place is exactly right, so
+it must not be given a mode to carry around. The game wraps it and catches the
+click instead — on the way DOWN, in the capture phase, because every link in
+the card is a Next.js link that cancels the click itself and routes the page in
+place. A bubbling handler sees it only after the navigation is already decided;
+that was the first attempt and it did not work, which the browser check caught.
+A modified click is still left alone, so the browser's own new-tab, new-window
+and save-as handling is untouched.
+
+The two panels — comments and voters — open a new tab from the feed as well.
+They sit over whatever the reader was doing, and a link that navigates in place
+throws away both the place and the read the panel just made.
+
+Checked: five postcard links all opened `_blank` with the page and the game
+untouched; 25 comment links and 8 voter links all `_blank`; the profile and the
+money table all `_blank`.
+
 ## Open, not decided
 
 - Whether the money panel belongs on the postcard too, or stays in the game.

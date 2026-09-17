@@ -50,6 +50,11 @@ const CommentRow = ({ comment, nowMs }: CommentRowProps) => {
           href={comment.url}
           className={cn(BASECAMP_LINK, 'flex shrink-0 items-center gap-1 text-[10px]')}
           title={t('basecamp.card.comments.open')}
+          // A new tab, always. This is a panel over whatever the reader was
+          // doing — a feed they had scrolled, a game they were half way
+          // through — and following a link in place throws that away.
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <ExternalLink className="h-3 w-3" style={{ color: CYAN }} aria-hidden="true" />
           <span className="sr-only">{t('basecamp.card.comments.open')}</span>

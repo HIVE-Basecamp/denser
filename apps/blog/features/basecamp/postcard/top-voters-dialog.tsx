@@ -93,6 +93,11 @@ const VoterRow = ({ tally, rank, totalRshares, rate }: VoterRowProps) => {
         href={`/@${tally.voter}`}
         className="flex min-w-0 flex-1 items-center gap-2.5"
         data-testid="basecamp-top-voter-name"
+        // A new tab, for the same reason the comments panel opens one: this
+        // sits over a feed or a game, and going to a voter in place loses it —
+        // along with the whole-life read the panel just made.
+        target="_blank"
+        rel="noopener noreferrer"
       >
         <span
           className="block shrink-0 rounded-full bg-cover bg-no-repeat ring-1 ring-white/15"

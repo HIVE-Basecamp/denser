@@ -5,6 +5,7 @@ import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import CommentsButton from '../../postcard/comments-button';
+import { RESEARCH_LINK } from './research-link';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED } from '../../lib/theme';
 
 interface SuspectProfileProps {
@@ -36,7 +37,7 @@ const SuspectProfile = ({ account, reputation, accountAgeDays, postCount }: Susp
 
   return (
     <div className="flex flex-wrap items-center gap-4" data-testid="judging-profile">
-      <Link href={`/@${account}`} className="shrink-0">
+      <Link href={`/@${account}`} className="shrink-0" {...RESEARCH_LINK}>
         <span
           className="block h-16 w-16 rounded-full bg-cover bg-no-repeat ring-2 ring-[#B79CFF]/45 transition-shadow hover:ring-[#B79CFF]"
           style={{ backgroundImage: `url(${getUserAvatarUrl(account, 'large')})` }}
@@ -48,17 +49,30 @@ const SuspectProfile = ({ account, reputation, accountAgeDays, postCount }: Susp
           href={`/@${account}`}
           className={cn(BASECAMP_LINK, 'text-[20px] font-bold leading-none')}
           data-testid="judging-account"
+          {...RESEARCH_LINK}
         >
           {account}
         </Link>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
-          <Link href={`/@${account}`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
+          <Link
+            href={`/@${account}`}
+            className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}
+            {...RESEARCH_LINK}
+          >
             {t('basecamp.games.judging.their_blog')}
           </Link>
-          <Link href={`/@${account}/posts`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
+          <Link
+            href={`/@${account}/posts`}
+            className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}
+            {...RESEARCH_LINK}
+          >
             {t('basecamp.games.judging.their_posts')}
           </Link>
-          <Link href={`/@${account}/comments`} className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}>
+          <Link
+            href={`/@${account}/comments`}
+            className={cn(BASECAMP_LINK, 'underline-offset-2 hover:underline')}
+            {...RESEARCH_LINK}
+          >
             {t('basecamp.games.judging.their_comments')}
           </Link>
           <CommentsButton account={account} />

@@ -7,6 +7,7 @@ import { useTranslation } from '@/blog/i18n/client';
 import { BASECAMP_LINK, BASECAMP_MUTED, BASECAMP_VIVID } from '../../lib/theme';
 import { formatTokenAmount } from '../../postcard/format-value';
 import type { PayerRow as PayerRowData } from '../../lib/payers';
+import { RESEARCH_LINK } from '../judging/research-link';
 
 const AMBER = BASECAMP_VIVID.orange;
 const LIME = BASECAMP_VIVID.lime;
@@ -54,7 +55,7 @@ const PayerRow = ({ row, rank, hivePerVest, isCreator }: PayerRowProps) => {
       <span className="w-5 shrink-0 pt-1 text-right text-[12px] font-bold tabular-nums" style={{ color: AMBER }}>
         {rank}
       </span>
-      <Link href={`/@${row.payer}`} className="shrink-0" aria-hidden="true" tabIndex={-1}>
+      <Link href={`/@${row.payer}`} className="shrink-0" aria-hidden="true" tabIndex={-1} {...RESEARCH_LINK}>
         <span
           className="block rounded-full bg-cover bg-no-repeat ring-1 ring-white/15"
           style={{
@@ -70,6 +71,7 @@ const PayerRow = ({ row, rank, hivePerVest, isCreator }: PayerRowProps) => {
             href={`/@${row.payer}`}
             className={cn(BASECAMP_LINK, 'truncate text-[12.5px] font-semibold')}
             data-testid="sock-or-not-payer-name"
+            {...RESEARCH_LINK}
           >
             @{row.payer}
           </Link>
