@@ -1,5 +1,5 @@
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
-import { MAX_TRAFFIC, TAP_MS } from './constants';
+import { MAX_CANVAS_PIXELS, MAX_TRAFFIC, MIN_CANVAS_SCALE, TAP_MS } from './constants';
 import type { BuzzZone, HoverInfo, RideState, WitnessCard } from './types';
 import { useEffect } from 'react';
 import {
@@ -301,9 +301,13 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     let H = 0;
     let DPR = 1;
     const resize = () => {
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
       W = wrap.clientWidth;
       H = wrap.clientHeight;
+      // What the screen asks for, then what we can afford. Full screen on a
+      // big monitor is the case this exists for (MAX_CANVAS_PIXELS).
+      const asked = Math.min(window.devicePixelRatio || 1, 2);
+      const afford = Math.sqrt(MAX_CANVAS_PIXELS / Math.max(1, W * H));
+      DPR = Math.max(MIN_CANVAS_SCALE, Math.min(asked, afford));
       canvas.style.width = `${W}px`;
       canvas.style.height = `${H}px`;
       canvas.width = Math.round(W * DPR);
@@ -838,7 +842,15 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     let last = 0;
     let shake = 0;
     const frame = (ts: number) => {
-      const dt = last ? Math.min(0.033, (ts - last) / 1000) : 0;
+      // The step is the real time since the last frame, with a ceiling. The
+      // ceiling is there so a tab that was hidden for a minute does not come
+      // back and teleport the bug through a wall. The cost of it is that once
+      // frames take longer than the ceiling the world runs on short time and
+      // everything moves in slow motion, which is what a big screen used to
+      // do. The canvas is now kept inside a pixel budget so frames stay under
+      // it, and the ceiling itself is loose enough (a twentieth of a second,
+      // so 20 frames a second) that a dip reads as a stutter, not as syrup.
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
       last = ts;
 
       readInput();
