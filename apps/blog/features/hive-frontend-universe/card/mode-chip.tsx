@@ -1,11 +1,12 @@
 'use client';
 
 /**
- * H.I.V.E.R. — the mode chip, top right.
+ * H.I.V.E.R. — the mode chip, top right, one step in from the corner.
  *
  * Names the mode you are in and counts down to the next round. Tap it to
  * reopen the welcome and change mode. The canvas HUD (top left) repeats the
- * round clock so it is readable with the chip covered.
+ * round clock so it is readable with the chip covered. The very corner
+ * belongs to the full screen button, so the chip sits to the left of it.
  */
 
 import { useTranslation } from '@/blog/i18n/client';
@@ -29,7 +30,7 @@ export const ModeChip = ({ mode, onChange }: ModeChipProps) => {
       data-testid="hfu-mode-chip"
       onClick={onChange}
       aria-label={t('hive_frontend_universe.modes.change')}
-      className="pointer-events-auto absolute right-3 top-3 z-20 flex items-center gap-2 rounded-full border bg-black/60 px-3 py-1.5 font-mono text-xs"
+      className="pointer-events-auto absolute right-14 top-3 z-20 flex items-center gap-2 rounded-full border bg-black/60 px-3 py-1.5 font-mono text-xs"
       style={{ borderColor: `${accent}80` }}
     >
       <span className="font-bold" style={{ color: accent }}>

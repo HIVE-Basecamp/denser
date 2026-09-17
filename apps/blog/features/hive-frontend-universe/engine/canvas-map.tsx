@@ -21,9 +21,11 @@ import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBoard } from '../hooks/use-board';
 import { useCommunities } from '../hooks/use-communities';
 import { useWitnesses } from '../hooks/use-witnesses';
+import { useFullscreen } from '../hooks/use-fullscreen';
 import { GAME_MODES, formatCountdown, msToNextRound, type GameMode } from '../lib/modes';
 import { WelcomeRoom } from '../card/welcome-room';
 import { ModeChip } from '../card/mode-chip';
+import { FullscreenButton } from '../card/fullscreen-button';
 import { PlayerDashboard, type DashboardRow } from '../card/player-dashboard';
 import { adventureGoals, type Goal } from '../lib/goals';
 import { postsMet, type PostMarkState } from './post-marks';
@@ -127,6 +129,10 @@ const Stage = ({ board }: { board: Board }) => {
     if (playerHandle) requestAvatar(playerHandle);
   }, [playerHandle]);
   const wrapRef = useRef<HTMLDivElement>(null);
+  // The stage itself is what goes full screen, so the canvas, the HUD and
+  // every panel travel with it. The canvas is already watching this element
+  // for size changes, so it redraws at the new size on its own.
+  const fullscreen = useFullscreen(wrapRef);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [atNode, setAtNode] = useState(-1);
   // THE MODE (Bryan, 2026-09-06): null until the player answers the welcome.
@@ -161,10 +167,7 @@ const Stage = ({ board }: { board: Board }) => {
   /** A clicked or beam-visited witness citadel, which has no world node. */
   const [clickedWitness, setClickedWitness] = useState<WitnessCard>(null);
 
-  const world: GameWorld = useMemo(
-    () => buildWorld(board.windowStart, board.houses.length),
-    [board]
-  );
+  const world: GameWorld = useMemo(() => buildWorld(board.windowStart, board.houses.length), [board]);
   // The routes seam: named edge-id lists riding ON the mesh, no new geometry.
   const routes = useMemo(() => buildRoutes(world), [world]);
   /**
@@ -180,10 +183,7 @@ const Stage = ({ board }: { board: Board }) => {
     }
     return s;
   }, [world, board]);
-  const newbieTrail = useMemo(
-    () => buildNewbieTrail(world, Array.from(newbieNodes)),
-    [world, newbieNodes]
-  );
+  const newbieTrail = useMemo(() => buildNewbieTrail(world, Array.from(newbieNodes)), [world, newbieNodes]);
   // The transit map: the flagship post line laid first and solid, then the
   // dApps line dashed on top so shared track reads as two services rather
   // than as one line hiding the other.
@@ -498,7 +498,6 @@ const Stage = ({ board }: { board: Board }) => {
     setFullMap(fullMapRef.current);
   };
 
-
   /**
    * THE DASHBOARD SNAPSHOT: every fact about the player the engine holds
    * today, as plain rows. Rough on purpose; which rows belong is the
@@ -514,18 +513,28 @@ const Stage = ({ board }: { board: Board }) => {
       { label: t(`${k}.round`), value: formatCountdown(msToNextRound(Date.now())) },
       { label: t(`${k}.side`), value: t(`${k}.${sideRef.current === 'steem' ? 'back' : 'front'}`) },
       { label: t(`${k}.where`), value: gridCellName(p.x, p.y) },
-      { label: t(`${k}.lives`), value: `${Math.max(0, MAX_HITS - (combatRef.current?.hits ?? 0))} / ${MAX_HITS}` },
+      {
+        label: t(`${k}.lives`),
+        value: `${Math.max(0, MAX_HITS - (combatRef.current?.hits ?? 0))} / ${MAX_HITS}`
+      },
       { label: t(`${k}.helmets`), value: `${helmetsRef.current?.count ?? 0} / ${HELMET_TOTAL}` },
       { label: t(`${k}.air`), value: String(helmetsRef.current?.spareAir ?? 0) },
       { label: t(`${k}.ammo`), value: String(coinsRef.current?.carried ?? 0) },
       { label: t(`${k}.banked`), value: String(coinsRef.current?.banked ?? 0) },
       { label: t(`${k}.stolen`), value: String(coinsRef.current?.drained ?? 0) },
       { label: t(`${k}.recovered`), value: String(coinsRef.current?.recovered ?? 0) },
-      { label: t(`${k}.gems`), value: `${gemsRef.current?.collected ?? 0} / ${gemsRef.current?.gems.length ?? 0}` }
+      {
+        label: t(`${k}.gems`),
+        value: `${gemsRef.current?.collected ?? 0} / ${gemsRef.current?.gems.length ?? 0}`
+      }
     ];
     if (modeRef.current === 'adventure' && race) {
       rows.push({ label: t(`${k}.votes`), value: `${race.carried} / ${race.line}`, accent: '#ffd24a' });
-      rows.push({ label: t(`${k}.funded`), value: t(`${k}.${race.funded ? 'yes' : 'no'}`), accent: '#ffd24a' });
+      rows.push({
+        label: t(`${k}.funded`),
+        value: t(`${k}.${race.funded ? 'yes' : 'no'}`),
+        accent: '#ffd24a'
+      });
     }
     rows.push({
       label: t(`${k}.keep`),
@@ -671,17 +680,21 @@ const Stage = ({ board }: { board: Board }) => {
   const atHouse = node?.kind === 'house' && board.houses[node.ref] ? board.houses[node.ref] : null;
   const atLandmark = node?.kind === 'landmark' ? LANDMARKS[node.ref] : null;
   const atCommunity: TopCommunity | null =
-    node?.kind === 'community' && communities ? communities[node.ref] ?? null : null;
+    node?.kind === 'community' && communities ? (communities[node.ref] ?? null) : null;
   /** The community the bug is standing in, for the "You are here" banner. */
   const insideCommunity: TopCommunity | null =
-    inCommunity >= 0 && communities ? communities[inCommunity] ?? null : null;
+    inCommunity >= 0 && communities ? (communities[inCommunity] ?? null) : null;
 
   // One line of news on a landmark panel: the DHF race at the park in
   // adventure mode, else the day's buzzing station.
   const landmarkNote = (id: string): string | undefined => {
     const race = raceRef.current;
     if (id === FLIP_LANDMARK_ID) {
-      return t(side === 'steem' ? 'hive_frontend_universe.panel.ruins_back' : 'hive_frontend_universe.panel.ruins_front');
+      return t(
+        side === 'steem'
+          ? 'hive_frontend_universe.panel.ruins_back'
+          : 'hive_frontend_universe.panel.ruins_front'
+      );
     }
     if (id === 'proposals' && mode === 'adventure' && race) {
       if (race.funded) return t('hive_frontend_universe.panel.race_funded');
@@ -762,7 +775,7 @@ const Stage = ({ board }: { board: Board }) => {
       // seamlessly. outline-none because the focus ring on the whole stage
       // read as a glitch.
       tabIndex={-1}
-      className="relative h-full w-full select-none overflow-hidden bg-[#04030a] outline-none touch-none"
+      className="relative h-full w-full touch-none select-none overflow-hidden bg-[#04030a] outline-none"
       data-testid="hfu-map"
     >
       <canvas ref={canvasRef} className="absolute inset-0 block" />
@@ -846,6 +859,13 @@ const Stage = ({ board }: { board: Board }) => {
         />
       ) : null}
 
+      {/*
+        THE FULL SCREEN BUTTON, hard into the corner and over everything,
+        including the welcome. The mode chip has stepped left to leave it the
+        corner.
+      */}
+      {fullscreen.supported ? <FullscreenButton on={fullscreen.on} onToggle={fullscreen.toggle} /> : null}
+
       {/* THE MODE CHIP, top right: mode name + round clock; tap to change. */}
       {mode ? <ModeChip mode={mode} onChange={reopenWelcome} /> : null}
       {mode ? (
@@ -859,14 +879,21 @@ const Stage = ({ board }: { board: Board }) => {
         </button>
       ) : null}
       {dashRows ? (
-        <PlayerDashboard title={t('hive_frontend_universe.dashboard.title')} rows={dashRows} onClose={toggleDashboard} />
+        <PlayerDashboard
+          title={t('hive_frontend_universe.dashboard.title')}
+          rows={dashRows}
+          onClose={toggleDashboard}
+        />
       ) : null}
 
       {/* THE WELCOME AT BASECAMP: every round starts here (Bryan). */}
       {mode === null ? <WelcomeRoom onPick={pickMode} goals={roundGoals()} /> : null}
 
       <Controls
-        labels={{ hop: t('hive_frontend_universe.controls.hop'), map: t('hive_frontend_universe.controls.map') }}
+        labels={{
+          hop: t('hive_frontend_universe.controls.hop'),
+          map: t('hive_frontend_universe.controls.map')
+        }}
         onVector={(x, y) => {
           stickRef.current.x = x;
           stickRef.current.y = y;
