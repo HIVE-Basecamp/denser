@@ -1068,6 +1068,24 @@
       "newbs": "NOVIZI",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "Controller",
+      "close": "Chiudi",
+      "connected": "Controller",
+      "test": "Premi un tasto qualsiasi per vederlo accendersi",
+      "stick": "Levetta sinistra",
+      "non_standard": "Questo controller non dichiara l’ordine di tasti abituale, quindi un tasto può fare la cosa sbagliata. Premi ognuno qui sotto e annota quale si accende.",
+      "actions": {
+        "hop": "Salta",
+        "fire": "Spara",
+        "map": "Mappa di viaggio (tieni premuto per sbirciare)",
+        "close": "Chiudi / indietro",
+        "dashboard": "Cruscotto",
+        "fullscreen": "Schermo intero",
+        "grid": "Griglia di progetto",
+        "mode": "Cambia modo"
+      }
+    },
     "fullscreen": {
       "enter": "Schermo intero",
       "exit": "Esci da schermo intero"

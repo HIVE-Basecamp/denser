@@ -1170,6 +1170,24 @@
       "newbs": "NEWBS",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "Controller",
+      "close": "Close",
+      "connected": "Controller",
+      "test": "Press any button to see it light up",
+      "stick": "Left stick",
+      "non_standard": "This controller does not report the usual button order, so a button may do the wrong thing. Press each one below and note which slot lights up.",
+      "actions": {
+        "hop": "Hop",
+        "fire": "Fire",
+        "map": "Travel map (hold to peek)",
+        "close": "Close / back",
+        "dashboard": "Dashboard",
+        "fullscreen": "Full screen",
+        "grid": "Planning grid",
+        "mode": "Change mode"
+      }
+    },
     "fullscreen": {
       "enter": "Full screen",
       "exit": "Leave full screen"

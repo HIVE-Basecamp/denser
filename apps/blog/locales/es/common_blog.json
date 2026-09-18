@@ -1068,6 +1068,24 @@
       "newbs": "NOVATOS",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "Control",
+      "close": "Cerrar",
+      "connected": "Control",
+      "test": "Presiona cualquier botón para verlo encenderse",
+      "stick": "Joystick izquierdo",
+      "non_standard": "Este control no informa el orden de botones habitual, así que un botón puede hacer algo distinto. Presiona cada uno abajo y anota cuál se enciende.",
+      "actions": {
+        "hop": "Saltar",
+        "fire": "Disparar",
+        "map": "Mapa de viaje (mantén para ver)",
+        "close": "Cerrar / atrás",
+        "dashboard": "Panel",
+        "fullscreen": "Pantalla completa",
+        "grid": "Rejilla de planeación",
+        "mode": "Cambiar modo"
+      }
+    },
     "fullscreen": {
       "enter": "Pantalla completa",
       "exit": "Salir de pantalla completa"

@@ -1,5 +1,6 @@
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
 import { MAX_CANVAS_PIXELS, MAX_TRAFFIC, MIN_CANVAS_SCALE, TAP_MS } from './constants';
+import { DEFAULT_PAD_MAP, crossVector, padStick, wentDown, type PadAction } from '../../lib/pad';
 import type { BuzzZone, HoverInfo, RideState, WitnessCard } from './types';
 import { useEffect } from 'react';
 import {
@@ -38,7 +39,14 @@ import { placeBlocks, blockPlayer, type BlockState } from '../blocks';
 import { createFootprints, addReplyTracks, type FootprintState } from '../footprints';
 import { fetchRepliers } from '../../data/fetch-replies';
 import { createRace, takeVote, deliverVotes, dropVotes, type RaceState } from '../dhf-race';
-import { createPostMarks, visitPost, shouldAskMark, applyMark, postsMet, type PostMarkState } from '../post-marks';
+import {
+  createPostMarks,
+  visitPost,
+  shouldAskMark,
+  applyMark,
+  postsMet,
+  type PostMarkState
+} from '../post-marks';
 import { fetchMyMark } from '../../data/fetch-my-mark';
 import { adventureGoals } from '../../lib/goals';
 import { createKeep, releaseHoard, updateKeep, KEEP_LANDMARK_ID, type KeepState } from '../keep';
@@ -91,6 +99,12 @@ interface FrameLoopArgs {
   firePlayerShot: () => void;
   hopWithO2: () => void;
   toggleDashboard: () => void;
+  /** Escape, as a function: shut the travel map, else shut whatever panel is open. */
+  closePanel: () => void;
+  /** The full screen button, as a function, so a controller can reach it too. */
+  toggleFullscreen: () => void;
+  /** Back to the welcome to pick a different mode (the mode chip, as a function). */
+  changeMode: () => void;
   witnessStats: (name: string) => { label: string; value: string }[];
 
   /** Engine state, all in refs so the loop never re-creates it. */
@@ -151,6 +165,8 @@ interface FrameLoopArgs {
   setSide: Dispatch<SetStateAction<BoardSide>>;
   setHover: Dispatch<SetStateAction<HoverInfo>>;
   setClickedWitness: Dispatch<SetStateAction<WitnessCard>>;
+  /** The connected controller's own name, or null. Drives the HUD chip. */
+  setPadName: Dispatch<SetStateAction<string | null>>;
 }
 
 /**
@@ -193,6 +209,9 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     firePlayerShot,
     hopWithO2,
     toggleDashboard,
+    closePanel,
+    toggleFullscreen,
+    changeMode,
     witnessStats,
     playerRef,
     camRef,
@@ -243,7 +262,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     setFullMap,
     setSide,
     setHover,
-    setClickedWitness
+    setClickedWitness,
+    setPadName
   } = a;
 
   useEffect(() => {
@@ -327,8 +347,21 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
     };
     const GAME_KEYS = new Set([
-      'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ',
-      'w', 'a', 's', 'd', 'm', 'g', 'x', 'z', 'f', 'i'
+      'arrowup',
+      'arrowdown',
+      'arrowleft',
+      'arrowright',
+      ' ',
+      'w',
+      'a',
+      's',
+      'd',
+      'm',
+      'g',
+      'x',
+      'z',
+      'f',
+      'i'
     ]);
     const onKeyDown = (e: KeyboardEvent) => {
       if (typingTarget(e)) return;
@@ -478,10 +511,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         // cursor is on its glass, so panes win there and the oculus still
         // opens the whole window's panel.
         if (lm.id === 'rose_window' && z >= 0.3) {
-          const mapn = Math.max(
-            0,
-            Math.min(1, (playZ() - z) / Math.max(playZ() - fitZ(), 0.001))
-          );
+          const mapn = Math.max(0, Math.min(1, (playZ() - z) / Math.max(playZ() - fitZ(), 0.001)));
           const paneR = (BIG_SIZE.rosewindow ?? 140) * (1 + mapn * 0.9) * 2.2;
           for (let k = 0; k < ROSE_WINDOW_PANES.length; k++) {
             const pane = ROSE_WINDOW_PANES[k];
@@ -711,6 +741,98 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     };
     canvas.addEventListener('mouseleave', onCanvasLeave);
 
+    /*
+      THE CONTROLLER (lib/pad.ts holds the map and the maths).
+
+      A controller is not like a key. A key shouts when it is pressed; a
+      controller says nothing and must be ASKED, once a frame, which is why
+      this is read here and not wired to listeners. Every action a button
+      fires is the very same function the key fires, so nothing in the game
+      has to know how it was told.
+
+      The browser hides a connected controller until a button on it is
+      pressed once. That is the browser protecting you from pages that
+      fingerprint your hardware, not a fault, and it is why nothing appears
+      in the HUD until the first press.
+    */
+    let padDown: boolean[] = [];
+    let padNameShown: string | null = null;
+    let padMapDownAt = 0;
+    const padVec: Vec2 = { x: 0, y: 0 };
+
+    /** Every action a button can fire. The map button is a hold as well as a tap, so it is handled apart. */
+    const padFire: Record<Exclude<PadAction, 'map'>, () => void> = {
+      hop: () => {
+        if (!fullMapRef.current) hopWithO2();
+      },
+      fire: () => {
+        if (!fullMapRef.current) firePlayerShot();
+      },
+      close: closePanel,
+      dashboard: toggleDashboard,
+      fullscreen: toggleFullscreen,
+      grid: () => {
+        gridRef.current = !gridRef.current;
+      },
+      mode: changeMode
+    };
+
+    const readPad = () => {
+      const list = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
+      let pad: Gamepad | null = null;
+      for (const g of list) {
+        if (g && g.connected) {
+          pad = g;
+          break;
+        }
+      }
+      if (!pad) {
+        if (padNameShown !== null) {
+          padNameShown = null;
+          setPadName(null);
+          padDown = [];
+          padVec.x = 0;
+          padVec.y = 0;
+        }
+        return;
+      }
+      if (pad.id !== padNameShown) {
+        padNameShown = pad.id;
+        setPadName(pad.id);
+      }
+
+      const down = pad.buttons.map((b) => b.pressed);
+      // The left stick first; the cross stands in when the stick is at rest,
+      // so either one drives and neither fights the other.
+      const stick = padStick(pad.axes[0] ?? 0, pad.axes[1] ?? 0);
+      const lean = stick.x === 0 && stick.y === 0 ? crossVector(down) : stick;
+      padVec.x = lean.x;
+      padVec.y = lean.y;
+
+      // THE MAP BUTTON: held it peeks, released quickly it opens or shuts.
+      // The same two behaviours the M key has, from the one button.
+      const mapBtn = DEFAULT_PAD_MAP.map;
+      if (down[mapBtn] && !padDown[mapBtn]) {
+        padMapDownAt = Date.now();
+        mapHeldRef.current = true;
+      }
+      if (!down[mapBtn] && padDown[mapBtn]) {
+        mapHeldRef.current = false;
+        if (Date.now() - padMapDownAt < TAP_MS) {
+          fullMapRef.current = !fullMapRef.current;
+          setFullMap(fullMapRef.current);
+        }
+      }
+
+      // Everything else fires on the press and only on the press.
+      for (const i of wentDown(padDown, down)) {
+        for (const [action, button] of Object.entries(DEFAULT_PAD_MAP)) {
+          if (button === i && action !== 'map') padFire[action as Exclude<PadAction, 'map'>]();
+        }
+      }
+      padDown = down;
+    };
+
     const readInput = () => {
       const keys = keysRef.current;
       let x = 0;
@@ -728,6 +850,12 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       if (Math.hypot(stick.x, stick.y) > 0.05) {
         x = stick.x;
         y = stick.y;
+      }
+      // A leaning controller stick wins over both, because it is the only one
+      // of the three that can say HOW HARD as well as which way.
+      if (Math.hypot(padVec.x, padVec.y) > 0) {
+        x = padVec.x;
+        y = padVec.y;
       }
       inputRef.current.x = x;
       inputRef.current.y = y;
@@ -853,6 +981,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
       last = ts;
 
+      readPad();
       readInput();
       if (p.stuck > 0) p.stuck = Math.max(0, p.stuck - dt);
       const hz = hazardsRef.current;
@@ -966,7 +1095,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       }
       // The HUD is painted on the canvas every frame, so the token counts
       // need no React state to stay current.
-      if (alive && coinsRef.current) updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
+      if (alive && coinsRef.current)
+        updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
       if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
       if (alive && keepRef.current) updateKeep(keepRef.current, dt);
       if (alive && gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
@@ -1089,7 +1219,13 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         const fn = nodes[ferrisNode];
         const distWheel = Math.hypot(fn.x - p.x, fn.y - p.y);
         if (!ride && wheelArmedRef.current && !hazardHeld && distWheel < 430) {
-          ride = { type: 'wheel', node: ferrisNode, cx: fn.x, cy: fn.y, startAngle: (ts / 1000) * FERRIS_SPIN };
+          ride = {
+            type: 'wheel',
+            node: ferrisNode,
+            cx: fn.x,
+            cy: fn.y,
+            startAngle: (ts / 1000) * FERRIS_SPIN
+          };
           rideRef.current = ride;
           wheelArmedRef.current = false;
         }
@@ -1265,7 +1401,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         cubes,
         formations,
         witnesses: witnessVisualsRef.current,
-        flows: alive ? flowsRef.current?.particles ?? [] : [],
+        flows: alive ? (flowsRef.current?.particles ?? []) : [],
         traffic: alive ? trafficRef.current : [],
         routeLayers,
         critters: alive ? crittersRef.current : null,

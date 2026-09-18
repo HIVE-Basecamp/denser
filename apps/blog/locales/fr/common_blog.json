@@ -1068,6 +1068,24 @@
       "newbs": "NOVICES",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "Manette",
+      "close": "Fermer",
+      "connected": "Manette",
+      "test": "Appuyez sur un bouton pour le voir s’allumer",
+      "stick": "Stick gauche",
+      "non_standard": "Cette manette n’annonce pas l’ordre de boutons habituel, un bouton peut donc faire autre chose. Appuyez sur chacun ci-dessous et notez lequel s’allume.",
+      "actions": {
+        "hop": "Sauter",
+        "fire": "Tirer",
+        "map": "Carte de voyage (maintenir pour voir)",
+        "close": "Fermer / retour",
+        "dashboard": "Tableau de bord",
+        "fullscreen": "Plein écran",
+        "grid": "Grille de repérage",
+        "mode": "Changer de mode"
+      }
+    },
     "fullscreen": {
       "enter": "Plein écran",
       "exit": "Quitter le plein écran"

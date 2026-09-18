@@ -1073,6 +1073,24 @@
       "newbs": "NOWI",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "Kontroler",
+      "close": "Zamknij",
+      "connected": "Kontroler",
+      "test": "Naciśnij dowolny przycisk, aby zobaczyć, jak się zapala",
+      "stick": "Lewy drążek",
+      "non_standard": "Ten kontroler nie zgłasza zwykłej kolejności przycisków, więc przycisk może zrobić coś innego. Naciśnij każdy poniżej i zanotuj, który się zapala.",
+      "actions": {
+        "hop": "Skok",
+        "fire": "Strzał",
+        "map": "Mapa podróży (przytrzymaj, aby podejrzeć)",
+        "close": "Zamknij / wstecz",
+        "dashboard": "Pulpit",
+        "fullscreen": "Pełny ekran",
+        "grid": "Siatka planowania",
+        "mode": "Zmień tryb"
+      }
+    },
     "fullscreen": {
       "enter": "Pełny ekran",
       "exit": "Wyjdź z pełnego ekranu"

@@ -21,6 +21,7 @@ import { raceChecks } from './race';
 import { planetChecks } from './planet';
 import { globeChecks } from './globe';
 import { seaChecks } from './sea';
+import { padChecks } from './pad';
 import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
@@ -34,4 +35,5 @@ raceChecks();
 planetChecks();
 globeChecks();
 seaChecks();
+padChecks();
 report();

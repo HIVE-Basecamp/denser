@@ -26,6 +26,7 @@ import { GAME_MODES, formatCountdown, msToNextRound, type GameMode } from '../li
 import { WelcomeRoom } from '../card/welcome-room';
 import { ModeChip } from '../card/mode-chip';
 import { FullscreenButton } from '../card/fullscreen-button';
+import { PadCard } from '../card/pad-card';
 import { PlayerDashboard, type DashboardRow } from '../card/player-dashboard';
 import { adventureGoals, type Goal } from '../lib/goals';
 import { postsMet, type PostMarkState } from './post-marks';
@@ -133,6 +134,13 @@ const Stage = ({ board }: { board: Board }) => {
   // every panel travel with it. The canvas is already watching this element
   // for size changes, so it redraws at the new size on its own.
   const fullscreen = useFullscreen(wrapRef);
+  /**
+   * A connected game controller's own name, straight from the browser, or
+   * null. The frame loop sets it, because the browser only admits a
+   * controller exists once a button on it has been pressed.
+   */
+  const [padName, setPadName] = useState<string | null>(null);
+  const [padOpen, setPadOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [atNode, setAtNode] = useState(-1);
   // THE MODE (Bryan, 2026-09-06): null until the player answers the welcome.
@@ -577,6 +585,20 @@ const Stage = ({ board }: { board: Board }) => {
     setDashRows(dashOpenRef.current ? snapshotDashboard() : null);
   };
 
+  /**
+   * Escape, as one function: the travel map first, then whatever panel is
+   * open. The B button on a controller runs this, so one thumb backs out of
+   * everything the same way one key does.
+   */
+  const closePanel = () => {
+    if (fullMapRef.current) {
+      fullMapRef.current = false;
+      setFullMap(false);
+      return;
+    }
+    skip();
+  };
+
   useFrameLoop({
     world,
     board,
@@ -601,6 +623,9 @@ const Stage = ({ board }: { board: Board }) => {
     firePlayerShot,
     hopWithO2,
     toggleDashboard,
+    closePanel,
+    toggleFullscreen: fullscreen.toggle,
+    changeMode: reopenWelcome,
     witnessStats,
     playerRef,
     camRef,
@@ -651,7 +676,8 @@ const Stage = ({ board }: { board: Board }) => {
     setFullMap,
     setSide,
     setHover,
-    setClickedWitness
+    setClickedWitness,
+    setPadName
   });
 
   // While the dashboard is open its numbers keep up with the game.
@@ -858,6 +884,23 @@ const Stage = ({ board }: { board: Board }) => {
           onSkip={skip}
         />
       ) : null}
+
+      {/*
+        THE CONTROLLER CHIP. Only ever drawn once the browser has admitted a
+        controller exists, which it does at the first button press. Tap it for
+        the card that says which button does what.
+      */}
+      {padName ? (
+        <button
+          type="button"
+          data-testid="hfu-pad-chip"
+          onClick={() => setPadOpen(true)}
+          className="pointer-events-auto absolute bottom-3 left-3 z-20 rounded-full border border-[#5df0ff]/50 bg-black/60 px-3 py-1 font-mono text-[11px] font-bold text-[#5df0ff]"
+        >
+          {t('hive_frontend_universe.pad.connected')}
+        </button>
+      ) : null}
+      {padName && padOpen ? <PadCard name={padName} onClose={() => setPadOpen(false)} /> : null}
 
       {/*
         THE FULL SCREEN BUTTON, hard into the corner and over everything,

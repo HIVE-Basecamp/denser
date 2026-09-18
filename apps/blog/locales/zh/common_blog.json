@@ -1068,6 +1068,24 @@
       "newbs": "新人",
       "side": "SIDE"
     },
+    "pad": {
+      "title": "手柄",
+      "close": "关闭",
+      "connected": "手柄",
+      "test": "按任意按键即可看到它亮起",
+      "stick": "左摇杆",
+      "non_standard": "此手柄未报告常规按键顺序，因此某个按键可能会执行错误的操作。请逐个按下下方按键，并记下哪一个亮起。",
+      "actions": {
+        "hop": "跳跃",
+        "fire": "射击",
+        "map": "旅行地图（按住可查看）",
+        "close": "关闭 / 返回",
+        "dashboard": "仪表板",
+        "fullscreen": "全屏",
+        "grid": "规划网格",
+        "mode": "切换模式"
+      }
+    },
     "fullscreen": {
       "enter": "全屏",
       "exit": "退出全屏"
