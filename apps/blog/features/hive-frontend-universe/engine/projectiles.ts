@@ -7,7 +7,7 @@
  * line at real speed with real travel time, so both sides actually aim and
  * actually dodge. Every critter kind takes potshots from range now; the
  * close-range nuisances (hazards.ts) and thieves (coins.ts) are unchanged
- * underneath. The bug fires back by spending a carried token per shot.
+ * underneath. The bug fires back by spending one bullet per shot.
  *
  * AIM is held here (aimX/aimY), not on the player: the last direction the
  * bug travelled, so standing still keeps pointing where you were going.
@@ -18,12 +18,16 @@
  * consequences go through combat.ts (the bug) and the critter's own
  * hp/koUntil fields (critters.ts). A DRIFTING bug is immune to enemy fire,
  * the same rule every other hazard obeys: jumping over trouble always works.
+ *
+ * The bug's own shots are paid for out of engine/ammo.ts, never out of the
+ * tokens it is carrying: tokens are for gathering, bullets are for spending.
  */
 
 import type { PlayerState } from './movement';
 import { KNOCKOUT_HITS, KNOCKOUT_SECONDS, type CritterState, type CritterKind } from './critters';
 import { registerPlayerHit, type CombatState } from './combat';
 import { drawHiveMark } from './icons';
+import { spendRound, type AmmoState } from './ammo';
 
 export interface Shot {
   x: number;
@@ -174,12 +178,17 @@ export function updateProjectiles(
 }
 
 /**
- * The bug fires along its aim (see aimX/aimY), spending one carried token.
- * Returns false with no ammo.
+ * The bug fires along its aim (see aimX/aimY), spending one bullet.
+ * Returns false with an empty magazine, and spends nothing.
+ *
+ * This used to spend a carried TOKEN. Bryan, 2026-09-17: "i need the tokens
+ * to return to just being tokens to collect and not bullets." A token is
+ * gathered and banked; a bullet is spent. Charging the round's score for
+ * every shot made never firing the safest way to play, which is the opposite
+ * of what a shot is for. Bullets now come from ammo packs (engine/ammo.ts).
  */
-export function playerFire(state: ProjectileState, player: PlayerState, coins: { carried: number }): boolean {
-  if (coins.carried <= 0) return false;
-  coins.carried--;
+export function playerFire(state: ProjectileState, player: PlayerState, ammo: AmmoState | null): boolean {
+  if (!spendRound(ammo)) return false;
   fire(
     state,
     player.x + state.aimX * MUZZLE,

@@ -23,6 +23,7 @@ import { globeChecks } from './globe';
 import { seaChecks } from './sea';
 import { padChecks, panelFocusChecks } from './pad';
 import { critterChecks } from './critters';
+import { ammoChecks } from './ammo';
 import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
@@ -39,4 +40,5 @@ seaChecks();
 padChecks();
 panelFocusChecks();
 critterChecks();
+ammoChecks();
 report();

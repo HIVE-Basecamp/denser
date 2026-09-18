@@ -33,6 +33,7 @@ import { type GameWorld } from '../world';
 import { createCritters, updateCritters, type CritterState } from '../critters';
 import { createCoins, updateCoins, type CoinState } from '../coins';
 import { createHelmets, updateHelmets, o2Multiplier, HELMET_TOTAL, type HelmetState } from '../helmets';
+import { createAmmo, tickAmmo, updateAmmo, type AmmoState } from '../ammo';
 import { createHazards, updateHazards, hazardHolds, GOO_SLOW, type HazardState } from '../hazards';
 import { createGems, updateGems, type GemState } from '../gems';
 import { createSea, updateSea, seaHolds, inOpenWater, type SeaState } from '../sea';
@@ -119,6 +120,7 @@ interface FrameLoopArgs {
   crittersRef: MutableRefObject<CritterState | null>;
   coinsRef: MutableRefObject<CoinState | null>;
   helmetsRef: MutableRefObject<HelmetState | null>;
+  ammoRef: MutableRefObject<AmmoState | null>;
   hazardsRef: MutableRefObject<HazardState | null>;
   blocksRef: MutableRefObject<BlockState | null>;
   footprintsRef: MutableRefObject<FootprintState | null>;
@@ -224,6 +226,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     crittersRef,
     coinsRef,
     helmetsRef,
+    ammoRef,
     hazardsRef,
     blocksRef,
     footprintsRef,
@@ -281,6 +284,10 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     // Tokens minted from the window's REAL custom_json count.
     coinsRef.current = createCoins(world, board.counts.customJson, board.windowStart);
     helmetsRef.current = createHelmets();
+    // Bullets and the packs lying about. Rebuilt with the round on purpose:
+    // a supply a player can permanently run out of is a game that can stop
+    // being playable (engine/ammo.ts).
+    ammoRef.current = createAmmo();
     hazardsRef.current = createHazards(crittersRef.current.critters.length);
     blocksRef.current = placeBlocks(world, board.windowStart);
     footprintsRef.current = createFootprints(world, board.houses);
@@ -1180,6 +1187,10 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       if (alive && coinsRef.current)
         updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
       if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
+      if (ammoRef.current) {
+        tickAmmo(ammoRef.current, dt);
+        if (alive) updateAmmo(ammoRef.current, p.x, p.y);
+      }
       if (alive && keepRef.current) updateKeep(keepRef.current, dt);
       if (alive && gemsRef.current) updateGems(gemsRef.current, p.x, p.y);
       // THE WATER (engine/sea.ts). Only a bug adrift in the open sea is on
@@ -1489,6 +1500,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         critters: alive ? crittersRef.current : null,
         coins: alive ? coinsRef.current : null,
         helmetState: alive ? helmetsRef.current : null,
+        ammo: alive ? ammoRef.current : null,
         rideOverlay: overlayPos,
         hazards: alive ? hazardsRef.current : null,
         projectiles: alive ? projectilesRef.current : null,
@@ -1518,6 +1530,8 @@ export function useFrameLoop(a: FrameLoopArgs): void {
           helmetsLabel: t('hive_frontend_universe.hud.helmets'),
           helmets: helmetsRef.current?.count ?? 0,
           helmetTotal: HELMET_TOTAL,
+          ammoLabel: t('hive_frontend_universe.hud.ammo'),
+          ammo: ammoRef.current?.rounds ?? 0,
           placesLabel: t('hive_frontend_universe.hud.places'),
           places: visitedRef.current?.size ?? 0,
           placesTotal: LANDMARKS.length,

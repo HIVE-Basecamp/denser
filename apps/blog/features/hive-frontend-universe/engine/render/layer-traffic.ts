@@ -2,6 +2,7 @@ import { drawCoins } from '../coins';
 import { drawCritters } from '../critters';
 import { drawFootprints } from '../footprints';
 import { drawHelmets } from '../helmets';
+import { drawAmmoPacks } from '../ammo';
 import { posAt } from '../movement';
 import { drawProjectiles } from '../projectiles';
 import { FLOW_STYLE, MONO, PALETTE } from './palette';
@@ -123,6 +124,11 @@ export function drawTraffic(p: Pass): void {
   // The oxygen helmets, waiting to be found. Sub-pixel on the far map.
   if (scene.helmetState && mapness < 0.6) {
     drawHelmets(ctx, scene.helmetState, time, vis);
+  }
+
+  // The ammo packs, scattered rather than hidden. Same zoom rule.
+  if (scene.ammo && mapness < 0.6) {
+    drawAmmoPacks(ctx, scene.ammo, time, vis);
   }
 
   // FOOTPRINTS: who voted or replied this round, as prints on the street

@@ -48,6 +48,7 @@ import { buildWorld, type GameWorld } from './world';
 import { type CritterState } from './critters';
 import { type CoinState } from './coins';
 import { o2Multiplier, HELMET_TOTAL, type HelmetState } from './helmets';
+import { AMMO_MAX, type AmmoState } from './ammo';
 import { fightWrap, type HazardState } from './hazards';
 import { type GemState } from './gems';
 import { type SeaState } from './sea';
@@ -381,6 +382,8 @@ const Stage = ({ board }: { board: Board }) => {
   const crittersRef = useRef<CritterState | null>(null);
   const coinsRef = useRef<CoinState | null>(null);
   const helmetsRef = useRef<HelmetState | null>(null);
+  /** Bullets in hand and the packs still lying about (engine/ammo.ts). */
+  const ammoRef = useRef<AmmoState | null>(null);
   /**
    * The current RIDE: cosmetic transport that never touches the player's
    * edge-plus-fraction state. 'wheel' orbits the DHF ferris (a full rotation
@@ -497,8 +500,8 @@ const Stage = ({ board }: { board: Board }) => {
 
   /** The bug fires in its travel direction, one carried token per shot. */
   const firePlayerShot = () => {
-    if (!projectilesRef.current || !coinsRef.current) return;
-    playerFire(projectilesRef.current, playerRef.current, coinsRef.current);
+    if (!projectilesRef.current) return;
+    playerFire(projectilesRef.current, playerRef.current, ammoRef.current);
   };
 
   const toggleFullMap = () => {
@@ -527,6 +530,10 @@ const Stage = ({ board }: { board: Board }) => {
       },
       { label: t(`${k}.helmets`), value: `${helmetsRef.current?.count ?? 0} / ${HELMET_TOTAL}` },
       { label: t(`${k}.air`), value: String(helmetsRef.current?.spareAir ?? 0) },
+      {
+        label: t(`${k}.bullets`),
+        value: `${ammoRef.current?.rounds ?? 0} / ${AMMO_MAX}`
+      },
       { label: t(`${k}.ammo`), value: String(coinsRef.current?.carried ?? 0) },
       { label: t(`${k}.banked`), value: String(coinsRef.current?.banked ?? 0) },
       { label: t(`${k}.stolen`), value: String(coinsRef.current?.drained ?? 0) },
@@ -637,6 +644,7 @@ const Stage = ({ board }: { board: Board }) => {
     crittersRef,
     coinsRef,
     helmetsRef,
+    ammoRef,
     hazardsRef,
     blocksRef,
     footprintsRef,

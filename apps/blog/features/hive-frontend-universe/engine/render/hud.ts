@@ -23,6 +23,14 @@ export function drawHud(scene: RenderScene): void {
   ctx.fillStyle = '#9be8ff';
   ctx.fillText(`${hud.helmetsLabel} ${hud.helmets} / ${hud.helmetTotal}`, 16, 71);
   let hudY = 90;
+  // BULLETS. In the shot's own red, under the helmets, so what you can do
+  // about the thing shooting at you is read in the same glance as the air
+  // you have left.
+  if (hud.ammoLabel !== undefined) {
+    ctx.fillStyle = '#ff6e88';
+    ctx.fillText(`${hud.ammoLabel} ${hud.ammo ?? 0}`, 16, hudY);
+    hudY += 19;
+  }
   if (hud.placesLabel !== undefined) {
     ctx.fillStyle = '#b8ffd2';
     ctx.fillText(`${hud.placesLabel} ${hud.places} / ${hud.placesTotal}`, 16, hudY);
@@ -61,7 +69,9 @@ export function drawHud(scene: RenderScene): void {
   // line, then FUNDED once delivered.
   if (!questLinesElsewhere && hud.votesLabel !== undefined && hud.votes !== undefined) {
     ctx.fillStyle = '#ffd24a';
-    const text = hud.funded ? `${hud.votesLabel} ${hud.fundedLabel ?? ''}` : `${hud.votesLabel} ${hud.votes} / ${hud.votesLine ?? 0}`;
+    const text = hud.funded
+      ? `${hud.votesLabel} ${hud.fundedLabel ?? ''}`
+      : `${hud.votesLabel} ${hud.votes} / ${hud.votesLine ?? 0}`;
     ctx.fillText(text, 16, hudY);
     hudY += 19;
   }

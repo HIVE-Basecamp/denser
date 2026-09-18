@@ -9,6 +9,7 @@ import type { LandmarkCategory, IconKey } from '../../lib/fixed-world';
 import type { GemState } from '../gems';
 import type { CoinState } from '../coins';
 import type { HelmetState } from '../helmets';
+import type { AmmoState } from '../ammo';
 import type { KeepState } from '../keep';
 import type { HazardState } from '../hazards';
 import type { ProjectileState } from '../projectiles';
@@ -161,6 +162,8 @@ export interface RenderScene {
   coins: CoinState | null;
   /** The 21 oxygen helmets and how many the player has compiled. */
   helmetState: HelmetState | null;
+  /** Bullets in hand and the packs still lying about (engine/ammo.ts). */
+  ammo?: AmmoState | null;
   /** The nuisance hazards on the bug (goo, wrap, sock envelop). */
   hazards: HazardState | null;
   /** In-flight enemy and player shots. */
@@ -251,6 +254,9 @@ export interface RenderScene {
     helmetsLabel: string;
     helmets: number;
     helmetTotal: number;
+    /** Bullets in hand. Optional so a scene built before ammo still renders. */
+    ammoLabel?: string;
+    ammo?: number;
     /** Map completion: named places visited. Optional so old scenes render. */
     placesLabel?: string;
     places?: number;
