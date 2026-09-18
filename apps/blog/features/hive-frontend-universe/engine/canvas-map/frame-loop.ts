@@ -1,6 +1,7 @@
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
 import { MAX_CANVAS_PIXELS, MAX_TRAFFIC, MIN_CANVAS_SCALE, TAP_MS } from './constants';
 import { DEFAULT_PAD_MAP, crossVector, padStick, wentDown, type PadAction } from '../../lib/pad';
+import { choose, reachable, step, topPanel, unchoose } from '../../lib/panel-focus';
 import type { BuzzZone, HoverInfo, RideState, WitnessCard } from './types';
 import { useEffect } from 'react';
 import {
@@ -420,6 +421,18 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     // roving-focus handler (or anything else) can act on them.
     window.addEventListener('keydown', onKeyDown, true);
     window.addEventListener('keyup', onKeyUp, true);
+    /*
+      A CONTROLLER ARRIVING. The frame loop already asks for one every frame,
+      which ought to be enough, but browsers have been unreliable about
+      handing one over to a page that only ever asks and never listens. This
+      listens as well. It costs two lines and it cannot do any harm: the name
+      it sets is the same name the asking would have set.
+    */
+    const onPadConnected = (e: Event) => {
+      const pad = (e as GamepadEvent).gamepad;
+      if (pad) setPadName(pad.id);
+    };
+    window.addEventListener('gamepadconnected', onPadConnected);
     // Seamless start: entering the game steals focus from the H.I.V.E.R.
     // tab button immediately, so the first arrow press moves the bug, not
     // the tab selection. Clicking back into the game re-arms it too.
@@ -759,6 +772,17 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     let padNameShown: string | null = null;
     let padMapDownAt = 0;
     const padVec: Vec2 = { x: 0, y: 0 };
+    /** The thing chosen on the open card, so the ring can be taken off it again. */
+    let padChosen: HTMLElement | null = null;
+    /** Which way the cross was last pushed on a card, and when it last stepped. */
+    let padStepDir = 0;
+    let padStepAt = 0;
+    let padStepFast = false;
+    /** Push once, step once. Hold, and after a pause it walks along by itself. */
+    const STEP_WAIT_MS = 380;
+    const STEP_REPEAT_MS = 150;
+    /** How far a stick must lean before it counts as a push on a card, not a wobble. */
+    const STEP_LEAN = 0.5;
 
     /** Every action a button can fire. The map button is a hold as well as a tap, so it is handled apart. */
     const padFire: Record<Exclude<PadAction, 'map'>, () => void> = {
@@ -805,9 +829,52 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // The left stick first; the cross stands in when the stick is at rest,
       // so either one drives and neither fights the other.
       const stick = padStick(pad.axes[0] ?? 0, pad.axes[1] ?? 0);
-      const lean = stick.x === 0 && stick.y === 0 ? crossVector(down) : stick;
+      // The Cruceta stands in when the stick is at rest. It is handed the raw
+      // axes as well as the buttons because on some controllers - Bryan's
+      // among them - the Cruceta is not buttons at all but one number.
+      const lean = stick.x === 0 && stick.y === 0 ? crossVector(down, pad.axes) : stick;
       padVec.x = lean.x;
       padVec.y = lean.y;
+
+      /*
+        A CARD IS OPEN. Then the controller belongs to the card, not to the
+        bug: the cross moves the choice, A presses it, X still backs out. That
+        is how a console game has always worked, and it is the only way to
+        reach a card's buttons without a mouse. The bug stands still while it
+        lasts, which also means you cannot walk away from a card by accident.
+      */
+      const panel = topPanel(wrap);
+      if (!panel && padChosen) {
+        unchoose(padChosen);
+        padChosen = null;
+      }
+      if (panel) {
+        padVec.x = 0;
+        padVec.y = 0;
+        // The lean already carries the Cruceta whichever way it arrived, so the
+        // card is stepped from the lean and nothing here needs to know whether
+        // it came from buttons, a hat or the stick.
+        let dir = 0;
+        if (lean.y > STEP_LEAN || lean.x > STEP_LEAN) dir = 1;
+        if (lean.y < -STEP_LEAN || lean.x < -STEP_LEAN) dir = -1;
+        const now = Date.now();
+        if (dir === 0) {
+          padStepDir = 0;
+          padStepFast = false;
+        } else {
+          const first = dir !== padStepDir;
+          if (first || now - padStepAt >= (padStepFast ? STEP_REPEAT_MS : STEP_WAIT_MS)) {
+            const next = step(reachable(panel), document.activeElement, dir > 0);
+            if (next) {
+              choose(next, padChosen);
+              padChosen = next;
+            }
+            padStepDir = dir;
+            padStepAt = now;
+            padStepFast = !first;
+          }
+        }
+      }
 
       // THE MAP BUTTON: held it peeks, released quickly it opens or shuts.
       // The same two behaviours the M key has, from the one button.
@@ -826,6 +893,21 @@ export function useFrameLoop(a: FrameLoopArgs): void {
 
       // Everything else fires on the press and only on the press.
       for (const i of wentDown(padDown, down)) {
+        // On a card the hop button is the PRESS button. Nothing is chosen the
+        // first time, so the first press chooses rather than pressing: a card
+        // can never be answered by a button nobody has looked at.
+        if (panel && i === DEFAULT_PAD_MAP.hop) {
+          if (padChosen && document.activeElement === padChosen) {
+            padChosen.click();
+          } else {
+            const first = step(reachable(panel), null, true);
+            if (first) {
+              choose(first, padChosen);
+              padChosen = first;
+            }
+          }
+          continue;
+        }
         for (const [action, button] of Object.entries(DEFAULT_PAD_MAP)) {
           if (button === i && action !== 'map') padFire[action as Exclude<PadAction, 'map'>]();
         }
@@ -1052,7 +1134,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // THE BACK OF THE BOARD is dead: no critters move, no shots fly, no
       // tokens or gems change hands. The bug alone still rides.
       const alive = sideRef.current === 'hive';
-      if (alive && crittersRef.current) updateCritters(crittersRef.current, world, dt);
+      if (alive && crittersRef.current) updateCritters(crittersRef.current, world, dt, ts / 1000);
       if (alive && hz) {
         updateHazards(hz, p, crittersRef.current, dt);
         // The sock has closed around the bug: flash-post it to Mount Socko.
@@ -1548,6 +1630,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       ro.disconnect();
       window.removeEventListener('keydown', onKeyDown, true);
       window.removeEventListener('keyup', onKeyUp, true);
+      window.removeEventListener('gamepadconnected', onPadConnected);
       wrap.removeEventListener('pointerdown', refocus);
       canvas.removeEventListener('click', onCanvasClick);
       canvas.removeEventListener('mousemove', onCanvasMove);

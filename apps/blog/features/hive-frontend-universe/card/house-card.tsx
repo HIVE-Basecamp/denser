@@ -41,7 +41,10 @@ export const HouseCard = ({ house, onSkip }: { house: BoardHouse; onSkip: () => 
   const { post } = house;
 
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-0 mx-auto max-w-[470px] p-3 sm:bottom-3">
+    <div
+      data-hfu-panel
+      className="pointer-events-auto absolute inset-x-0 bottom-0 mx-auto max-w-[470px] p-3 sm:bottom-3"
+    >
       <div
         className="flex max-h-[70vh] flex-col overflow-hidden rounded-xl border bg-[#080d13]/95 backdrop-blur-sm"
         style={{ borderColor: house.isNewcomer ? '#5df0ff' : '#1d2a34' }}
@@ -66,7 +69,10 @@ export const HouseCard = ({ house, onSkip }: { house: BoardHouse; onSkip: () => 
                 </span>
               ) : null}
             </div>
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 font-mono text-[11px]" style={{ color: '#465866' }}>
+            <div
+              className="mt-0.5 flex flex-wrap items-center gap-x-2 font-mono text-[11px]"
+              style={{ color: '#465866' }}
+            >
               <span style={{ color: tier.col }}>{tier.name.toUpperCase()}</span>
               <span>
                 {formatHp(house.hp)} {HFU_COPY.card.hp}

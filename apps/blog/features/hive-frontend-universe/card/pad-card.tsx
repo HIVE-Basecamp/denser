@@ -41,6 +41,8 @@ const READ_MS = 50;
 
 interface Live {
   down: boolean[];
+  /** Every stick channel the controller reports, raw. The cross is on one of these on some controllers. */
+  axes: number[];
   x: number;
   y: number;
   standard: boolean;
@@ -48,7 +50,7 @@ interface Live {
 
 export const PadCard = ({ name, onClose }: PadCardProps) => {
   const { t } = useTranslation('common_blog');
-  const [live, setLive] = useState<Live>({ down: [], x: 0, y: 0, standard: true });
+  const [live, setLive] = useState<Live>({ down: [], axes: [], x: 0, y: 0, standard: true });
 
   useEffect(() => {
     const read = () => {
@@ -58,6 +60,7 @@ export const PadCard = ({ name, onClose }: PadCardProps) => {
         const stick = padStick(pad.axes[0] ?? 0, pad.axes[1] ?? 0);
         setLive({
           down: pad.buttons.map((b) => b.pressed),
+          axes: Array.from(pad.axes),
           x: stick.x,
           y: stick.y,
           standard: pad.mapping === 'standard'
@@ -72,7 +75,10 @@ export const PadCard = ({ name, onClose }: PadCardProps) => {
   const leaning = Math.hypot(live.x, live.y) > 0;
 
   return (
-    <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/60 p-4">
+    <div
+      data-hfu-panel
+      className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/60 p-4"
+    >
       <div className="max-h-full w-full max-w-md overflow-auto rounded-2xl border border-[#5df0ff]/40 bg-[#05080f] p-4 font-mono text-xs text-[#cfe6ef] shadow-2xl">
         <div className="mb-1 flex items-start justify-between gap-3">
           <span className="text-sm font-bold text-[#5df0ff]">{t('hive_frontend_universe.pad.title')}</span>
@@ -121,25 +127,41 @@ export const PadCard = ({ name, onClose }: PadCardProps) => {
         </table>
 
         <p className="mb-2 text-[11px] text-[#8fa6b4]">{t('hive_frontend_universe.pad.test')}</p>
+        {/*
+          Every button the controller reports, whether or not this build has a
+          name for it, each one labelled with the NUMBER it arrives on. The
+          number is the fact; the name is only this file's belief about it, and
+          when the two disagree it is the name that is wrong.
+        */}
         <div className="mb-3 flex flex-wrap gap-1">
-          {PAD_BUTTONS.map((label, i) => (
+          {Array.from({ length: Math.max(live.down.length, PAD_BUTTONS.length) }).map((_, i) => (
             <span
-              key={label}
+              key={i}
               className={
                 live.down[i]
                   ? 'rounded bg-[#5df0ff] px-1.5 py-0.5 font-bold text-[#04060a]'
                   : 'rounded bg-white/5 px-1.5 py-0.5 text-[#65808f]'
               }
             >
-              {label}
+              {i}
+              <span className="opacity-60"> {PAD_BUTTONS[i] ?? '?'}</span>
             </span>
           ))}
         </div>
-        <p className="text-[11px]">
+
+        <p className="mb-1 text-[11px]">
           <span className="text-[#8fa6b4]">{t('hive_frontend_universe.pad.stick')} </span>
           <span className={leaning ? 'font-bold text-[#5df0ff]' : 'text-[#65808f]'}>
             {live.x.toFixed(2)}, {live.y.toFixed(2)}
           </span>
+        </p>
+        {/*
+          The raw stick channels. Some controllers put the cross here instead
+          of on buttons, and then it moves a number in this row and lights
+          nothing above. That is the one thing a name could never reveal.
+        */}
+        <p className="break-words text-[11px] text-[#65808f]">
+          {t('hive_frontend_universe.pad.axes')} {live.axes.map((v, i) => `${i}:${v.toFixed(2)}`).join('  ')}
         </p>
       </div>
     </div>

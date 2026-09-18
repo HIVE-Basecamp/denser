@@ -1079,6 +1079,7 @@
       "connected": "Kontroler",
       "test": "Naciśnij dowolny przycisk, aby zobaczyć, jak się zapala",
       "stick": "Lewy drążek",
+      "axes": "Osie",
       "non_standard": "Ten kontroler nie zgłasza zwykłej kolejności przycisków, więc przycisk może zrobić coś innego. Naciśnij każdy poniżej i zanotuj, który się zapala.",
       "actions": {
         "hop": "Skok",

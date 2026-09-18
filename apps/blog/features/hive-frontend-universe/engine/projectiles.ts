@@ -23,6 +23,7 @@
 import type { PlayerState } from './movement';
 import { KNOCKOUT_HITS, KNOCKOUT_SECONDS, type CritterState, type CritterKind } from './critters';
 import { registerPlayerHit, type CombatState } from './combat';
+import { drawHiveMark } from './icons';
 
 export interface Shot {
   x: number;
@@ -160,6 +161,10 @@ export function updateProjectiles(
       if (c.hp <= 0) {
         c.koUntil = time + KNOCKOUT_SECONDS;
         c.hp = KNOCKOUT_HITS;
+        // Out of the game for the count, and when it comes back it comes back
+        // out of the Emperor's ground, not out of thin air where it stood
+        // (critters.ts, `emperorEdges`).
+        c.returning = true;
         state.bursts.push({ x: c.x, y: c.y, age: 0, kind: c.kind, big: true });
       }
       state.shots.splice(i, 1);
@@ -316,7 +321,39 @@ const ENEMY_SHOT_PULSE = 8;
 /** Pulses per second. Fast enough to read as alive, not a blink. */
 const ENEMY_SHOT_PULSE_HZ = 4;
 const ENEMY_SHOT_TAIL = 90;
-const PLAYER_SHOT_RADIUS = 9;
+
+/*
+  THE BUG'S SHOT (Bryan, 2026-09-17): "a red and black diamond with the hive
+  logo in middle and a flame tale... same size as the enemy bullets with same
+  tale, but black and red the bullet and shimmering glowing vibe."
+
+  So it is built to the enemy shot's measurements on purpose - the same ball
+  size, the same pulse, the same tail length - and differs only in what it is
+  made of. Reading which way a shot is going matters more than reading whose
+  it is, and two shots the same size read as one language.
+
+  The diamond turns to point along its flight; the Hive mark inside it does
+  NOT (hive-mark.ts: the mark must never be drawn under a flipped or turned
+  transform), so the mark is laid on afterwards, upright, the way a badge sits
+  flat on a moving thing.
+*/
+const PLAYER_SHOT_RADIUS = ENEMY_SHOT_RADIUS;
+const PLAYER_SHOT_PULSE = ENEMY_SHOT_PULSE;
+const PLAYER_SHOT_TAIL = ENEMY_SHOT_TAIL;
+/** The diamond is a shade longer than it is wide, so it reads as pointed. */
+const PLAYER_SHOT_LONG = 1.3;
+/** The black it is cut from, and the red it is lit by. */
+const PLAYER_SHOT_BLACK = '#0b0409';
+const PLAYER_SHOT_RED = '#ff2d4f';
+const PLAYER_SHOT_RED_DEEP = '#8d0c22';
+/** The flame: hottest at the ball, cooling backwards down the tail. */
+const PLAYER_FLAME_HOT = '255, 214, 120';
+const PLAYER_FLAME_MID = '255, 92, 32';
+const PLAYER_FLAME_COOL = '160, 12, 40';
+/** Shimmers per second. Faster than the pulse, so the two beat against each other. */
+const PLAYER_SHIMMER_HZ = 7;
+/** Tongues of flame in the tail. Odd number, so they never pair up. */
+const PLAYER_FLAME_TONGUES = 5;
 
 function drawEnemyShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number): void {
   const pulse = Math.sin(s.age * ENEMY_SHOT_PULSE_HZ * 6.283);
@@ -356,24 +393,111 @@ function drawEnemyShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: n
   ctx.fill();
 }
 
-function drawPlayerShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number): void {
-  const color = SHOT_COLORS.player;
-  ctx.strokeStyle = color;
+/**
+ * The flame tail: one broad body of fire plus a few tongues that flicker
+ * independently, all of it drawn back along the flight line. The tongues are
+ * worked out from the shot's own age rather than remembered, so nothing
+ * accumulates and two machines draw the same flame at the same moment.
+ */
+function drawFlameTail(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number, r: number): void {
+  const bx = s.x - nx * PLAYER_SHOT_TAIL;
+  const by = s.y - ny * PLAYER_SHOT_TAIL;
+  const body = ctx.createLinearGradient(bx, by, s.x, s.y);
+  body.addColorStop(0, `rgba(${PLAYER_FLAME_COOL}, 0)`);
+  body.addColorStop(0.45, `rgba(${PLAYER_FLAME_COOL}, 0.55)`);
+  body.addColorStop(0.8, `rgba(${PLAYER_FLAME_MID}, 0.85)`);
+  body.addColorStop(1, `rgba(${PLAYER_FLAME_HOT}, 0.95)`);
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = body;
   ctx.lineCap = 'round';
-  ctx.lineWidth = 5;
-  ctx.globalAlpha = 0.55;
+  ctx.lineWidth = r * 1.1;
   ctx.beginPath();
-  ctx.moveTo(s.x - nx * 30, s.y - ny * 30);
+  ctx.moveTo(bx, by);
   ctx.lineTo(s.x, s.y);
   ctx.stroke();
+
+  // The tongues: thin licks either side of the body, each a different length
+  // and each wavering on its own clock.
+  const px = -ny;
+  const py = nx;
+  for (let i = 0; i < PLAYER_FLAME_TONGUES; i++) {
+    const side = i % 2 === 0 ? 1 : -1;
+    const seed = (i + 1) * 1.7;
+    const waver = Math.sin(s.age * (9 + i * 2.1) + seed);
+    const reach = PLAYER_SHOT_TAIL * (0.45 + (i / PLAYER_FLAME_TONGUES) * 0.5) * (0.85 + waver * 0.15);
+    const off = side * r * (0.22 + (i % 3) * 0.14) * (0.6 + waver * 0.4);
+    const tip = ctx.createLinearGradient(s.x - nx * reach + px * off, s.y - ny * reach + py * off, s.x, s.y);
+    tip.addColorStop(0, `rgba(${PLAYER_FLAME_MID}, 0)`);
+    tip.addColorStop(1, `rgba(${PLAYER_FLAME_HOT}, 0.8)`);
+    ctx.strokeStyle = tip;
+    ctx.lineWidth = r * 0.26;
+    ctx.beginPath();
+    ctx.moveTo(s.x - nx * reach + px * off, s.y - ny * reach + py * off);
+    ctx.quadraticCurveTo(
+      s.x - nx * reach * 0.5 + px * off * 1.8,
+      s.y - ny * reach * 0.5 + py * off * 1.8,
+      s.x,
+      s.y
+    );
+    ctx.stroke();
+  }
+}
+
+function drawPlayerShot(ctx: CanvasRenderingContext2D, s: Shot, nx: number, ny: number): void {
+  const pulse = Math.sin(s.age * ENEMY_SHOT_PULSE_HZ * 6.283);
+  const shimmer = 0.5 + Math.sin(s.age * PLAYER_SHIMMER_HZ * 6.283) * 0.5;
+  const r = PLAYER_SHOT_RADIUS + pulse * PLAYER_SHOT_PULSE;
+
+  // The glow, first and widest, so the shot is seen before it is read. It
+  // breathes on the shimmer rather than the pulse, which is what stops the
+  // thing looking like a painted shape being slid along.
+  const halo = ctx.createRadialGradient(s.x, s.y, r * 0.4, s.x, s.y, r * 2.2);
+  halo.addColorStop(0, `rgba(255, 45, 79, ${(0.34 + shimmer * 0.2).toFixed(3)})`);
+  halo.addColorStop(1, 'rgba(255, 45, 79, 0)');
   ctx.globalAlpha = 1;
-  ctx.fillStyle = color;
+  ctx.fillStyle = halo;
   ctx.beginPath();
-  ctx.arc(s.x, s.y, PLAYER_SHOT_RADIUS, 0, 6.283);
+  ctx.arc(s.x, s.y, r * 2.2, 0, 6.283);
   ctx.fill();
-  ctx.strokeStyle = OUTLINE;
-  ctx.lineWidth = 1.6;
+
+  drawFlameTail(ctx, s, nx, ny, r);
+
+  // THE DIAMOND, turned to point where it is going. Black through the middle,
+  // red at the edges, with a rim that brightens on the shimmer.
+  const rx = r * PLAYER_SHOT_LONG;
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  ctx.rotate(Math.atan2(ny, nx));
+  const face = ctx.createLinearGradient(-rx, 0, rx, 0);
+  face.addColorStop(0, PLAYER_SHOT_RED_DEEP);
+  face.addColorStop(0.42, PLAYER_SHOT_BLACK);
+  face.addColorStop(1, PLAYER_SHOT_RED);
+  ctx.fillStyle = face;
+  ctx.beginPath();
+  ctx.moveTo(rx, 0);
+  ctx.lineTo(0, r);
+  ctx.lineTo(-rx, 0);
+  ctx.lineTo(0, -r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = PLAYER_SHOT_RED;
+  ctx.globalAlpha = 0.55 + shimmer * 0.45;
+  ctx.lineWidth = 3;
   ctx.stroke();
+  // A hairline of pure black outside the red rim, so the diamond keeps its
+  // shape over bright ground the way every other icon here does.
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = OUTLINE;
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+  ctx.restore();
+
+  // THE MARK, upright and never turned. It rides at the diamond's heart and
+  // brightens with the shimmer, which is what makes the shot look lit from
+  // inside rather than coloured in.
+  ctx.globalAlpha = 0.85 + shimmer * 0.15;
+  drawHiveMark(ctx, s.x, s.y, r * 0.95, shimmer > 0.5 ? '#ffd6c0' : PLAYER_SHOT_RED);
+  ctx.globalAlpha = 1;
 }
 
 export function drawProjectiles(

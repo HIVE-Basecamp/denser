@@ -21,7 +21,8 @@ import { raceChecks } from './race';
 import { planetChecks } from './planet';
 import { globeChecks } from './globe';
 import { seaChecks } from './sea';
-import { padChecks } from './pad';
+import { padChecks, panelFocusChecks } from './pad';
+import { critterChecks } from './critters';
 import { report } from './harness';
 
 console.log('H.I.V.E.R. checks\n');
@@ -36,4 +37,6 @@ planetChecks();
 globeChecks();
 seaChecks();
 padChecks();
+panelFocusChecks();
+critterChecks();
 report();

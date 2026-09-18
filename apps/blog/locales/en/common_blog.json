@@ -1176,6 +1176,7 @@
       "connected": "Controller",
       "test": "Press any button to see it light up",
       "stick": "Left stick",
+      "axes": "Sticks",
       "non_standard": "This controller does not report the usual button order, so a button may do the wrong thing. Press each one below and note which slot lights up.",
       "actions": {
         "hop": "Hop",

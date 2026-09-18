@@ -1074,6 +1074,7 @@
       "connected": "Manette",
       "test": "Appuyez sur un bouton pour le voir s’allumer",
       "stick": "Stick gauche",
+      "axes": "Axes",
       "non_standard": "Cette manette n’annonce pas l’ordre de boutons habituel, un bouton peut donc faire autre chose. Appuyez sur chacun ci-dessous et notez lequel s’allume.",
       "actions": {
         "hop": "Sauter",

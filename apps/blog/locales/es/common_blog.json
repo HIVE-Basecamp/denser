@@ -1074,6 +1074,7 @@
       "connected": "Control",
       "test": "Presiona cualquier botón para verlo encenderse",
       "stick": "Joystick izquierdo",
+      "axes": "Ejes",
       "non_standard": "Este control no informa el orden de botones habitual, así que un botón puede hacer algo distinto. Presiona cada uno abajo y anota cuál se enciende.",
       "actions": {
         "hop": "Saltar",

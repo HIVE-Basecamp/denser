@@ -14,17 +14,19 @@
  */
 
 import type { GameWorld } from './world';
+import { TROLL_HOLES } from '../lib/fixed-world';
 import { posAt, tangentAt, type Vec2 } from './movement';
 
 export type CritterKind = 'sock' | 'blah' | 'scammer' | 'extractor' | 'spammer';
 
-/** Hits a critter can take from player fire before it goes down. Same for
- *  every kind, on purpose: the combat pass, not the population, decides
+/** Hits a critter can take from player fire before it goes down. One, since
+ *  Bryan 2026-09-17: "if i shoot and hit an enemy they should blow up". Same
+ *  for every kind, on purpose: the combat pass, not the population, decides
  *  difficulty. See engine/projectiles.ts. */
-export const KNOCKOUT_HITS = 3;
-/** Seconds a knocked-out critter stays invisible before it drifts back in.
+export const KNOCKOUT_HITS = 1;
+/** Seconds a knocked-out critter is gone for. Bryan, 2026-09-17: ten.
  *  It never leaves the population; the world's enemy count never changes. */
-export const KNOCKOUT_SECONDS = 6;
+export const KNOCKOUT_SECONDS = 10;
 
 /** Modest counts: inhabited, not infested. All seeded, same for everyone. */
 const KIND_COUNTS: readonly [CritterKind, number][] = [
@@ -64,11 +66,28 @@ export interface Critter {
   hp: number;
   /** The `time` (seconds) until which it is knocked out; 0 = awake. */
   koUntil: number;
+  /**
+   * Blown up and not yet back. Set the moment it goes down, cleared the
+   * moment it walks out of the Emperor's ground, which is what tells the
+   * movement pass that this one owes a journey home before it drifts again.
+   */
+  returning: boolean;
 }
 
 export interface CritterState {
   critters: Critter[];
   counts: Record<CritterKind, number>;
+  /**
+   * WHERE THE BLOWN-UP COME BACK FROM (Bryan, 2026-09-17: "they can re join
+   * the game from some location owned by emperor j son").
+   *
+   * The Emperor owns six places on this map: five troll holes sunk into the
+   * land and the keep itself out in the north-east void (lib/fixed-world.ts).
+   * None of them is a line, and a critter can only exist ON a line, so what
+   * is kept here is the nearest line to each - worked out once, when the
+   * round is built, because the world never moves afterwards.
+   */
+  emperorEdges: number[];
 }
 
 function mulberry32(a: number): () => number {
@@ -133,21 +152,61 @@ export function createCritters(world: GameWorld, seed: number): CritterState {
         papers: [],
         dropIn: rng(),
         hp: KNOCKOUT_HITS,
-        koUntil: 0
+        koUntil: 0,
+        returning: false
       });
       counts[kind]++;
     }
   }
-  const state: CritterState = { critters, counts };
+  const state: CritterState = { critters, counts, emperorEdges: emperorEdges(world) };
   // Settle initial positions so the first frame is already correct.
-  updateCritters(state, world, 0);
+  updateCritters(state, world, 0, 0);
   return state;
 }
 
+/**
+ * The nearest line to each of the Emperor's places.
+ *
+ * Measured to each line's middle, which is near enough: what matters is that
+ * a critter walks back in out of his ground rather than reappearing wherever
+ * it happened to be standing when it died. Worked out once per round.
+ */
+function emperorEdges(world: GameWorld): number[] {
+  const out: number[] = [];
+  for (const hole of TROLL_HOLES) {
+    let best = -1;
+    let bestD = Infinity;
+    for (let i = 0; i < world.edges.length; i++) {
+      const e = world.edges[i];
+      posAt(e, 0.5, scratch);
+      const d = (scratch.x - hole.x) ** 2 + (scratch.y - hole.y) ** 2;
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    }
+    if (best >= 0 && !out.includes(best)) out.push(best);
+  }
+  return out;
+}
+
 /** Slow drift along the lines; turns at junctions are per-critter seeded. */
-export function updateCritters(state: CritterState, world: GameWorld, dt: number): void {
+export function updateCritters(state: CritterState, world: GameWorld, dt: number, time: number): void {
   const { edges, incident } = world;
   for (const c of state.critters) {
+    // COMING BACK. The ten seconds are up, so this one walks out of one of
+    // the Emperor's places rather than reappearing where it was blown up.
+    // Which place is its own seeded draw, so the same critter always comes
+    // home the same way and the six mouths all get used.
+    if (c.returning && c.koUntil <= time) {
+      c.returning = false;
+      const where = state.emperorEdges;
+      if (where.length) {
+        c.edge = where[Math.floor(stepRng(c) * where.length)];
+        c.t = 0.5;
+        c.dir = stepRng(c) < 0.5 ? -1 : 1;
+      }
+    }
     const e = edges[c.edge];
     if (!e) continue;
     c.t += (c.dir * c.speed * dt) / e.len;
@@ -246,13 +305,7 @@ export function drawCritters(
  * pupils, and the crooked stitched grin. Touch it and it envelops the bug
  * and posts it to the real mountain (hazards.ts owns that).
  */
-function drawSock(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  face: number,
-  time: number
-): void {
+function drawSock(ctx: CanvasRenderingContext2D, x: number, y: number, face: number, time: number): void {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(1.4 * (face >= 0 ? 1 : -1), 1.4);
@@ -594,7 +647,13 @@ function drawScammer(ctx: CanvasRenderingContext2D, x: number, y: number, face: 
  * each ending in a sucker cup, each with a droplet travelling the wrong way.
  * Half again the size of the other critters: this is the one to watch for.
  */
-function drawExtractor(ctx: CanvasRenderingContext2D, x: number, y: number, face: number, time: number): void {
+function drawExtractor(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  face: number,
+  time: number
+): void {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(1.55, 1.55);
@@ -651,7 +710,11 @@ function drawExtractor(ctx: CanvasRenderingContext2D, x: number, y: number, face
   ctx.stroke();
   // Abdomen spots, because a villain this size earns detail.
   ctx.fillStyle = '#8f2fc4';
-  for (const [sx2, sy2, sr] of [[-13, -3, 3.2], [-6, 5, 2.6], [-9, -6, 2.2]] as const) {
+  for (const [sx2, sy2, sr] of [
+    [-13, -3, 3.2],
+    [-6, 5, 2.6],
+    [-9, -6, 2.2]
+  ] as const) {
     ctx.beginPath();
     ctx.arc(-face * 5 + face * sx2 * -0.4 + sx2 * 0.6, sy2, sr, 0, 6.283);
     ctx.fill();

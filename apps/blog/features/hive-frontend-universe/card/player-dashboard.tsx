@@ -28,7 +28,10 @@ export interface PlayerDashboardProps {
 export const PlayerDashboard = ({ title, rows, onClose }: PlayerDashboardProps) => {
   const { t } = useTranslation('common_blog');
   return (
-    <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/50 p-4">
+    <div
+      data-hfu-panel
+      className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/50 p-4"
+    >
       <div
         className="w-full max-w-[400px] rounded-xl border border-[#5df0ff]/60 bg-[#080d13]/95 p-4 backdrop-blur-sm"
         data-testid="hfu-dashboard"

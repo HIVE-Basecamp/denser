@@ -57,7 +57,10 @@ export const LandmarkPanel = ({
   const color = ACCENT_HEX[accent] ?? '#5EE9D5';
 
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-0 mx-auto max-w-[380px] p-3 sm:bottom-4">
+    <div
+      data-hfu-panel
+      className="pointer-events-auto absolute inset-x-0 bottom-0 mx-auto max-w-[380px] p-3 sm:bottom-4"
+    >
       <div
         className="rounded-xl border bg-[#080d13]/95 p-4 backdrop-blur-sm"
         style={{ borderColor: color }}

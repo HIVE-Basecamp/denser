@@ -38,7 +38,9 @@ const GoalList = ({ goals }: { goals: readonly Goal[] }) => {
         <li key={g.id} className="flex items-start gap-2 text-[11px] leading-snug">
           <span className={g.complete ? 'text-[#8cf5b0]' : 'text-[#8fa6b4]'}>{g.complete ? '✓' : '·'}</span>
           <span className="flex-1 text-[#bfd3dd]">{t(g.labelKey)}</span>
-          <span className="font-mono text-[10px] text-[#8fa6b4]">{g.id === 'keep' ? '' : `${g.done} / ${g.total}`}</span>
+          <span className="font-mono text-[10px] text-[#8fa6b4]">
+            {g.id === 'keep' ? '' : `${g.done} / ${g.total}`}
+          </span>
         </li>
       ))}
     </ul>
@@ -61,7 +63,9 @@ const AdventureGoalsStep = ({
   const { t } = useTranslation('common_blog');
   return (
     <div data-testid="hfu-welcome-goals">
-      <div className="font-mono text-sm font-bold text-[#ff6a4d]">{t('hive_frontend_universe.modes.adventure')}</div>
+      <div className="font-mono text-sm font-bold text-[#ff6a4d]">
+        {t('hive_frontend_universe.modes.adventure')}
+      </div>
       <div className="mb-3 mt-2 rounded-xl border border-[#ff6a4d]/30 bg-[#ff6a4d]/[0.06] px-3 py-2">
         <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-wide text-[#ff9d86]">
           {t('hive_frontend_universe.goals.heading')}
@@ -108,17 +112,24 @@ export const WelcomeRoom = ({ onPick, goals }: WelcomeRoomProps) => {
 
   return (
     <div
+      data-hfu-panel
       className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/70 p-4"
       data-testid="hfu-welcome"
     >
       <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-[#070a12]/95 p-5 text-center shadow-2xl">
-        <div className="font-mono text-lg font-bold text-[#e9f4f8]">{t('hive_frontend_universe.modes.welcome')}</div>
+        <div className="font-mono text-lg font-bold text-[#e9f4f8]">
+          {t('hive_frontend_universe.modes.welcome')}
+        </div>
         <div className="mt-1 font-mono text-sm text-[#ffd24a]" data-testid="hfu-round-clock">
           {t('hive_frontend_universe.modes.next_round', { time: formatCountdown(left) })}
         </div>
         {showAdventureGoals && goals ? (
           <div className="mt-4">
-            <AdventureGoalsStep goals={goals} onStart={() => onPick('adventure')} onBack={() => setShowAdventureGoals(false)} />
+            <AdventureGoalsStep
+              goals={goals}
+              onStart={() => onPick('adventure')}
+              onBack={() => setShowAdventureGoals(false)}
+            />
           </div>
         ) : (
           <>

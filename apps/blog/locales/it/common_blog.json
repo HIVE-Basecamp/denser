@@ -1074,6 +1074,7 @@
       "connected": "Controller",
       "test": "Premi un tasto qualsiasi per vederlo accendersi",
       "stick": "Levetta sinistra",
+      "axes": "Assi",
       "non_standard": "Questo controller non dichiara l’ordine di tasti abituale, quindi un tasto può fare la cosa sbagliata. Premi ognuno qui sotto e annota quale si accende.",
       "actions": {
         "hop": "Salta",
