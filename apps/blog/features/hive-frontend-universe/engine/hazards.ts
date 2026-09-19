@@ -99,7 +99,14 @@ export function updateHazards(
   hz: HazardState,
   player: { x: number; y: number; mode: string },
   critters: CritterState | null,
-  dt: number
+  dt: number,
+  /**
+   * True while the game has stopped the bug to ask it something. Nothing may
+   * grab or slime a player who is only standing still because a card told
+   * them to. Same rule, and the same reason, as the shots in projectiles.ts
+   * (Bryan, 2026-09-19).
+   */
+  reading = false
 ): void {
   // Timers first, so a fresh hit this tick is not immediately decayed.
   if (hz.gooT > 0) hz.gooT = Math.max(0, hz.gooT - dt);
@@ -131,7 +138,9 @@ export function updateHazards(
 
   if (!critters || hz.mercy > 0) return;
   // A drifting bug sails over every nuisance. Jumping is always the answer.
-  if (player.mode === 'drift') return;
+  // A bug reading a card is untouchable for the opposite reason: it cannot
+  // jump, because the game asked it to hold still.
+  if (player.mode === 'drift' || reading) return;
 
   const held = hz.wrapJumps > 0;
   for (let i = 0; i < critters.critters.length; i++) {

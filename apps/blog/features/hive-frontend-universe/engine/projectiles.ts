@@ -97,7 +97,21 @@ export function updateProjectiles(
   critters: CritterState | null,
   combat: CombatState,
   dt: number,
-  time: number
+  time: number,
+  /**
+   * TRUE WHILE THE GAME HAS STOPPED THE PLAYER TO ASK SOMETHING.
+   *
+   * Bryan, 2026-09-19: "i was voting on a post and was killed. because i have
+   * to stay still." A card is the game asking a question, and standing still
+   * is the only way to answer it. Shooting a player for doing the thing the
+   * game just told them to do is the game cheating.
+   *
+   * While this holds, nothing takes aim at the bug AND nothing already in the
+   * air can touch it. Both halves are needed: stopping the shots alone would
+   * leave a wall of them hanging in mid-flight to land the instant the card
+   * closed, which is the same death one second later.
+   */
+  reading = false
 ): void {
   // Aim follows travel; standing still keeps the last heading.
   const sp = Math.hypot(player.vx, player.vy);
@@ -139,6 +153,8 @@ export function updateProjectiles(
     const dx = player.x - c.x;
     const dy = player.y - c.y;
     if (dx * dx + dy * dy > engage2) continue;
+    // Nobody takes aim at someone reading a card.
+    if (reading) continue;
     fire(state, c.x, c.y, dx, dy, CRITTER_SHOT_SPEED, 'critter', c.kind);
     state.cooldowns[i] = FIRE_COOLDOWN;
   }
@@ -146,7 +162,8 @@ export function updateProjectiles(
   for (let i = state.shots.length - 1; i >= 0; i--) {
     const s = state.shots[i];
     if (s.owner === 'critter') {
-      if (airborne) continue;
+      // Drifting has always been immunity; reading a card is now the same.
+      if (airborne || reading) continue;
       const dx = s.x - player.x;
       const dy = s.y - player.y;
       if (dx * dx + dy * dy <= hit2) {

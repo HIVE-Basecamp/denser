@@ -180,7 +180,13 @@ export function updateCoins(
   factories: Factory[],
   lairs: readonly Lair[],
   dt: number,
-  buzz: BuzzZone | null = null
+  buzz: BuzzZone | null = null,
+  /**
+   * True while the game has stopped the bug to ask it something. No pocket is
+   * picked while a card is open: the player cannot dodge, because holding
+   * still is the only way to answer (Bryan, 2026-09-19).
+   */
+  reading = false
 ): void {
   if (state.drained > 0) state.drained = Math.max(0, state.drained - dt);
   if (state.bankFlash > 0) state.bankFlash = Math.max(0, state.bankFlash - dt);
@@ -235,7 +241,9 @@ export function updateCoins(
       if (state.graceByCritter[i] > 0) state.graceByCritter[i] -= dt;
     }
 
-    const airborne = player.mode === 'drift';
+    // The two ways a pocket cannot be picked: up in the air, where nothing
+    // reaches, and stopped at a card, where the game itself did the stopping.
+    const airborne = player.mode === 'drift' || reading;
 
     // EXTRACTOR: latches on and drains, token by token, into its own pouch.
     if (state.carried > 0 && !airborne) {
@@ -420,12 +428,7 @@ export function drawCoins(
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(cr.x, cr.y);
-      ctx.quadraticCurveTo(
-        cr.x + dx * 0.5 + nx * wobble,
-        cr.y + dy * 0.5 + ny * wobble,
-        player.x,
-        player.y
-      );
+      ctx.quadraticCurveTo(cr.x + dx * 0.5 + nx * wobble, cr.y + dy * 0.5 + ny * wobble, player.x, player.y);
       ctx.stroke();
       ctx.strokeStyle = '#c98bff';
       ctx.lineWidth = Math.max(2, 6 / Math.max(z, 0.3));

@@ -779,6 +779,14 @@ export function useFrameLoop(a: FrameLoopArgs): void {
     let padNameShown: string | null = null;
     let padMapDownAt = 0;
     const padVec: Vec2 = { x: 0, y: 0 };
+    /**
+     * THE CARD THE GAME HAS OPENED, read once a frame and shared.
+     *
+     * Two things need it and they must agree: the controller, which belongs
+     * to the card while one is open, and the world, which must not punish the
+     * bug for standing still to answer it (Bryan, 2026-09-19).
+     */
+    let openPanel: HTMLElement | null = null;
     /** The thing chosen on the open card, so the ring can be taken off it again. */
     let padChosen: HTMLElement | null = null;
     /** Which way the cross was last pushed on a card, and when it last stepped. */
@@ -850,11 +858,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
         reach a card's buttons without a mouse. The bug stands still while it
         lasts, which also means you cannot walk away from a card by accident.
       */
-      const panel = topPanel(wrap);
-      if (!panel && padChosen) {
-        unchoose(padChosen);
-        padChosen = null;
-      }
+      const panel = openPanel;
       if (panel) {
         padVec.x = 0;
         padVec.y = 0;
@@ -1070,6 +1074,16 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
       last = ts;
 
+      // What is open is read once, before anything acts on it, so the
+      // controller and the world never disagree within a frame.
+      openPanel = topPanel(wrap);
+      // The pulled-out travel map counts too: the bug parks while it is open,
+      // so it is the same standing target for the same reason.
+      const reading = openPanel !== null || fullMapRef.current;
+      if (!reading && padChosen) {
+        unchoose(padChosen);
+        padChosen = null;
+      }
       readPad();
       readInput();
       if (p.stuck > 0) p.stuck = Math.max(0, p.stuck - dt);
@@ -1143,7 +1157,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       const alive = sideRef.current === 'hive';
       if (alive && crittersRef.current) updateCritters(crittersRef.current, world, dt, ts / 1000);
       if (alive && hz) {
-        updateHazards(hz, p, crittersRef.current, dt);
+        updateHazards(hz, p, crittersRef.current, dt, reading);
         // The sock has closed around the bug: flash-post it to Mount Socko.
         // Not a death, a DELIVERY; the toll is the walk back.
         if (hz.tripped) {
@@ -1161,7 +1175,15 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // a setback, priced the same way the thieves already price risk.
       if (alive && combatRef.current) tickCombat(combatRef.current, dt);
       if (alive && projectilesRef.current && combatRef.current) {
-        updateProjectiles(projectilesRef.current, p, crittersRef.current, combatRef.current, dt, ts / 1000);
+        updateProjectiles(
+          projectilesRef.current,
+          p,
+          crittersRef.current,
+          combatRef.current,
+          dt,
+          ts / 1000,
+          reading
+        );
         if (combatRef.current.respawned) {
           combatRef.current.respawned = false;
           // EXPLORE MODE has no consequences (Bryan): the hits clear and the
@@ -1185,7 +1207,7 @@ export function useFrameLoop(a: FrameLoopArgs): void {
       // The HUD is painted on the canvas every frame, so the token counts
       // need no React state to stay current.
       if (alive && coinsRef.current)
-        updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz);
+        updateCoins(coinsRef.current, p, crittersRef.current, factories, TROLL_HOLES, dt, buzz, reading);
       if (alive && helmetsRef.current) updateHelmets(helmetsRef.current, p.x, p.y);
       if (ammoRef.current) {
         tickAmmo(ammoRef.current, dt);

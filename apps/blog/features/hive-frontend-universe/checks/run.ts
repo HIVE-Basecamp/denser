@@ -22,7 +22,7 @@ import { planetChecks } from './planet';
 import { globeChecks } from './globe';
 import { seaChecks } from './sea';
 import { padChecks, panelFocusChecks } from './pad';
-import { critterChecks } from './critters';
+import { critterChecks, readingChecks, readingSafeChecks } from './critters';
 import { ammoChecks } from './ammo';
 import { report } from './harness';
 
@@ -40,5 +40,7 @@ seaChecks();
 padChecks();
 panelFocusChecks();
 critterChecks();
+readingChecks();
+readingSafeChecks();
 ammoChecks();
 report();
