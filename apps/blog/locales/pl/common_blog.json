@@ -775,7 +775,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Sześć odczytów tego, jak używano tego konta, każdy na osobnym płatku. Najedź na płatek, aby zobaczyć, co liczy; w środku jest konto, które utworzyło to konto.",
         "posted": "When this post was published.",
-        "votes_received": "Głosy oddane przez inne osoby na posty tego konta — nie głosy, które ono oddało. Kliknij, aby zobaczyć, kto wnosi na to konto najwięcej pieniędzy, ile głosów oddał każdy i ile były warte."
+        "votes_received": "Głosy oddane przez inne osoby na posty tego konta — nie głosy, które ono oddało. Kliknij, aby zobaczyć, kto głosuje na to konto największą wartością, ile głosów oddał każdy i ile były warte."
       },
       "comments": {
         "button": "Komentarze",
@@ -911,7 +911,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "Jedno konto naraz. Przyjrzyj się i powiedz, co o nim myślisz.",
@@ -981,6 +982,79 @@
         "why_placeholder": "Co ją zdradziło?",
         "worth": "{{value}} HIVE",
         "worth_label": "W HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "Czyjś pierwszy wpis w życiu — te, na które strumień sypie konfetti. Spójrz na niego, powiedz, co o nim sądzisz, i napisz coś, jeśli chcesz.",
+        "thin_evidence": "Nie ma tu wiele i być nie może — ta osoba napisała jedną rzecz. Oceń wpis i konto takimi, jakie są, a nie tak, jakby brakowało historii.",
+        "choice": {
+          "legit": "Wygląda prawdziwie",
+          "suspect": "Sock, bot albo extractor",
+          "unsure": "Nie umiem ocenić"
+        },
+        "why": {
+          "legit": "Co sprawiło, że czytasz to jako prawdziwą osobę?",
+          "suspect": "Co wydało ci się nie tak w tym wpisie albo koncie?",
+          "unsure": "Co utrudnia ocenę?"
+        },
+        "why_placeholder": "Jedna linijka w zupełności wystarczy.",
+        "said": {
+          "legit": "Powiedziałeś, że ten wygląda prawdziwie.",
+          "suspect": "Powiedziałeś: sock, bot albo extractor.",
+          "unsure": "Powiedziałeś, że nie umiesz ocenić."
+        },
+        "empty_title": "Brak pierwszych wpisów pod ręką",
+        "empty_body": "Nikt nie opublikował pierwszego wpisu w ostatnich 24 godzinach albo przejrzałeś już wszystkie. Są rzadkie — właśnie dlatego warto je łapać.",
+        "finding_title": "Szukam pierwszego wpisu",
+        "finding_body": "Czytam dalej w strumieniu. Pierwsze wpisy to jego drobny ułamek, więc może to chwilę potrwać.",
+        "done_title": "To już wszyscy",
+        "done_body": "Przejrzałeś każdy pierwszy wpis, jaki ma strumień.",
+        "templates": {
+          "heading": "Napisz coś do nich",
+          "hint": "Wybierz jeden, żeby wypełnić pole odpowiedzi. Przeczytaj, zmień, co chcesz, i sam naciśnij Opublikuj — nic nie jest wysyłane za ciebie.",
+          "make_own": "Moje szablony",
+          "from_scratch": "Napisz od zera",
+          "keep": "Zachowaj",
+          "untitled": "Mój szablon",
+          "forget": "Zapomnij szablon o nazwie {{name}}",
+          "name_label": "Nazwij go",
+          "name_placeholder": "Słowo lub dwa, żeby go znaleźć",
+          "body_label": "Co mówi",
+          "body_placeholder": "Napisz odpowiedź, którą chciałbyś wysłać ponownie.",
+          "name_token": "Napisz gdziekolwiek {{name}}, a zamieni się w ich nazwę użytkownika.",
+          "before_publish": "To jest prawdziwe pole odpowiedzi. Zmień, co chcesz, potem naciśnij Opublikuj.",
+          "signed_out": "Zaloguj się, aby odpowiedzieć na ten wpis.",
+          "built_in": {
+            "welcome": {
+              "name": "Powitanie",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "Kilka wskazówek",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Zapytaj ich o coś",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Dodaj szablon",
+          "kept_forever": "Twoje szablony są zapisane dla tego konta i zostają na miejscu — wróć za rok, a wciąż tu będą. Żyją w tej przeglądarce, więc nie pójdą za tobą na inny komputer.",
+          "save_failed": "Nie udało się zapisać w tej przeglądarce. Nic nie zginęło z pola powyżej; spróbuj ponownie albo najpierw skopiuj tekst."
+        },
+        "first_post_badge": "Ich pierwszy wpis w życiu",
+        "look_further": "Szukaj dalej",
+        "list": {
+          "heading": "Wszystkie pierwsze wpisy, ostatnie 24 godziny",
+          "count": "{{count}} do wyboru. Dotknij jednego, żeby go otworzyć.",
+          "untitled": "(bez tytułu)",
+          "here": "Tutaj",
+          "window_end": "To wszystkie pierwsze wpisy z ostatnich 24 godzin.",
+          "still_reading": "Wciąż czytam wstecz przez ten dzień — mogą pojawić się kolejne."
+        },
+        "reader": {
+          "unfold": "Pokaż cały wpis",
+          "fold": "Zwiń wpis"
+        }
       }
     },
     "signals": {

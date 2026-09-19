@@ -770,7 +770,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Sei letture di come è stato usato questo account, un petalo ciascuna. Passa il cursore su un petalo per sapere cosa conta; al centro c’è l’account che ha creato questo.",
         "posted": "When this post was published.",
-        "votes_received": "Voti espressi da altre persone sui post di questo account, non i voti che ha dato. Fai clic per vedere chi porta più denaro a questo account, quanti voti ha dato ciascuno e quanto valevano."
+        "votes_received": "Voti espressi da altre persone sui post di questo account, non i voti che ha dato. Fai clic per vedere chi vota più valore a questo account, quanti voti ha dato ciascuno e quanto valevano."
       },
       "comments": {
         "button": "Commenti",
@@ -906,7 +906,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "Un account alla volta. Guardalo, poi di' cosa ne pensi.",
@@ -976,6 +977,79 @@
         "why_placeholder": "Cosa lo ha tradito?",
         "worth": "{{value}} HIVE",
         "worth_label": "In HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "Il primissimo post di qualcuno — quelli su cui il feed lancia i coriandoli. Guardalo, di' cosa ne pensi e, se vuoi, digli qualcosa.",
+        "thin_evidence": "Qui non c'è molto, e non può esserci: hanno scritto una cosa sola. Giudica il post e l'account così come sono, non come se mancasse una cronologia.",
+        "choice": {
+          "legit": "Sembra autentico",
+          "suspect": "Sock, bot o extractor",
+          "unsure": "Non so decidere"
+        },
+        "why": {
+          "legit": "Cosa te l'ha fatto leggere come una persona vera?",
+          "suspect": "Cosa non ti è tornato di questo post o account?",
+          "unsure": "Cosa rende difficile deciderlo?"
+        },
+        "why_placeholder": "Basta una riga.",
+        "said": {
+          "legit": "Hai detto che questo sembra autentico.",
+          "suspect": "Hai detto sock, bot o extractor.",
+          "unsure": "Hai detto di non saper decidere."
+        },
+        "empty_title": "Nessun primo post a portata di mano",
+        "empty_body": "Nessuno ha pubblicato per la prima volta nelle ultime 24 ore, oppure li hai già visti tutti. Sono rari: è proprio questo che li rende degni di essere colti.",
+        "finding_title": "Cerco un primo post",
+        "finding_body": "Sto leggendo più in basso nel feed. I primi post ne sono una fetta sottilissima, quindi può volerci un momento.",
+        "done_title": "Sono tutti",
+        "done_body": "Hai passato in rassegna ogni primo post che il feed contiene.",
+        "templates": {
+          "heading": "Digli qualcosa",
+          "hint": "Scegline uno per riempire la casella di risposta. Leggilo, cambia quello che vuoi e premi tu Pubblica: non viene inviato niente al posto tuo.",
+          "make_own": "I miei modelli",
+          "from_scratch": "Scrivi da zero",
+          "keep": "Tienilo",
+          "untitled": "Il mio modello",
+          "forget": "Dimentica il modello chiamato {{name}}",
+          "name_label": "Chiamalo",
+          "name_placeholder": "Una parola o due, per ritrovarlo",
+          "body_label": "Cosa dice",
+          "body_placeholder": "Scrivi la risposta che vorresti inviare di nuovo.",
+          "name_token": "Scrivi {{name}} ovunque e diventerà il loro nome utente.",
+          "before_publish": "Questa è la vera casella di risposta. Cambia quello che vuoi, poi premi Pubblica.",
+          "signed_out": "Accedi per rispondere a questo post.",
+          "built_in": {
+            "welcome": {
+              "name": "Benvenuto",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "Qualche consiglio",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Chiedi qualcosa",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Aggiungi un modello",
+          "kept_forever": "I tuoi modelli sono conservati per questo account e restano dove sono: torna fra un anno e saranno ancora qui. Vivono in questo browser, quindi non ti seguono su un altro computer.",
+          "save_failed": "Non è stato possibile salvarlo in questo browser. Nulla è andato perso nella casella qui sopra; riprova, o copia prima il testo."
+        },
+        "first_post_badge": "Il suo primo post in assoluto",
+        "look_further": "Continua a cercare",
+        "list": {
+          "heading": "Tutti i primi post, ultime 24 ore",
+          "count": "{{count}} fra cui scegliere. Toccane uno per aprirlo.",
+          "untitled": "(senza titolo)",
+          "here": "Qui",
+          "window_end": "Questi sono tutti i primi post delle ultime 24 ore.",
+          "still_reading": "Sto ancora risalendo la giornata: potrebbero comparirne altri."
+        },
+        "reader": {
+          "unfold": "Mostra tutto il post",
+          "fold": "Richiudi il post"
+        }
       }
     },
     "signals": {

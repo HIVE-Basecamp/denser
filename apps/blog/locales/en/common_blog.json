@@ -872,7 +872,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Six readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published.",
-        "votes_received": "Votes other people have cast on this account's posts — not the votes it cast. Click to see who is putting the most money on this account, how many votes each has given and what they were worth."
+        "votes_received": "Votes other people have cast on this account's posts — not the votes it cast. Click to see who is voting the most value to this account, how many votes each has given and what they were worth."
       },
       "comments": {
         "button": "Comments",
@@ -1008,7 +1008,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "One account at a time. Look at them, then say what you think.",
@@ -1078,6 +1079,79 @@
         "why_placeholder": "What gave it away?",
         "worth": "{{value}} HIVE",
         "worth_label": "In HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "Somebody's very first post — the ones the feed throws confetti at. Look at it, say what you make of it, and say something to them if you want to.",
+        "thin_evidence": "There is not much here, and there cannot be — they have written one thing. Judge the post and the account as they stand, not as if a history were missing.",
+        "choice": {
+          "legit": "Seems legit",
+          "suspect": "Sock, bot or extractor",
+          "unsure": "Can't decide"
+        },
+        "why": {
+          "legit": "What made it read as a real person?",
+          "suspect": "What seemed off about this post or account?",
+          "unsure": "What is making this hard to call?"
+        },
+        "why_placeholder": "A line is plenty.",
+        "said": {
+          "legit": "You said this one seems legit.",
+          "suspect": "You said sock, bot or extractor.",
+          "unsure": "You said you couldn't decide."
+        },
+        "empty_title": "No first posts to hand",
+        "empty_body": "Nobody has posted for the first time in the last 24 hours, or you have already been through them all. They are rare — that is what makes them worth catching.",
+        "finding_title": "Looking for a first post",
+        "finding_body": "Reading further down the feed. First posts are a sliver of it, so this can take a moment.",
+        "done_title": "That's everybody",
+        "done_body": "You have been through every first post the feed is holding.",
+        "templates": {
+          "heading": "Say something to them",
+          "hint": "Pick one to fill the reply box in. Read it, change whatever you like, then press Publish yourself — nothing is sent for you.",
+          "make_own": "My templates",
+          "from_scratch": "Write from scratch",
+          "keep": "Keep it",
+          "untitled": "My template",
+          "forget": "Forget the template called {{name}}",
+          "name_label": "Call it",
+          "name_placeholder": "A word or two, so you can find it",
+          "body_label": "What it says",
+          "body_placeholder": "Write the reply you would want to send again.",
+          "name_token": "Write {{name}} anywhere and it becomes their username.",
+          "before_publish": "This is the real reply box. Change anything you like, then press Publish.",
+          "signed_out": "Sign in to reply to this post.",
+          "built_in": {
+            "welcome": {
+              "name": "Welcome",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "A few tips",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Ask them something",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Add a template",
+          "kept_forever": "Your templates are kept for this account and stay put — come back in a year and they will still be here. They live in this browser, so they do not follow you to another computer.",
+          "save_failed": "That could not be saved to this browser. Nothing was lost from the box above; try again, or copy the words out first."
+        },
+        "first_post_badge": "Their first ever post",
+        "look_further": "Keep looking",
+        "list": {
+          "heading": "All first posts, last 24 hours",
+          "count": "{{count}} to choose from. Tap one to bring it up.",
+          "untitled": "(no title)",
+          "here": "Here",
+          "window_end": "That is every first post in the last 24 hours.",
+          "still_reading": "Still reading back through the day — more may appear."
+        },
+        "reader": {
+          "unfold": "Show the whole post",
+          "fold": "Fold the post back up"
+        }
       }
     },
     "signals": {

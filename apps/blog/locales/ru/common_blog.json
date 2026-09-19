@@ -776,7 +776,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Шесть показателей того, как использовался этот аккаунт, по одному на лепесток. Наведите курсор на лепесток, чтобы увидеть, что он считает; в центре — аккаунт, создавший этот.",
         "posted": "When this post was published.",
-        "votes_received": "Голоса, отданные другими людьми за посты этого аккаунта, а не голоса, которые он отдал. Нажмите, чтобы увидеть, кто приносит этому аккаунту больше всего денег, сколько голосов отдал каждый и сколько они стоили."
+        "votes_received": "Голоса, отданные другими людьми за посты этого аккаунта, а не голоса, которые он отдал. Нажмите, чтобы увидеть, кто голосует за этот аккаунт на наибольшую ценность, сколько голосов отдал каждый и сколько они стоили."
       },
       "comments": {
         "button": "Комментарии",
@@ -912,7 +912,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "По одному аккаунту за раз. Посмотрите и скажите, что думаете.",
@@ -982,6 +983,79 @@
         "why_placeholder": "Что его выдало?",
         "worth": "{{value}} HIVE",
         "worth_label": "В HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "Самый первый пост человека — те, на которые лента сыплет конфетти. Посмотрите на него, скажите, что вы о нём думаете, и, если хотите, напишите пару слов.",
+        "thin_evidence": "Здесь немного, и больше быть не может — человек написал одну вещь. Судите пост и аккаунт такими, какие они есть, а не так, будто не хватает истории.",
+        "choice": {
+          "legit": "Похоже на настоящего",
+          "suspect": "Sock, бот или extractor",
+          "unsure": "Не могу решить"
+        },
+        "why": {
+          "legit": "Что заставило прочитать это как живого человека?",
+          "suspect": "Что показалось не так в этом посте или аккаунте?",
+          "unsure": "Что мешает решить?"
+        },
+        "why_placeholder": "Одной строки вполне достаточно.",
+        "said": {
+          "legit": "Вы сказали, что этот похож на настоящего.",
+          "suspect": "Вы сказали: sock, бот или extractor.",
+          "unsure": "Вы сказали, что не можете решить."
+        },
+        "empty_title": "Первых постов под рукой нет",
+        "empty_body": "За последние 24 часа никто не опубликовал первый пост, либо вы уже прошли их все. Они редки — именно поэтому их стоит ловить.",
+        "finding_title": "Ищу первый пост",
+        "finding_body": "Читаю ленту дальше. Первые посты — её тончайшая доля, так что это может занять минуту.",
+        "done_title": "Это все",
+        "done_body": "Вы прошли все первые посты, что есть в ленте.",
+        "templates": {
+          "heading": "Скажите им что-нибудь",
+          "hint": "Выберите один, чтобы заполнить поле ответа. Прочитайте, измените что хотите и нажмите «Опубликовать» сами — за вас ничего не отправляется.",
+          "make_own": "Мои шаблоны",
+          "from_scratch": "Написать с нуля",
+          "keep": "Сохранить",
+          "untitled": "Мой шаблон",
+          "forget": "Забыть шаблон «{{name}}»",
+          "name_label": "Название",
+          "name_placeholder": "Слово-два, чтобы найти его",
+          "body_label": "Что в нём",
+          "body_placeholder": "Напишите ответ, который захотели бы отправить снова.",
+          "name_token": "Напишите {{name}} где угодно — и это станет их именем пользователя.",
+          "before_publish": "Это настоящее поле ответа. Измените что хотите и нажмите «Опубликовать».",
+          "signed_out": "Войдите, чтобы ответить на этот пост.",
+          "built_in": {
+            "welcome": {
+              "name": "Приветствие",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "Несколько советов",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Спросите их",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Добавить шаблон",
+          "kept_forever": "Ваши шаблоны хранятся для этого аккаунта и никуда не денутся — вернитесь через год, они будут здесь. Они живут в этом браузере, поэтому не переедут с вами на другой компьютер.",
+          "save_failed": "Не удалось сохранить в этом браузере. Из поля выше ничего не пропало; попробуйте снова или сначала скопируйте текст."
+        },
+        "first_post_badge": "Их самый первый пост",
+        "look_further": "Искать дальше",
+        "list": {
+          "heading": "Все первые посты за последние 24 часа",
+          "count": "{{count}} на выбор. Нажмите, чтобы открыть.",
+          "untitled": "(без заголовка)",
+          "here": "Здесь",
+          "window_end": "Это все первые посты за последние 24 часа.",
+          "still_reading": "Всё ещё читаю день в обратную сторону — могут появиться ещё."
+        },
+        "reader": {
+          "unfold": "Показать пост целиком",
+          "fold": "Свернуть пост"
+        }
       }
     },
     "signals": {

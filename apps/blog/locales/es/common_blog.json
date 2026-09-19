@@ -770,7 +770,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Seis lecturas de cómo se ha usado esta cuenta, un pétalo cada una. Pasa el cursor sobre un pétalo para ver qué cuenta; en el centro está la cuenta que creó esta.",
         "posted": "When this post was published.",
-        "votes_received": "Votos que otras personas han emitido en las publicaciones de esta cuenta, no los votos que ella emitió. Haz clic para ver quién aporta más dinero a esta cuenta, cuántos votos ha dado cada uno y cuánto valían."
+        "votes_received": "Votos que otras personas han emitido en las publicaciones de esta cuenta, no los votos que ella emitió. Haz clic para ver quién vota más valor a esta cuenta, cuántos votos ha dado cada uno y cuánto valían."
       },
       "comments": {
         "button": "Comentarios",
@@ -906,7 +906,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "Una cuenta a la vez. Mírala y luego di lo que piensas.",
@@ -976,6 +977,79 @@
         "why_placeholder": "¿Qué la delató?",
         "worth": "{{value}} HIVE",
         "worth_label": "En HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "La primerísima publicación de alguien: esas a las que el feed lanza confeti. Mírala, di qué te parece y, si quieres, dile algo.",
+        "thin_evidence": "Aquí no hay mucho, y no puede haberlo: han escrito una sola cosa. Juzga la publicación y la cuenta tal como están, no como si faltara un historial.",
+        "choice": {
+          "legit": "Parece legítima",
+          "suspect": "Sock, bot o extractor",
+          "unsure": "No puedo decidir"
+        },
+        "why": {
+          "legit": "¿Qué te hizo leerla como una persona real?",
+          "suspect": "¿Qué te pareció raro en esta publicación o cuenta?",
+          "unsure": "¿Qué hace difícil decidirlo?"
+        },
+        "why_placeholder": "Con una línea basta.",
+        "said": {
+          "legit": "Dijiste que esta parece legítima.",
+          "suspect": "Dijiste sock, bot o extractor.",
+          "unsure": "Dijiste que no podías decidir."
+        },
+        "empty_title": "No hay primeras publicaciones a mano",
+        "empty_body": "Nadie ha publicado por primera vez en las últimas 24 horas, o ya has pasado por todas. Son raras: por eso vale la pena cazarlas.",
+        "finding_title": "Buscando una primera publicación",
+        "finding_body": "Leyendo más abajo en el feed. Las primeras publicaciones son una porción mínima, así que puede tardar un momento.",
+        "done_title": "Eso es todo el mundo",
+        "done_body": "Has pasado por todas las primeras publicaciones que tiene el feed.",
+        "templates": {
+          "heading": "Dile algo",
+          "hint": "Elige una para rellenar la caja de respuesta. Léela, cambia lo que quieras y pulsa Publicar tú: no se envía nada por ti.",
+          "make_own": "Mis plantillas",
+          "from_scratch": "Escribir desde cero",
+          "keep": "Guardarla",
+          "untitled": "Mi plantilla",
+          "forget": "Olvidar la plantilla llamada {{name}}",
+          "name_label": "Llámala",
+          "name_placeholder": "Una o dos palabras, para encontrarla",
+          "body_label": "Qué dice",
+          "body_placeholder": "Escribe la respuesta que querrías volver a enviar.",
+          "name_token": "Escribe {{name}} en cualquier parte y se convertirá en su nombre de usuario.",
+          "before_publish": "Esta es la caja de respuesta real. Cambia lo que quieras y pulsa Publicar.",
+          "signed_out": "Inicia sesión para responder a esta publicación.",
+          "built_in": {
+            "welcome": {
+              "name": "Bienvenida",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "Algunos consejos",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Pregúntales algo",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Añadir una plantilla",
+          "kept_forever": "Tus plantillas se guardan para esta cuenta y se quedan: vuelve dentro de un año y seguirán aquí. Viven en este navegador, así que no te siguen a otro ordenador.",
+          "save_failed": "No se pudo guardar en este navegador. No se ha perdido nada de la caja de arriba; inténtalo otra vez o copia antes el texto."
+        },
+        "first_post_badge": "Su primera publicación",
+        "look_further": "Seguir buscando",
+        "list": {
+          "heading": "Todas las primeras publicaciones, últimas 24 horas",
+          "count": "{{count}} para elegir. Toca una para abrirla.",
+          "untitled": "(sin título)",
+          "here": "Aquí",
+          "window_end": "Esas son todas las primeras publicaciones de las últimas 24 horas.",
+          "still_reading": "Todavía leyendo hacia atrás en el día: pueden aparecer más."
+        },
+        "reader": {
+          "unfold": "Ver la publicación completa",
+          "fold": "Plegar la publicación"
+        }
       }
     },
     "signals": {

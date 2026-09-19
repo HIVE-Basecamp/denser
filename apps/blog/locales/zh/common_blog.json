@@ -770,7 +770,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "关于该账户使用方式的六项读数，每片花瓣一项。将鼠标悬停在花瓣上可查看它统计的内容；中心是创建该账户的账户。",
         "posted": "When this post was published.",
-        "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁给这个账户带来最多的钱、各自投了多少票以及价值多少。"
+        "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁为这个账户投出最多价值、各自投了多少票以及价值多少。"
       },
       "comments": {
         "button": "评论",
@@ -906,7 +906,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "一次看一个账号。看完之后说说你的判断。",
@@ -976,6 +977,79 @@
         "why_placeholder": "是什么让你看出来的？",
         "worth": "{{value}} HIVE",
         "worth_label": "折合 HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "某人的第一篇帖子——就是信息流会撒彩纸的那种。看一看，说说你的判断，愿意的话也可以跟他们说句话。",
+        "thin_evidence": "这里线索不多，也不可能多——他们只写过一样东西。就按帖子和账户现在的样子来判断，不要当作缺了一段历史。",
+        "choice": {
+          "legit": "看起来是真人",
+          "suspect": "马甲、机器人或榨取者",
+          "unsure": "拿不准"
+        },
+        "why": {
+          "legit": "哪里让你觉得这是个真人？",
+          "suspect": "这篇帖子或这个账户哪里不对劲？",
+          "unsure": "是什么让你难以判断？"
+        },
+        "why_placeholder": "一行就够了。",
+        "said": {
+          "legit": "你说这个看起来是真人。",
+          "suspect": "你说这是马甲、机器人或榨取者。",
+          "unsure": "你说你拿不准。"
+        },
+        "empty_title": "手头没有第一篇帖子",
+        "empty_body": "最近24小时内没有人发出第一篇帖子，或者你已经全部看过了。它们很少见——正因如此才值得捕捉。",
+        "finding_title": "正在寻找第一篇帖子",
+        "finding_body": "继续往下读信息流。第一篇帖子只占极小一部分，可能要等一会儿。",
+        "done_title": "全部看完了",
+        "done_body": "信息流里的第一篇帖子你都看过了。",
+        "templates": {
+          "heading": "跟他们说句话",
+          "hint": "选一个来填入回复框。读一遍，随意改动，然后自己按发布——不会替你发送任何东西。",
+          "make_own": "我的模板",
+          "from_scratch": "从零开始写",
+          "keep": "保存",
+          "untitled": "我的模板",
+          "forget": "删除名为 {{name}} 的模板",
+          "name_label": "取个名字",
+          "name_placeholder": "一两个词，方便你找到它",
+          "body_label": "内容",
+          "body_placeholder": "写下你愿意一再发送的回复。",
+          "name_token": "在任意位置写 {{name}}，它会变成对方的用户名。",
+          "before_publish": "这是真正的回复框。随意改动，然后按发布。",
+          "signed_out": "请登录后回复这篇帖子。",
+          "built_in": {
+            "welcome": {
+              "name": "欢迎",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "几条建议",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "问他们一个问题",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "添加模板",
+          "kept_forever": "你的模板按账户保存，不会消失——一年后回来它们还在。它们存在这个浏览器里，所以不会跟你到另一台电脑。",
+          "save_failed": "无法保存到这个浏览器。上面输入框里的内容没有丢失；请再试一次，或先把文字复制出来。"
+        },
+        "first_post_badge": "他们的第一篇帖子",
+        "look_further": "继续找",
+        "list": {
+          "heading": "最近24小时的全部第一篇帖子",
+          "count": "共 {{count}} 篇可选。点一下就能打开。",
+          "untitled": "（无标题）",
+          "here": "当前",
+          "window_end": "这就是最近24小时里所有的第一篇帖子。",
+          "still_reading": "仍在往回读取这一天——可能还会出现更多。"
+        },
+        "reader": {
+          "unfold": "显示整篇帖子",
+          "fold": "收起帖子"
+        }
       }
     },
     "signals": {

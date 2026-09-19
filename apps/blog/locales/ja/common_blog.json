@@ -770,7 +770,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "このアカウントの使われ方に関する6つの読み取り。花びら1枚につき1つです。花びらにカーソルを合わせると何を数えているかがわかります。中央はこのアカウントを作成したアカウントです。",
         "posted": "When this post was published.",
-        "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も多くのお金を入れているか、それぞれの投票数とその価値が表示されます。"
+        "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も大きな価値を投票しているか、それぞれの投票数とその価値が表示されます。"
       },
       "comments": {
         "button": "コメント",
@@ -906,7 +906,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "一度に一つのアカウントを見て、どう思うか答えてください。",
@@ -976,6 +977,79 @@
         "why_placeholder": "何で分かりましたか？",
         "worth": "{{value}} HIVE",
         "worth_label": "HIVE 換算"
+      },
+      "newbie_or_not": {
+        "intro": "誰かの一番最初の投稿——フィードが紙吹雪を飛ばすあの投稿です。よく見て、どう思うかを答え、よければ一言かけてあげてください。",
+        "thin_evidence": "ここには材料がほとんどありません。当然です——この人はまだ一つしか書いていないのですから。履歴が欠けているかのようにではなく、投稿とアカウントをそのまま判断してください。",
+        "choice": {
+          "legit": "本物っぽい",
+          "suspect": "sock・ボット・extractor",
+          "unsure": "判断できない"
+        },
+        "why": {
+          "legit": "どこが本物の人らしく読めましたか？",
+          "suspect": "この投稿やアカウントのどこが引っかかりましたか？",
+          "unsure": "何が判断を難しくしていますか？"
+        },
+        "why_placeholder": "一行で十分です。",
+        "said": {
+          "legit": "「本物っぽい」と答えました。",
+          "suspect": "「sock・ボット・extractor」と答えました。",
+          "unsure": "「判断できない」と答えました。"
+        },
+        "empty_title": "手元に初投稿がありません",
+        "empty_body": "直近24時間に初投稿をした人がいないか、すでに全部見終わっています。初投稿はめったにない——だからこそ捕まえる価値があります。",
+        "finding_title": "初投稿を探しています",
+        "finding_body": "フィードをさらに読み進めています。初投稿はごく一部なので、少し時間がかかることがあります。",
+        "done_title": "全員終わりました",
+        "done_body": "フィードにある初投稿はすべて見終わりました。",
+        "templates": {
+          "heading": "一言かけてあげる",
+          "hint": "ひとつ選ぶと返信欄に入ります。読んで、好きなように直して、自分で「公開」を押してください——代わりに送信されることはありません。",
+          "make_own": "マイテンプレート",
+          "from_scratch": "ゼロから書く",
+          "keep": "保存する",
+          "untitled": "マイテンプレート",
+          "forget": "「{{name}}」というテンプレートを削除",
+          "name_label": "名前",
+          "name_placeholder": "見つけやすい一言",
+          "body_label": "本文",
+          "body_placeholder": "また送りたくなる返信を書いてください。",
+          "name_token": "どこかに {{name}} と書くと、相手のユーザー名になります。",
+          "before_publish": "これは本物の返信欄です。好きなように直してから「公開」を押してください。",
+          "signed_out": "この投稿に返信するにはサインインしてください。",
+          "built_in": {
+            "welcome": {
+              "name": "ようこそ",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "いくつかのコツ",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "質問する",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "テンプレートを追加",
+          "kept_forever": "テンプレートはこのアカウントのものとして保存され、消えません——一年後に戻ってきてもここにあります。このブラウザの中にあるので、別のパソコンにはついていきません。",
+          "save_failed": "このブラウザに保存できませんでした。上の入力欄の内容は消えていません。もう一度試すか、先に文章をコピーしてください。"
+        },
+        "first_post_badge": "この人の初投稿",
+        "look_further": "探し続ける",
+        "list": {
+          "heading": "直近24時間のすべての初投稿",
+          "count": "{{count}} 件から選べます。タップすると開きます。",
+          "untitled": "（無題）",
+          "here": "ここ",
+          "window_end": "直近24時間の初投稿はこれで全部です。",
+          "still_reading": "まだこの一日をさかのぼって読んでいます——さらに出てくるかもしれません。"
+        },
+        "reader": {
+          "unfold": "投稿を全部表示",
+          "fold": "投稿を折りたたむ"
+        }
       }
     },
     "signals": {

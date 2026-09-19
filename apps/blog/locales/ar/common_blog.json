@@ -817,7 +817,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "ستّ قراءات لكيفية استخدام هذا الحساب، واحدة لكل بتلة. مرّر المؤشر فوق بتلة لمعرفة ما تحصيه؛ وفي المنتصف الحساب الذي أنشأ هذا الحساب.",
         "posted": "When this post was published.",
-        "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يضخّ أكبر قدر من المال في هذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها."
+        "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يصوّت بأكبر قيمة لهذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها."
       },
       "comments": {
         "button": "التعليقات",
@@ -953,7 +953,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "حساب واحد في كل مرة. انظر إليه ثم قل رأيك.",
@@ -1023,6 +1024,79 @@
         "why_placeholder": "ما الذي كشفه؟",
         "worth": "{{value}} HIVE",
         "worth_label": "بـ HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "أول منشور لشخص ما على الإطلاق — تلك التي تنثر عليها الخلاصة القصاصات الملونة. انظر إليه، وقل رأيك فيه، وقل له شيئًا إن أردت.",
+        "thin_evidence": "لا يوجد الكثير هنا، ولا يمكن أن يوجد — فقد كتب شيئًا واحدًا فقط. احكم على المنشور والحساب كما هما، لا كأن هناك سجلًا ناقصًا.",
+        "choice": {
+          "legit": "يبدو حقيقيًا",
+          "suspect": "حساب وهمي أو بوت أو مستنزِف",
+          "unsure": "لا أستطيع الحسم"
+        },
+        "why": {
+          "legit": "ما الذي جعله يبدو كشخص حقيقي؟",
+          "suspect": "ما الذي بدا غير سليم في هذا المنشور أو الحساب؟",
+          "unsure": "ما الذي يجعل الحسم صعبًا؟"
+        },
+        "why_placeholder": "سطر واحد يكفي.",
+        "said": {
+          "legit": "قلت إن هذا يبدو حقيقيًا.",
+          "suspect": "قلت إنه حساب وهمي أو بوت أو مستنزِف.",
+          "unsure": "قلت إنك لا تستطيع الحسم."
+        },
+        "empty_title": "لا توجد منشورات أولى في المتناول",
+        "empty_body": "لم ينشر أحد لأول مرة خلال الـ 24 ساعة الماضية، أو أنك مررت عليها كلها بالفعل. إنها نادرة — ولهذا تستحق أن تُلتقط.",
+        "finding_title": "البحث عن منشور أول",
+        "finding_body": "قراءة المزيد في الخلاصة. المنشورات الأولى شريحة ضئيلة منها، لذا قد يستغرق الأمر لحظة.",
+        "done_title": "هذا هو الجميع",
+        "done_body": "لقد مررت على كل منشور أول تحتفظ به الخلاصة.",
+        "templates": {
+          "heading": "قل لهم شيئًا",
+          "hint": "اختر واحدًا ليملأ صندوق الرد. اقرأه، وغيّر ما تشاء، ثم اضغط نشر بنفسك — لا يُرسل شيء نيابة عنك.",
+          "make_own": "قوالبي",
+          "from_scratch": "اكتب من الصفر",
+          "keep": "احتفظ به",
+          "untitled": "قالبي",
+          "forget": "نسيان القالب المسمى {{name}}",
+          "name_label": "سمِّه",
+          "name_placeholder": "كلمة أو كلمتان لتجده",
+          "body_label": "ما يقوله",
+          "body_placeholder": "اكتب الرد الذي تودّ إرساله مرة أخرى.",
+          "name_token": "اكتب {{name}} في أي موضع وسيتحول إلى اسم المستخدم الخاص بهم.",
+          "before_publish": "هذا هو صندوق الرد الحقيقي. غيّر ما تشاء ثم اضغط نشر.",
+          "signed_out": "سجّل الدخول للرد على هذا المنشور.",
+          "built_in": {
+            "welcome": {
+              "name": "ترحيب",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "بعض النصائح",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "اسألهم شيئًا",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "أضف قالبًا",
+          "kept_forever": "تُحفظ قوالبك لهذا الحساب وتبقى مكانها — عد بعد عام وستجدها هنا. إنها تعيش في هذا المتصفح، لذا لا تنتقل معك إلى حاسوب آخر.",
+          "save_failed": "تعذّر الحفظ في هذا المتصفح. لم يُفقد شيء من الصندوق أعلاه؛ حاول مرة أخرى أو انسخ النص أولًا."
+        },
+        "first_post_badge": "أول منشور له على الإطلاق",
+        "look_further": "واصل البحث",
+        "list": {
+          "heading": "كل المنشورات الأولى خلال آخر 24 ساعة",
+          "count": "{{count}} للاختيار منها. انقر على واحد لفتحه.",
+          "untitled": "(بلا عنوان)",
+          "here": "هنا",
+          "window_end": "هذه كل المنشورات الأولى خلال آخر 24 ساعة.",
+          "still_reading": "ما زلت أقرأ رجوعًا عبر اليوم — قد يظهر المزيد."
+        },
+        "reader": {
+          "unfold": "اعرض المنشور كاملًا",
+          "fold": "اطوِ المنشور"
+        }
       }
     },
     "signals": {

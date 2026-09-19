@@ -770,7 +770,7 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their most recent 1,000 actions.",
         "flower": "Six lectures de la façon dont ce compte a été utilisé, un pétale chacune. Survolez un pétale pour voir ce qu’il compte ; au centre se trouve le compte qui a créé celui-ci.",
         "posted": "When this post was published.",
-        "votes_received": "Votes émis par d'autres personnes sur les publications de ce compte, et non les votes qu'il a émis. Cliquez pour voir qui apporte le plus d'argent à ce compte, combien de votes chacun a donnés et ce qu'ils valaient."
+        "votes_received": "Votes émis par d'autres personnes sur les publications de ce compte, et non les votes qu'il a émis. Cliquez pour voir qui vote le plus de valeur à ce compte, combien de votes chacun a donnés et ce qu'ils valaient."
       },
       "comments": {
         "button": "Commentaires",
@@ -906,7 +906,8 @@
         "cut_the_strings": "Cut the Strings",
         "sock_or_not": "Sock or Not",
         "spot_the_bot": "Spot the Bot",
-        "hive_frontend_universe": "Hive Frontend Universe"
+        "hive_frontend_universe": "Hive Frontend Universe",
+        "newbie_or_not": "Newbie or Not to Be"
       },
       "bot_or_not": {
         "intro": "Un compte à la fois. Regardez-le, puis dites ce que vous en pensez.",
@@ -976,6 +977,79 @@
         "why_placeholder": "Qu'est-ce qui l'a trahi ?",
         "worth": "{{value}} HIVE",
         "worth_label": "En HIVE"
+      },
+      "newbie_or_not": {
+        "intro": "Le tout premier billet de quelqu'un — ceux sur lesquels le flux lance des confettis. Regardez-le, dites ce que vous en pensez, et dites-lui un mot si vous voulez.",
+        "thin_evidence": "Il n'y a pas grand-chose ici, et il ne peut pas y en avoir : cette personne n'a écrit qu'une seule chose. Jugez le billet et le compte tels quels, pas comme s'il manquait un historique.",
+        "choice": {
+          "legit": "A l'air authentique",
+          "suspect": "Sock, bot ou extracteur",
+          "unsure": "Impossible de trancher"
+        },
+        "why": {
+          "legit": "Qu'est-ce qui vous a fait y voir une vraie personne ?",
+          "suspect": "Qu'est-ce qui clochait dans ce billet ou ce compte ?",
+          "unsure": "Qu'est-ce qui rend la chose difficile à trancher ?"
+        },
+        "why_placeholder": "Une ligne suffit largement.",
+        "said": {
+          "legit": "Vous avez dit que celui-ci a l'air authentique.",
+          "suspect": "Vous avez dit sock, bot ou extracteur.",
+          "unsure": "Vous avez dit ne pas pouvoir trancher."
+        },
+        "empty_title": "Aucun premier billet sous la main",
+        "empty_body": "Personne n'a publié pour la première fois ces 24 dernières heures, ou vous les avez déjà toutes parcourues. Ils sont rares — c'est ce qui les rend précieux.",
+        "finding_title": "Recherche d'un premier billet",
+        "finding_body": "Lecture plus bas dans le flux. Les premiers billets n'en sont qu'une infime part, cela peut prendre un instant.",
+        "done_title": "C'est tout le monde",
+        "done_body": "Vous avez parcouru tous les premiers billets que le flux contient.",
+        "templates": {
+          "heading": "Dites-lui un mot",
+          "hint": "Choisissez-en un pour remplir la boîte de réponse. Lisez-le, changez ce que vous voulez, puis appuyez vous-même sur Publier : rien n'est envoyé à votre place.",
+          "make_own": "Mes modèles",
+          "from_scratch": "Écrire de zéro",
+          "keep": "Le garder",
+          "untitled": "Mon modèle",
+          "forget": "Oublier le modèle appelé {{name}}",
+          "name_label": "Appelez-le",
+          "name_placeholder": "Un mot ou deux, pour le retrouver",
+          "body_label": "Ce qu'il dit",
+          "body_placeholder": "Écrivez la réponse que vous voudriez renvoyer.",
+          "name_token": "Écrivez {{name}} n'importe où et cela deviendra leur nom d'utilisateur.",
+          "before_publish": "Ceci est la vraie boîte de réponse. Changez ce que vous voulez, puis appuyez sur Publier.",
+          "signed_out": "Connectez-vous pour répondre à ce billet.",
+          "built_in": {
+            "welcome": {
+              "name": "Bienvenue",
+              "body": "Welcome to Hive, @{{name}} — good to see a first post.\n\nHave a look around, follow a few people whose posts you like, and don't worry about getting it right straight away. Plenty of us are still working that out.\n\nGlad you're here."
+            },
+            "tips": {
+              "name": "Quelques conseils",
+              "body": "Welcome aboard, @{{name}}.\n\nThree things that helped me early on:\n\n- Post in a community that fits what you write — your post gets seen by people who care about it.\n- Reply to other people's posts. It is the fastest way to meet anybody here.\n- Keep your keys somewhere safe and never paste your owner key into anything.\n\nAsk if you get stuck."
+            },
+            "question": {
+              "name": "Posez-lui une question",
+              "body": "Welcome to Hive, @{{name}}.\n\nI read your first post — what brought you here, and what are you planning to write about?"
+            }
+          },
+          "add_heading": "Ajouter un modèle",
+          "kept_forever": "Vos modèles sont conservés pour ce compte et y restent — revenez dans un an, ils seront toujours là. Ils vivent dans ce navigateur, ils ne vous suivent donc pas sur un autre ordinateur.",
+          "save_failed": "Impossible d'enregistrer dans ce navigateur. Rien n'a été perdu dans la boîte ci-dessus ; réessayez, ou copiez d'abord le texte."
+        },
+        "first_post_badge": "Son tout premier billet",
+        "look_further": "Continuer à chercher",
+        "list": {
+          "heading": "Tous les premiers billets, dernières 24 heures",
+          "count": "{{count}} au choix. Touchez-en un pour l'ouvrir.",
+          "untitled": "(sans titre)",
+          "here": "Ici",
+          "window_end": "Ce sont tous les premiers billets des 24 dernières heures.",
+          "still_reading": "Lecture toujours en cours dans la journée — d'autres peuvent apparaître."
+        },
+        "reader": {
+          "unfold": "Afficher le billet entier",
+          "fold": "Replier le billet"
+        }
       }
     },
     "signals": {
