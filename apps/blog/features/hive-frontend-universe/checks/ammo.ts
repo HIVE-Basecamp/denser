@@ -68,6 +68,10 @@ export function ammoChecks(): void {
     equal(spendRound(null), false, 'spending from nothing at all');
   });
 
+  check('ammo: a pack is a full reload', () => {
+    equal(AMMO_PER_PACK, AMMO_START, 'a pack is worth what the bug starts with');
+  });
+
   check('ammo: walking over a pack takes it, once', () => {
     const ammo = createAmmo();
     ammo.rounds = 0;

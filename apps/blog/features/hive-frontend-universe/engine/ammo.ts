@@ -47,8 +47,8 @@ export interface AmmoState {
 export const AMMO_START = 25;
 /** How many packs are scattered over the world. Bryan's number. */
 export const AMMO_PACKS = 25;
-/** What one pack is worth. Chosen, not asked for - say the word and it moves. */
-export const AMMO_PER_PACK = 10;
+/** What one pack is worth. Bryan's number: a pack is a full reload. */
+export const AMMO_PER_PACK = 25;
 /** A ceiling, so a hoarder cannot carry a thousand and stop aiming. */
 export const AMMO_MAX = 99;
 /** How close the bug must pass to collect, world px. The helmets' range. */
