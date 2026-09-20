@@ -31,6 +31,8 @@ export function formatReadoutValue(
       return t('basecamp.signals.units.count', { value });
     case 'hive_power':
       return t('basecamp.signals.units.hive_power', { value: value.toLocaleString() });
+    case 'hive':
+      return t('basecamp.signals.units.hive', { value: formatTokenAmount(value) });
     case 'ratio':
       return t('basecamp.signals.units.ratio', { value: value.toFixed(2) });
     case 'none':
@@ -121,6 +123,9 @@ export function formatPetalValue(
  */
 export function formatTokenAmount(value: number): string {
   if (!Number.isFinite(value)) return '';
+  // Nothing at all is "0", not "0.000": trailing zeroes on an empty figure
+  // read as a precise measurement of nothing.
+  if (value === 0) return '0';
   const size = Math.abs(value);
   const decimals = size >= 1000 ? 0 : size >= 1 ? 2 : 3;
   return value.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });

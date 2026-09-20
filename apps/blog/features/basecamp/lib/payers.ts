@@ -23,6 +23,8 @@
  * often, and stops there (ETHOS.md: visual indicators, not conclusions).
  */
 
+import { RECORDS_PER_ACCOUNT, type TransferRecord } from './transfers';
+
 /** One piece of money arriving from somebody else. */
 export interface PaymentEvent {
   payer: string;
@@ -35,12 +37,22 @@ export interface PaymentEvent {
   /** In the asset's own unit: HIVE, HBD or VESTS, already scaled. */
   amount: number;
   timestampMs: number;
+  /** What was written on a transfer. Empty for the kinds that carry none. */
+  memo?: string;
 }
 
 export interface PayerTally {
   payer: string;
   /** How many records this payer appears in, delegation changes included. */
   payments: number;
+  /**
+   * How many separate transfers made up `hive` and `hbd`. One payment of 289
+   * and ninety-seven payments of three are the same total and not the same
+   * thing, so the count is kept beside the sum.
+   */
+  transfers: number;
+  /** How many separate power-ups made up `poweredUp`. */
+  powerUps: number;
   hive: number;
   hbd: number;
   /** HIVE this payer powered up into the account. */
@@ -51,6 +63,8 @@ export interface PayerTally {
   delegatedAtMs: number;
   /** The newest record of any kind from this payer. */
   lastMs: number;
+  /** The newest straight transfers from this payer, in full, so the trail can be opened. */
+  records: TransferRecord[];
 }
 
 export interface PayerTallySheet {
@@ -67,12 +81,15 @@ function blankTally(payer: string): PayerTally {
   return {
     payer,
     payments: 0,
+    transfers: 0,
+    powerUps: 0,
     hive: 0,
     hbd: 0,
     poweredUp: 0,
     delegatedVests: 0,
     delegatedAtMs: Number.NEGATIVE_INFINITY,
-    lastMs: Number.NEGATIVE_INFINITY
+    lastMs: Number.NEGATIVE_INFINITY,
+    records: []
   };
 }
 
@@ -96,9 +113,22 @@ export function foldPayments(sheet: PayerTallySheet, events: PaymentEvent[]): Pa
       }
       continue;
     }
-    if (event.kind === 'hive') tally.hive += event.amount;
-    else if (event.kind === 'hbd') tally.hbd += event.amount;
-    else tally.poweredUp += event.amount;
+    if (event.kind === 'hive' || event.kind === 'hbd') {
+      if (event.kind === 'hbd') tally.hbd += event.amount;
+      else tally.hive += event.amount;
+      tally.transfers++;
+      if (tally.records.length < RECORDS_PER_ACCOUNT) {
+        tally.records.push({
+          kind: event.kind,
+          amount: event.amount,
+          timestampMs: event.timestampMs,
+          memo: event.memo ?? ''
+        });
+      }
+    } else {
+      tally.poweredUp += event.amount;
+      tally.powerUps++;
+    }
   }
   return sheet;
 }
@@ -193,6 +223,10 @@ export function summarizePayers(sheet: PayerTallySheet, rates: MoneyRates, cappe
       row.share = row.worth === null ? null : Math.min(Math.max(row.worth / totalWorth, 0), 1);
     }
   }
+
+  // Newest first within a row, as on the outgoing side: a trail read out of
+  // order is worse than no trail.
+  for (const row of rows) row.records.sort((a, b) => b.timestampMs - a.timestampMs);
 
   rows.sort((a, b) => {
     if (a.worth !== null && b.worth !== null && a.worth !== b.worth) return b.worth - a.worth;

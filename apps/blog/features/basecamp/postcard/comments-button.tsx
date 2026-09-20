@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
-import { ACCOUNT_COMMENTS_LIMIT } from '../hooks/use-account-comments';
+import { ACCOUNT_COMMENTS_LIMIT, useAccountComments } from '../hooks/use-account-comments';
 import { BASECAMP_VIVID } from '../lib/theme';
 import CommentsDialog from './comments-dialog';
 import Hint from './hint';
@@ -15,23 +14,19 @@ const RIM_WIDTH = 3;
 const SIDE_PADDING = RIM_WIDTH * 2;
 /**
  * Fitted into a drawing's hollow the button is a half-disc, so it is at its
- * full width only along the bottom. The word sits low in it, where the shape
- * is nearly full width, and is measured against that much of it.
+ * full width only along the bottom. Text is measured against that much of it.
  */
 const TEXT_WIDTH_SHARE = 0.95;
-/** How far up from the flat bottom the word sits, as a share of the height. */
-const TEXT_BASELINE_SHARE = 0.12;
 /** Type size as a share of the button's height, and the range it is allowed to land in. */
 const FONT_SHARE = 0.45;
 const MIN_FONT = 8;
 const MAX_FONT = 11;
 /**
- * Roughly how wide the word prints, per point of type size — measured in the
+ * Roughly how wide one glyph prints, per point of type size — measured in the
  * browser, with a little slack. The type has to answer to the shape's width as
- * well as its height; where the word will not print at the smallest readable
- * size, the button is the speech bubble alone.
+ * well as its height, so what is printed decides how large it can be printed.
  */
-const WORD_WIDTH_PER_FONT = 5.6;
+const WIDTH_PER_CHAR_PER_FONT = 0.7;
 
 /** The rim: the card's neon pink, at Bryan's order — the loudest edge the palette has. */
 const BUTTON_RIM = BASECAMP_VIVID.pink;
@@ -58,6 +53,12 @@ const HALF_DISC_RADIUS = '50% 50% 0 0 / 100% 100% 0 0';
 interface CommentsButtonProps {
   account: string;
   /**
+   * Defers the read until the card is near the viewport, so a long feed does
+   * not ask the chain for every row's replies before anyone has scrolled to
+   * them. The panel asks for itself when it opens, whatever this says.
+   */
+  enabled?: boolean;
+  /**
    * The hollow the button has to fill, when it is being fitted into a drawing
    * — the U inside the reply mix half-moon. Given one, the button takes that
    * shape and fills it to its edges. Without one it draws as a plain pill at
@@ -75,15 +76,26 @@ interface CommentsButtonProps {
  * has to guess what it opens. The panel is only mounted once it is open, so a
  * feed of cards asks the chain nothing until a reader actually asks to look.
  */
-const CommentsButton = ({ account, fit }: CommentsButtonProps) => {
+const CommentsButton = ({ account, fit, enabled = true }: CommentsButtonProps) => {
   const { t } = useTranslation('common_blog');
   const [open, setOpen] = useState(false);
+  // The same read the panel makes, under the same key, so the button and the
+  // list it opens can never disagree about how many there are.
+  const { comments, known } = useAccountComments(account, enabled || open);
 
   const label = t('basecamp.card.comments.button');
+  // How many replies they have written, to the depth this card reads: the
+  // panel's own limit. Past that the number stops rather than guesses, which
+  // is what Bryan asked for — a new account shows its seven, a busy one shows
+  // the limit. Unknown is the card's dash, never a zero.
+  const countText = known ? String(comments.length) : t('basecamp.signals.value_unknown');
+  // Fitted into the drawing there is only room for a number, and the number is
+  // the more useful of the two anyway. The free-standing pill keeps the word.
+  const text = fit ? countText : label;
+  const widthPerFont = Math.max(text.length, 1) * WIDTH_PER_CHAR_PER_FONT;
   const textWidth = fit ? fit.width * TEXT_WIDTH_SHARE - SIDE_PADDING : 0;
-  const wordFits = !fit || textWidth >= MIN_FONT * WORD_WIDTH_PER_FONT;
   const fontSize = fit
-    ? Math.min(Math.max(Math.min(fit.height * FONT_SHARE, textWidth / WORD_WIDTH_PER_FONT), MIN_FONT), MAX_FONT)
+    ? Math.min(Math.max(Math.min(fit.height * FONT_SHARE, textWidth / widthPerFont), MIN_FONT), MAX_FONT)
     : undefined;
 
   return (
@@ -95,17 +107,16 @@ const CommentsButton = ({ account, fit }: CommentsButtonProps) => {
           aria-label={label}
           data-testid="postcard-comments-button"
           className={cn(
-            'flex items-end justify-center overflow-hidden whitespace-nowrap font-bold tracking-[-0.01em] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-95',
+            'flex items-center justify-center overflow-hidden whitespace-nowrap font-bold leading-none tracking-[-0.01em] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-95',
             fit ? 'h-full w-full' : 'rounded-full px-2.5 py-1 text-[11px]'
           )}
           style={{
             ...FILLED_STYLE,
             fontSize,
-            borderRadius: fit ? HALF_DISC_RADIUS : undefined,
-            paddingBottom: fit ? fit.height * TEXT_BASELINE_SHARE : undefined
+            borderRadius: fit ? HALF_DISC_RADIUS : undefined
           }}
         >
-          {wordFits ? label : <MessageSquare style={{ height: '46%', width: 'auto' }} aria-hidden="true" />}
+          {text}
         </button>
       </Hint>
       {open ? <CommentsDialog open={open} onOpenChange={setOpen} account={account} /> : null}

@@ -64,6 +64,12 @@ interface CircleReadoutProps {
    * actually drawn.
    */
   action?: (fit: { width: number; height: number }) => ReactNode;
+  /**
+   * Makes the drawing itself a button. Used where the readout has more behind
+   * it than a popover can hold — the stake pie opens where the stake came
+   * from. The popover gains a line saying so.
+   */
+  onOpen?: () => void;
 }
 
 /**
@@ -77,7 +83,8 @@ const CircleReadout = ({
   boxHeight,
   minColumnWidth = MIN_COLUMN_WIDTH,
   captionSize,
-  action
+  action,
+  onOpen
 }: CircleReadoutProps) => {
   const { t } = useTranslation('common_blog');
   const viz: ReadoutViz = readout.viz ?? 'bubble';
@@ -104,6 +111,13 @@ const CircleReadout = ({
     color: slice.hex,
     label: t(`basecamp.card.labels.${slice.id}`),
     value: formatReadoutValue(t, slice)
+  }));
+  // Context under a rule: no colour, because nothing in the drawing stands for
+  // these.
+  const extras: HintRow[] = (readout.notes ?? []).map((item) => ({
+    color: '',
+    label: t(`basecamp.card.labels.${item.id}`),
+    value: formatReadoutValue(t, item)
   }));
 
   const isHalfMoon = viz === 'halfmoon';
@@ -164,7 +178,14 @@ const CircleReadout = ({
   // wrap the whole column, but a control inside the column would then be a
   // trigger inside a trigger and two popovers would open at once; the reader
   // still gets the explanation from anywhere they are likely to point.
-  const hintProps = { title: label, body: hint, value: insideShare ? valueText() : undefined, rows };
+  const hintProps = {
+    title: label,
+    body: hint,
+    value: insideShare ? valueText() : undefined,
+    rows,
+    extras,
+    action: onOpen ? t(`basecamp.card.hints.${readout.id}_click`) : undefined
+  };
 
   return (
     <div
@@ -177,7 +198,23 @@ const CircleReadout = ({
       <div className="flex flex-col items-center justify-center gap-0.5" style={{ height: boxHeight ?? height }}>
         <div className="relative flex flex-col items-center gap-0.5">
           <Hint {...hintProps}>
-            <div className="relative cursor-default" style={{ width: size, height }}>
+            <div
+              className={cn('relative', onOpen ? 'cursor-pointer' : 'cursor-default')}
+              style={{ width: size, height }}
+              role={onOpen ? 'button' : undefined}
+              tabIndex={onOpen ? 0 : undefined}
+              aria-label={onOpen ? t(`basecamp.card.hints.${readout.id}_click`) : undefined}
+              onClick={onOpen}
+              onKeyDown={
+                onOpen
+                  ? (event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      onOpen();
+                    }
+                  : undefined
+              }
+            >
               {drawing()}
               {insideShare ? (
                 <span

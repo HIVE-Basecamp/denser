@@ -145,6 +145,13 @@ export function useAccountComments(account: string, enabled = true) {
 
   return {
     comments,
+    /**
+     * True once a read has actually come back. An empty list means different
+     * things before and after that — nobody has looked yet, or they have
+     * written nothing — and a caller printing a number must not print a zero
+     * for the first of them.
+     */
+    known: data !== undefined,
     // A read that has not been asked for yet is not loading.
     isLoading: isEnabled && isLoading,
     isError

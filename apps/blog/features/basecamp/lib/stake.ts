@@ -108,6 +108,21 @@ export function keScore(
 }
 
 /**
+ * A lifetime reward total, as HIVE.
+ *
+ * The chain keeps these as whole numbers with three implied decimals, and they
+ * are the *whole* value of what was paid out — an author reward is normally
+ * half Hive Power and half liquid, so only about half of this figure ever
+ * became stake. Anything comparing it to Hive Power has to say so.
+ */
+export function rewardHive(amount: number | string | null | undefined): number | null {
+  if (amount === null || amount === undefined) return null;
+  const raw = Number(amount);
+  if (!Number.isFinite(raw)) return null;
+  return raw / REWARD_PRECISION;
+}
+
+/**
  * What share of an account's own stake is currently lent to somebody else.
  * Null when the account owns nothing, so a brand new account reads as unknown
  * rather than 0%.

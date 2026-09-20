@@ -24,6 +24,7 @@ export type SignalUnit =
   | 'percent'
   | 'boolean'
   | 'hive_power'
+  | 'hive'
   | 'ratio'
   | 'none';
 

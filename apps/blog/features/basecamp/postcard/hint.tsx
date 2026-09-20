@@ -6,6 +6,7 @@ import { cn } from '@ui/lib/utils';
 import { BASECAMP_HINT, BASECAMP_MUTED } from '../lib/theme';
 
 export interface HintRow {
+  /** Empty for a line that is not a slice of the drawing: no dot is drawn. */
   color: string;
   label: string;
   value: string;
@@ -18,6 +19,10 @@ interface HintProps {
   value?: string;
   /** For segmented drawings: one line per slice, with its colour. */
   rows?: HintRow[];
+  /** Context lines under a rule: read, not drawn, so they carry no colour. */
+  extras?: HintRow[];
+  /** A closing line in the accent colour — what happens if the reader clicks. */
+  action?: string;
   children: ReactNode;
 }
 
@@ -29,7 +34,20 @@ interface HintProps {
  * The content is portalled to the body: some triggers are SVG groups, and a
  * div rendered inside an <svg> would never paint.
  */
-const Hint = ({ title, body, value, rows, children }: HintProps) => (
+/** One line of a popover list: a dot only where the line is a slice of the drawing. */
+const Line = ({ row }: { row: HintRow }) => (
+  <li className="flex items-center gap-1.5 text-[10.5px]">
+    {row.color ? (
+      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.color }} aria-hidden="true" />
+    ) : (
+      <span className="h-2 w-2 shrink-0" aria-hidden="true" />
+    )}
+    <span className={cn(BASECAMP_MUTED, 'flex-1')}>{row.label}</span>
+    <span className="font-semibold tabular-nums text-[#E8EDF5]">{row.value}</span>
+  </li>
+);
+
+const Hint = ({ title, body, value, rows, extras, action, children }: HintProps) => (
   <TooltipProvider delayDuration={120}>
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
@@ -43,14 +61,18 @@ const Hint = ({ title, body, value, rows, children }: HintProps) => (
           {rows && rows.length > 0 ? (
             <ul className="mt-1.5 flex flex-col gap-0.5">
               {rows.map((row) => (
-                <li key={row.label} className="flex items-center gap-1.5 text-[10.5px]">
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.color }} aria-hidden="true" />
-                  <span className={cn(BASECAMP_MUTED, 'flex-1')}>{row.label}</span>
-                  <span className="font-semibold tabular-nums text-[#E8EDF5]">{row.value}</span>
-                </li>
+                <Line key={row.label} row={row} />
               ))}
             </ul>
           ) : null}
+          {extras && extras.length > 0 ? (
+            <ul className="mt-1.5 flex flex-col gap-0.5 border-t border-white/10 pt-1.5">
+              {extras.map((row) => (
+                <Line key={row.label} row={row} />
+              ))}
+            </ul>
+          ) : null}
+          {action ? <div className="mt-1.5 text-[10.5px] font-semibold text-[#B79CFF]">{action}</div> : null}
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>

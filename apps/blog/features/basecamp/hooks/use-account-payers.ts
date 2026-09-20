@@ -124,7 +124,8 @@ function toPayment(operation: { op?: { type?: string; value?: unknown }; timesta
     payer: from,
     kind: nai === NAI_HBD ? 'hbd' : 'hive',
     amount,
-    timestampMs
+    timestampMs,
+    memo: typeof value.memo === 'string' ? value.memo : ''
   } satisfies PaymentEvent;
 }
 

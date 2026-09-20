@@ -10,6 +10,7 @@ import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
 import IdentityStrip from './postcard/identity-strip';
 import PostCard from './postcard/post-card';
+import StakeSourcesDialog from './postcard/stake-sources-dialog';
 import TopVotersDialog from './postcard/top-voters-dialog';
 import { useAccountCreator } from './hooks/use-account-creator';
 import { useAccountHistory } from './hooks/use-account-history';
@@ -24,7 +25,7 @@ import {
   type PostcardTier
 } from './lib/postcard-sizes';
 import { BASECAMP_SIGNALS, parseIsoMs, type SignalInput, type SignalValue } from './lib/signals';
-import { hivePowerFromAmount } from './lib/stake';
+import { hivePowerFromAmount, rewardHive } from './lib/stake';
 import { BASECAMP_POSTCARD_STYLE } from './lib/theme';
 import type { Newcomer } from './hooks/use-newcomers';
 
@@ -52,6 +53,8 @@ const FIRST_POST_CLASS = 'my-7 border-[#FF6FB1]/50 hover:border-[#FF6FB1]/80';
 const REPLY_MIX_READOUT_ID = 'reply_mix';
 /** The one petal that opens something: the votes they were given get the way into who gave them. */
 const VOTES_RECEIVED_READOUT_ID = 'votes_received';
+/** The one drawing that opens something: the stake pie gets the way into where the stake came from. */
+const STAKE_READOUT_ID = 'stake_mix';
 
 /** Stacked, the post shares the first line with the flower and may grow past the usual cap to meet it. */
 function postZoneStyle(tier: PostcardTier): CSSProperties {
@@ -96,6 +99,7 @@ const NewcomersListItem = ({
   // panel costs nothing.
   const { votes, status: votesStatus } = useVotesReceived(post.author, inView);
   const [votersOpen, setVotersOpen] = useState(false);
+  const [stakeOpen, setStakeOpen] = useState(false);
 
   const signalInput: SignalInput = {
     account,
@@ -117,10 +121,16 @@ const NewcomersListItem = ({
   // signals report.
   const own = hivePowerFromAmount(account.vestingSharesAmount, vestsToHivePowerRate);
   const lentOut = hivePowerFromAmount(account.delegatedVestingAmount, vestsToHivePowerRate);
+  // Both lifetime reward totals ride on the account record the card already
+  // has, so the popover's breakdown costs no extra read.
+  const authorRewards = rewardHive(account.postingRewards);
+  const curationRewards = rewardHive(account.curationRewards);
   const stake: StakeInput = {
     kept: own !== null && lentOut !== null ? Math.max(own - lentOut, 0) : null,
     lentOut,
-    lentIn: hivePowerFromAmount(account.receivedVestingAmount, vestsToHivePowerRate)
+    lentIn: hivePowerFromAmount(account.receivedVestingAmount, vestsToHivePowerRate),
+    authorRewards,
+    curationRewards
   };
 
   // An empty history read must not print as a card full of zeroes, so the
@@ -186,9 +196,12 @@ const NewcomersListItem = ({
               // card keeps its height.
               action={
                 readout.id === REPLY_MIX_READOUT_ID
-                  ? (fit) => <CommentsButton account={post.author} fit={fit} />
+                  ? (fit) => <CommentsButton account={post.author} fit={fit} enabled={inView} />
                   : undefined
               }
+              // The pie says where the stake sits; clicking it says where the
+              // stake came from. That read is only ever made on a click.
+              onOpen={readout.id === STAKE_READOUT_ID ? () => setStakeOpen(true) : undefined}
             />
           ))}
         </div>
@@ -209,6 +222,18 @@ const NewcomersListItem = ({
           createdMs={parseIsoMs(account.createdIso)}
           loading={votesStatus === 'loading'}
           failed={votesStatus === 'unavailable'}
+        />
+      ) : null}
+      {stakeOpen ? (
+        <StakeSourcesDialog
+          open={stakeOpen}
+          onOpenChange={setStakeOpen}
+          account={post.author}
+          ownHp={own}
+          delegatedOutHp={lentOut}
+          delegatedInHp={stake.lentIn}
+          authorRewards={authorRewards}
+          curationRewards={curationRewards}
         />
       ) : null}
     </li>

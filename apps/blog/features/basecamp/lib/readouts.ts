@@ -84,6 +84,19 @@ export interface Readout {
   text?: string | null;
   /** 'segments': the slices. */
   segments?: ReadoutSegment[];
+  /**
+   * Extra lines for the popover that are not parts of the drawing — context a
+   * reader needs to make sense of the number, with nothing drawn for them.
+   */
+  notes?: ReadoutNote[];
+}
+
+/** One extra line in a readout's popover. Not drawn; only read. */
+export interface ReadoutNote {
+  id: string;
+  value: number | null;
+  unit: SignalUnit;
+  known: boolean;
 }
 
 /** Hive Power the account holds, lends and borrows, already converted. */
@@ -91,6 +104,10 @@ export interface StakeInput {
   kept: number | null;
   lentOut: number | null;
   lentIn: number | null;
+  /** Lifetime author rewards, in HIVE. The whole payout, not just the stake half. */
+  authorRewards: number | null;
+  /** Lifetime curation rewards, in HIVE. */
+  curationRewards: number | null;
 }
 
 /** A year is where "new user" ends, so it is where the age ring closes. */
@@ -169,6 +186,11 @@ function stakeSegment(id: string, hp: number | null, color: BasecampVividKey): R
   };
 }
 
+function note(id: string, value: number | null, unit: SignalUnit): ReadoutNote {
+  const known = value !== null && Number.isFinite(value);
+  return { id, value: known ? value : null, unit, known };
+}
+
 function petal(
   id: string,
   signals: Record<string, SignalValue>,
@@ -242,8 +264,9 @@ export function buildReadouts(
         percentSegment('self_votes', patterns.selfVotePercent, patterns.known, 'violet')
       ]
     },
-    // Where their stake is: kept, lent out, lent in — parts of one whole, so a
-    // real pie. The centre shows what they actually wield.
+    // Where their stake is: their own, delegated to others, delegated from
+    // others — parts of one whole, so a real pie. The centre shows what they
+    // actually wield.
     {
       id: 'stake_mix',
       display: 'circle',
@@ -259,6 +282,14 @@ export function buildReadouts(
         stakeSegment('stake_kept', stake.kept, 'blue'),
         stakeSegment('stake_out', stake.lentOut, 'orange'),
         stakeSegment('stake_in', stake.lentIn, 'pink')
+      ],
+      // What the chain will say about where that stake came from without being
+      // asked twice: both lifetime reward totals ride on the account record
+      // itself, so these cost the card nothing. Where the stake came from
+      // beyond them takes a history read, and that waits for a click.
+      notes: [
+        note('author_rewards', stake.authorRewards, 'hive'),
+        note('curation_rewards', stake.curationRewards, 'hive')
       ]
     },
     // Lifetime rewards over stake. Drains as it climbs.
