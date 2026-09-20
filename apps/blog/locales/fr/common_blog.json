@@ -773,7 +773,9 @@
         "flower": "Six lectures de la façon dont ce compte a été utilisé, un pétale chacune. Survolez un pétale pour voir ce qu’il compte ; au centre se trouve le compte qui a créé celui-ci.",
         "posted": "When this post was published.",
         "votes_received": "Votes émis par d'autres personnes sur les publications de ce compte, et non les votes qu'il a émis. Cliquez pour voir qui vote le plus de valeur à ce compte, combien de votes chacun a donnés et ce qu'ils valaient.",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "Cliquez pour voir à qui ils répondent",
+        "votes_received_click": "Cliquez pour voir qui a voté"
       },
       "comments": {
         "button": "Commentaires",
@@ -838,6 +840,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "Les {{limit}} personnes les plus répondues",
+        "subtitle": "À qui @{{account}} répond, et ce que ces réponses ont rapporté.",
+        "replies_stat": "Réponses",
+        "people_stat": "Personnes",
+        "earned_stat": "Gagné",
+        "order_label": "Trier par",
+        "order_replies": "Réponses",
+        "order_earned": "Gagné",
+        "replies_label": "réponses",
+        "earned_label": "gagné",
+        "amount": "{{value}} $",
+        "amount_under": "<{{value}} $",
+        "amount_over_negative": ">-{{value}} $",
+        "loading": "Lecture de la chaîne…",
+        "error": "Les réponses de ce compte n’ont pas pu être lues. Réessayez dans un instant.",
+        "empty": "@{{account}} n’a encore répondu à personne d’autre.",
+        "window_lifetime": "Toutes les réponses écrites par ce compte : {{replies}}.",
+        "window_capped": "{{replies}} réponses lues. Il en reste de plus anciennes non atteintes.",
+        "self_note": "{{self}} autres étaient des réponses sous ses propres publications.",
+        "unmatched_note": "{{rewards}} paiements portent sur des publications antérieures à cette fenêtre et ne sont pas comptés.",
+        "value_note": "Les montants correspondent au paiement de l’auteur, au prix actuel du HIVE."
       }
     },
     "title": "Basecamp",

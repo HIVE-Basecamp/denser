@@ -779,7 +779,9 @@
         "flower": "Шесть показателей того, как использовался этот аккаунт, по одному на лепесток. Наведите курсор на лепесток, чтобы увидеть, что он считает; в центре — аккаунт, создавший этот.",
         "posted": "When this post was published.",
         "votes_received": "Голоса, отданные другими людьми за посты этого аккаунта, а не голоса, которые он отдал. Нажмите, чтобы увидеть, кто голосует за этот аккаунт на наибольшую ценность, сколько голосов отдал каждый и сколько они стоили.",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "Нажмите, чтобы увидеть, кому он отвечает",
+        "votes_received_click": "Нажмите, чтобы увидеть, кто голосовал"
       },
       "comments": {
         "button": "Комментарии",
@@ -844,6 +846,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "Топ {{limit}} собеседников",
+        "subtitle": "Кому отвечает @{{account}} и сколько эти ответы принесли.",
+        "replies_stat": "Ответы",
+        "people_stat": "Люди",
+        "earned_stat": "Заработано",
+        "order_label": "Сортировать по",
+        "order_replies": "Ответам",
+        "order_earned": "Заработку",
+        "replies_label": "ответов",
+        "earned_label": "заработано",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Чтение блокчейна…",
+        "error": "Не удалось прочитать ответы этого аккаунта. Попробуйте ещё раз через минуту.",
+        "empty": "@{{account}} пока никому не отвечал.",
+        "window_lifetime": "Все ответы, написанные этим аккаунтом: {{replies}}.",
+        "window_capped": "Прочитано {{replies}} ответов. Есть более старые, до которых чтение не дошло.",
+        "self_note": "Ещё {{self}} — ответы под собственными постами.",
+        "unmatched_note": "{{rewards}} выплат приходится на посты старше этого окна и не учитываются.",
+        "value_note": "Суммы — выплата автору по текущей цене HIVE."
       }
     },
     "title": "Basecamp",

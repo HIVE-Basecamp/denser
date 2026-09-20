@@ -128,7 +128,16 @@ const FlowerReadout = ({ petals, core, size, petalAction }: FlowerReadoutProps) 
             : formatReadoutValue(t, readout);
           const action = petalAction?.(readout) ?? null;
           return (
-            <Hint key={readout.id} title={label} value={full} body={t(`basecamp.card.hints.${readout.id}`)}>
+            <Hint
+              key={readout.id}
+              title={label}
+              value={full}
+              body={t(`basecamp.card.hints.${readout.id}`)}
+              // A petal that opens a panel says so. Nothing else on the flower
+              // is a door, so without the line there is no way to learn which
+              // ones are but to click every petal.
+              action={action ? t(`basecamp.card.hints.${readout.id}_click`) : undefined}
+            >
               <Petal
                 angle={petalAngle(index, petals.length)}
                 ratio={readout.ratio}

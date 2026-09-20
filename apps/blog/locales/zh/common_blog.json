@@ -773,7 +773,9 @@
         "flower": "关于该账户使用方式的六项读数，每片花瓣一项。将鼠标悬停在花瓣上可查看它统计的内容；中心是创建该账户的账户。",
         "posted": "When this post was published.",
         "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁为这个账户投出最多价值、各自投了多少票以及价值多少。",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "点击查看他们回复了谁",
+        "votes_received_click": "点击查看谁投了票"
       },
       "comments": {
         "button": "评论",
@@ -838,6 +840,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "回复最多的 {{limit}} 人",
+        "subtitle": "@{{account}} 回复了谁，以及这些回复赚了多少。",
+        "replies_stat": "回复",
+        "people_stat": "人数",
+        "earned_stat": "收益",
+        "order_label": "排序方式",
+        "order_replies": "回复",
+        "order_earned": "收益",
+        "replies_label": "条回复",
+        "earned_label": "收益",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "正在读取链上数据…",
+        "error": "无法读取该账户的回复。请稍后再试。",
+        "empty": "@{{account}} 还没有回复过其他人。",
+        "window_lifetime": "该账户写过的全部回复：{{replies}} 条。",
+        "window_capped": "已读取 {{replies}} 条回复。还有更早的没有读到。",
+        "self_note": "另有 {{self}} 条是在自己帖子下的回复。",
+        "unmatched_note": "有 {{rewards}} 笔奖励落在此范围之前的帖子上，未计入。",
+        "value_note": "金额为作者收益，按当前 HIVE 价格计算。"
       }
     },
     "title": "Basecamp",

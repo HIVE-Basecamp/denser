@@ -820,7 +820,9 @@
         "flower": "ستّ قراءات لكيفية استخدام هذا الحساب، واحدة لكل بتلة. مرّر المؤشر فوق بتلة لمعرفة ما تحصيه؛ وفي المنتصف الحساب الذي أنشأ هذا الحساب.",
         "posted": "When this post was published.",
         "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يصوّت بأكبر قيمة لهذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها.",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "انقر لترى على مَن يردّ",
+        "votes_received_click": "انقر لترى من صوّت"
       },
       "comments": {
         "button": "التعليقات",
@@ -885,6 +887,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "أكثر {{limit}} شخصًا تلقّوا ردودًا",
+        "subtitle": "على مَن يردّ @{{account}}، وكم ربحت تلك الردود.",
+        "replies_stat": "الردود",
+        "people_stat": "الأشخاص",
+        "earned_stat": "المكتسب",
+        "order_label": "الترتيب حسب",
+        "order_replies": "الردود",
+        "order_earned": "المكتسب",
+        "replies_label": "ردود",
+        "earned_label": "مكتسب",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "جارٍ قراءة السلسلة…",
+        "error": "تعذّرت قراءة ردود هذا الحساب. حاول مرة أخرى بعد قليل.",
+        "empty": "لم يردّ @{{account}} على أحد بعد.",
+        "window_lifetime": "كل ردّ كتبه هذا الحساب: {{replies}}.",
+        "window_capped": "تمت قراءة {{replies}} ردًا. هناك ردود أقدم لم تصل إليها القراءة.",
+        "self_note": "و{{self}} ردًا أخرى كانت تحت منشوراته هو.",
+        "unmatched_note": "{{rewards}} من المكافآت تخصّ منشورات أقدم من هذه النافذة ولم تُحتسب.",
+        "value_note": "المبالغ هي مكافأة المؤلف بسعر HIVE الحالي."
       }
     },
     "title": "Basecamp",

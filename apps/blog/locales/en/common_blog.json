@@ -875,7 +875,9 @@
         "flower": "Six readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published.",
         "votes_received": "Votes other people have cast on this account's posts — not the votes it cast. Click to see who is voting the most value to this account, how many votes each has given and what they were worth.",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "Click to see who they reply to",
+        "votes_received_click": "Click to see who voted"
       },
       "comments": {
         "button": "Comments",
@@ -940,6 +942,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "Top {{limit}} people replied to",
+        "subtitle": "Who @{{account}} replies to, and what those replies earned.",
+        "replies_stat": "Replies",
+        "people_stat": "People",
+        "earned_stat": "Earned",
+        "order_label": "Order by",
+        "order_replies": "Replies",
+        "order_earned": "Earned",
+        "replies_label": "replies",
+        "earned_label": "earned",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Reading the chain…",
+        "error": "The replies on this account could not be read. Try again in a moment.",
+        "empty": "@{{account}} has not replied to anybody else yet.",
+        "window_lifetime": "Every reply this account has written: {{replies}}.",
+        "window_capped": "{{replies}} replies read. There are older ones this has not reached.",
+        "self_note": "{{self}} more were replies under their own posts.",
+        "unmatched_note": "{{rewards}} payouts landed on posts older than this window and are not counted.",
+        "value_note": "Amounts are the author payout, at the current HIVE price."
       }
     },
     "title": "Basecamp",

@@ -773,7 +773,9 @@
         "flower": "Sei letture di come è stato usato questo account, un petalo ciascuna. Passa il cursore su un petalo per sapere cosa conta; al centro c’è l’account che ha creato questo.",
         "posted": "When this post was published.",
         "votes_received": "Voti espressi da altre persone sui post di questo account, non i voti che ha dato. Fai clic per vedere chi vota più valore a questo account, quanti voti ha dato ciascuno e quanto valevano.",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "Clicca per vedere a chi risponde",
+        "votes_received_click": "Clicca per vedere chi ha votato"
       },
       "comments": {
         "button": "Commenti",
@@ -838,6 +840,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "Le {{limit}} persone a cui risponde di più",
+        "subtitle": "A chi risponde @{{account}}, e quanto hanno guadagnato quelle risposte.",
+        "replies_stat": "Risposte",
+        "people_stat": "Persone",
+        "earned_stat": "Guadagnato",
+        "order_label": "Ordina per",
+        "order_replies": "Risposte",
+        "order_earned": "Guadagnato",
+        "replies_label": "risposte",
+        "earned_label": "guadagnato",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "Lettura della catena…",
+        "error": "Non è stato possibile leggere le risposte di questo account. Riprova tra un momento.",
+        "empty": "@{{account}} non ha ancora risposto a nessun altro.",
+        "window_lifetime": "Tutte le risposte scritte da questo account: {{replies}}.",
+        "window_capped": "{{replies}} risposte lette. Ce ne sono di più vecchie non raggiunte.",
+        "self_note": "Altre {{self}} erano risposte sotto i propri post.",
+        "unmatched_note": "{{rewards}} pagamenti riguardano post precedenti a questa finestra e non sono conteggiati.",
+        "value_note": "Gli importi sono il pagamento all’autore, al prezzo attuale di HIVE."
       }
     },
     "title": "Basecamp",

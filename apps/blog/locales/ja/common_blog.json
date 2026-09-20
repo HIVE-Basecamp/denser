@@ -773,7 +773,9 @@
         "flower": "このアカウントの使われ方に関する6つの読み取り。花びら1枚につき1つです。花びらにカーソルを合わせると何を数えているかがわかります。中央はこのアカウントを作成したアカウントです。",
         "posted": "When this post was published.",
         "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も大きな価値を投票しているか、それぞれの投票数とその価値が表示されます。",
-        "stake_mix_click": "Click to see where this Hive Power came from"
+        "stake_mix_click": "Click to see where this Hive Power came from",
+        "reply_targets_click": "クリックして返信相手を見る",
+        "votes_received_click": "クリックして投票者を見る"
       },
       "comments": {
         "button": "コメント",
@@ -838,6 +840,29 @@
         "more_transfers": "and {{transfers}} older not shown",
         "open_wallet": "Open @{{account}}'s wallet",
         "trail_hint": "Click a transfer row to see the transfers behind it."
+      },
+      "reply_targets": {
+        "title": "返信した相手 上位{{limit}}人",
+        "subtitle": "@{{account}} が誰に返信し、その返信がいくら稼いだか。",
+        "replies_stat": "返信",
+        "people_stat": "人数",
+        "earned_stat": "獲得",
+        "order_label": "並び替え",
+        "order_replies": "返信",
+        "order_earned": "獲得",
+        "replies_label": "返信",
+        "earned_label": "獲得",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "loading": "チェーンを読み込み中…",
+        "error": "このアカウントの返信を読み取れませんでした。しばらくしてからもう一度お試しください。",
+        "empty": "@{{account}} はまだ誰にも返信していません。",
+        "window_lifetime": "このアカウントが書いた返信のすべて: {{replies}}件。",
+        "window_capped": "{{replies}}件の返信を読み取りました。これより古いものには届いていません。",
+        "self_note": "さらに{{self}}件は自分の投稿への返信でした。",
+        "unmatched_note": "{{rewards}}件の報酬はこの範囲より古い投稿に対するもので、集計に含まれていません。",
+        "value_note": "金額は現在のHIVE価格での著者報酬です。"
       }
     },
     "title": "Basecamp",

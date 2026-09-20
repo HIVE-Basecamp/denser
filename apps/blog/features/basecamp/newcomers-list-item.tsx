@@ -10,6 +10,7 @@ import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
 import IdentityStrip from './postcard/identity-strip';
 import PostCard from './postcard/post-card';
+import ReplyTargetsDialog from './postcard/reply-targets-dialog';
 import StakeSourcesDialog from './postcard/stake-sources-dialog';
 import TopVotersDialog from './postcard/top-voters-dialog';
 import { useAccountCreator } from './hooks/use-account-creator';
@@ -51,8 +52,10 @@ const FIRST_POST_CLASS = 'my-7 border-[#FF6FB1]/50 hover:border-[#FF6FB1]/80';
 
 /** The one readout that carries a control: the replies drawing gets the way into the replies. */
 const REPLY_MIX_READOUT_ID = 'reply_mix';
-/** The one petal that opens something: the votes they were given get the way into who gave them. */
+/** The petals that open something: the votes they were given get the way into who gave them. */
 const VOTES_RECEIVED_READOUT_ID = 'votes_received';
+/** …and the people petal gets the way into who those people are, and what replying to them paid. */
+const REPLY_TARGETS_READOUT_ID = 'reply_targets';
 /** The one drawing that opens something: the stake pie gets the way into where the stake came from. */
 const STAKE_READOUT_ID = 'stake_mix';
 
@@ -100,6 +103,7 @@ const NewcomersListItem = ({
   const { votes, status: votesStatus } = useVotesReceived(post.author, inView);
   const [votersOpen, setVotersOpen] = useState(false);
   const [stakeOpen, setStakeOpen] = useState(false);
+  const [peopleOpen, setPeopleOpen] = useState(false);
 
   const signalInput: SignalInput = {
     account,
@@ -143,8 +147,11 @@ const NewcomersListItem = ({
     votes
   );
   const shown = (display: ReadoutDisplay) => readouts.filter((readout) => readout.display === display);
-  const petalAction = (readout: Readout) =>
-    readout.id === VOTES_RECEIVED_READOUT_ID ? () => setVotersOpen(true) : null;
+  const petalAction = (readout: Readout) => {
+    if (readout.id === VOTES_RECEIVED_READOUT_ID) return () => setVotersOpen(true);
+    if (readout.id === REPLY_TARGETS_READOUT_ID) return () => setPeopleOpen(true);
+    return null;
+  };
   const firstPost = isFirstEverPost(account.postCount, status === 'ready' ? patterns : null);
 
   return (
@@ -223,6 +230,9 @@ const NewcomersListItem = ({
           loading={votesStatus === 'loading'}
           failed={votesStatus === 'unavailable'}
         />
+      ) : null}
+      {peopleOpen ? (
+        <ReplyTargetsDialog open={peopleOpen} onOpenChange={setPeopleOpen} account={post.author} />
       ) : null}
       {stakeOpen ? (
         <StakeSourcesDialog
