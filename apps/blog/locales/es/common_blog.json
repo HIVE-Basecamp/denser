@@ -795,7 +795,8 @@
         "earned": "ganado",
         "earned_pending": "pendiente",
         "one_vote": "1 voto",
-        "votes": "{{votes}} votos"
+        "votes": "{{votes}} votos",
+        "top_voters": "Los {{limit}} principales votantes en estas respuestas"
       },
       "top_voters": {
         "title": "Los {{limit}} principales votantes",

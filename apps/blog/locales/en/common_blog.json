@@ -897,7 +897,8 @@
         "earned": "earned",
         "earned_pending": "pending",
         "one_vote": "1 vote",
-        "votes": "{{votes}} votes"
+        "votes": "{{votes}} votes",
+        "top_voters": "Top {{limit}} voters across these replies"
       },
       "top_voters": {
         "title": "Top {{limit}} voters",

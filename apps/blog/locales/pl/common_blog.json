@@ -800,7 +800,8 @@
         "earned": "zarobione",
         "earned_pending": "oczekuje",
         "one_vote": "1 głos",
-        "votes": "głosów: {{votes}}"
+        "votes": "głosów: {{votes}}",
+        "top_voters": "Top {{limit}} głosujących na te odpowiedzi"
       },
       "top_voters": {
         "title": "Najaktywniejszych głosujących: {{limit}}",

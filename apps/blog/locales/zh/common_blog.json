@@ -795,7 +795,8 @@
         "earned": "收益",
         "earned_pending": "待结算",
         "one_vote": "1 票",
-        "votes": "{{votes}} 票"
+        "votes": "{{votes}} 票",
+        "top_voters": "这些回复的前 {{limit}} 位投票者"
       },
       "top_voters": {
         "title": "前 {{limit}} 名投票者",

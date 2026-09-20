@@ -842,7 +842,8 @@
         "earned": "مكتسب",
         "earned_pending": "قيد الانتظار",
         "one_vote": "صوت واحد",
-        "votes": "{{votes}} أصوات"
+        "votes": "{{votes}} أصوات",
+        "top_voters": "أكثر {{limit}} مصوّتين على هذه الردود"
       },
       "top_voters": {
         "title": "أفضل {{limit}} مصوّتين",

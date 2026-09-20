@@ -795,7 +795,8 @@
         "earned": "獲得",
         "earned_pending": "支払い前",
         "one_vote": "1票",
-        "votes": "{{votes}}票"
+        "votes": "{{votes}}票",
+        "top_voters": "これらの返信への投票者 上位{{limit}}人"
       },
       "top_voters": {
         "title": "上位 {{limit}} 人の投票者",

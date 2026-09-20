@@ -801,7 +801,8 @@
         "earned": "заработано",
         "earned_pending": "ожидается",
         "one_vote": "1 голос",
-        "votes": "голосов: {{votes}}"
+        "votes": "голосов: {{votes}}",
+        "top_voters": "Топ {{limit}} голосующих по этим ответам"
       },
       "top_voters": {
         "title": "Топ {{limit}} голосующих",

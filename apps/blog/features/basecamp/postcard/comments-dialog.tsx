@@ -7,7 +7,13 @@ import { Dialog, DialogContent, DialogTitle } from '@ui/components/dialog';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { ACCOUNT_COMMENTS_LIMIT, useAccountComments, type AccountComment } from '../hooks/use-account-comments';
-import { rankCommentVotes, type VoteWorth } from '../lib/comment-payouts';
+import {
+  rankCommentVotes,
+  topCommentVoters,
+  TOP_COMMENT_VOTERS_COUNT,
+  type VoteWorth,
+  type VoterSummary
+} from '../lib/comment-payouts';
 import { shortAge } from '../lib/short-age';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
 import { formatHbdAmount } from './format-value';
@@ -151,6 +157,68 @@ const CommentRow = ({ comment, nowMs }: CommentRowProps) => {
   );
 };
 
+/**
+ * One of the accounts paying, over all the replies at once: who, how much of
+ * the money they are responsible for, and how many of the replies they turned
+ * up on.
+ */
+const SummaryChip = ({ summary }: { summary: VoterSummary }) => {
+  const { t } = useTranslation('common_blog');
+
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-full bg-white/[0.05] py-1 pl-2 pr-2.5 text-[10.5px]"
+      data-testid="basecamp-comments-top-voter"
+    >
+      <Link
+        href={`/@${summary.voter}`}
+        className={cn(BASECAMP_LINK, 'max-w-[150px] truncate font-semibold')}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        @{summary.voter}
+      </Link>
+      <span className="shrink-0 font-bold tabular-nums" style={{ color: LIME }}>
+        <Hbd amount={summary.earned} />
+      </span>
+      <span className={cn(BASECAMP_MUTED, 'shrink-0 tabular-nums')}>
+        {summary.votes === 1
+          ? t('basecamp.card.comments.one_vote')
+          : t('basecamp.card.comments.votes', { votes: summary.votes })}
+      </span>
+    </span>
+  );
+};
+
+/**
+ * Who has been paying across the replies below, at a glance, before anybody
+ * scrolls.
+ *
+ * The list under it is left exactly as it happened — that order is where the
+ * rhythm of an account shows — so this answers the other question beside it
+ * rather than by rearranging the first. One account on all five chips is a
+ * shape; it is also what one friend, one curation trail and one community
+ * account each look like from here (ETHOS.md).
+ */
+const TopVotersStrip = ({ comments }: { comments: AccountComment[] }) => {
+  const { t } = useTranslation('common_blog');
+  const top = topCommentVoters(comments);
+  if (top.length === 0) return null;
+
+  return (
+    <div data-testid="basecamp-comments-top-voters">
+      <div className={cn(BASECAMP_MICRO_LABEL, 'mb-1.5')}>
+        {t('basecamp.card.comments.top_voters', { limit: TOP_COMMENT_VOTERS_COUNT })}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {top.map((summary) => (
+          <SummaryChip key={summary.voter} summary={summary} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 interface CommentsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -219,6 +287,9 @@ const CommentsDialog = ({ open, onOpenChange, account }: CommentsDialogProps) =>
             {t('basecamp.card.comments.subtitle', { account, limit: ACCOUNT_COMMENTS_LIMIT })}
           </div>
         </div>
+
+        {/* Above the scroll, so it stays put while the replies go by. */}
+        {comments.length > 0 ? <TopVotersStrip comments={comments} /> : null}
 
         <div className="max-h-[60vh] overflow-y-auto pr-1">{body()}</div>
       </DialogContent>

@@ -61,3 +61,54 @@ export function rankCommentVotes(votes: CommentVote[], payout: number): VoteWort
     }))
     .sort((a, b) => b.rshares - a.rshares);
 }
+
+/** A reply, reduced to the two things this file needs from it. */
+export interface PaidReply {
+  votes: CommentVote[];
+  payout: number;
+}
+
+export interface VoterSummary {
+  voter: string;
+  /** Their share of the payouts across every reply read, in HBD. */
+  earned: number;
+  /** How many of those replies they voted on. */
+  votes: number;
+}
+
+/** How many voters the strip above the list names. Bryan's number. */
+export const TOP_COMMENT_VOTERS_COUNT = 5;
+
+/**
+ * The same votes read across all the replies at once, biggest payer first.
+ *
+ * The list below it stays in the order it happened, which is where the rhythm
+ * of an account is visible — twenty-five replies inside an hour, the same
+ * sentence five times running. This is the other question, asked without
+ * disturbing that one: over these replies as a whole, who has been paying, and
+ * how often.
+ *
+ * It is the payers of the replies that were read and nothing wider. Five
+ * accounts here are five accounts across those replies, not across a life.
+ */
+export function topCommentVoters(
+  replies: PaidReply[],
+  limit = TOP_COMMENT_VOTERS_COUNT
+): VoterSummary[] {
+  const byVoter = new Map<string, VoterSummary>();
+
+  for (const reply of replies) {
+    for (const vote of rankCommentVotes(reply.votes, reply.payout)) {
+      const summary = byVoter.get(vote.voter) ?? { voter: vote.voter, earned: 0, votes: 0 };
+      byVoter.set(vote.voter, summary);
+      summary.votes++;
+      // A vote on a reply whose shares cannot be worked out is still a vote,
+      // and is counted as one. It simply adds nothing to the money.
+      if (vote.value !== null) summary.earned += vote.value;
+    }
+  }
+
+  return Array.from(byVoter.values())
+    .sort((a, b) => b.earned - a.earned || b.votes - a.votes)
+    .slice(0, limit);
+}
