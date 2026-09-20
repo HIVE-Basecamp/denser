@@ -788,7 +788,14 @@
         "replying_to": "回复 @{{author}}",
         "standalone": "这是帖子，不是回复",
         "open": "打开这条评论",
-        "blank_body": "没有正文。"
+        "blank_body": "没有正文。",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "收益",
+        "earned_pending": "待结算",
+        "one_vote": "1 票",
+        "votes": "{{votes}} 票"
       },
       "top_voters": {
         "title": "前 {{limit}} 名投票者",
@@ -856,6 +863,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "正在读取链上数据…",
+        "reading_left": "大约还剩 {{seconds}} 秒",
         "error": "无法读取该账户的回复。请稍后再试。",
         "empty": "@{{account}} 还没有回复过其他人。",
         "window_lifetime": "该账户写过的全部回复：{{replies}} 条。",

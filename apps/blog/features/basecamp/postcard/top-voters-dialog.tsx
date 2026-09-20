@@ -13,6 +13,7 @@ import { hbdFromRshares } from '../lib/vote-value';
 import { TOP_VOTERS_COUNT, voterShare, type VoterTally, type VotesReceived } from '../lib/voters';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
 import { formatHbdAmount } from './format-value';
+import ReadProgressBar from './read-progress-bar';
 
 const BLUE = BASECAMP_VIVID.blue;
 const CYAN = BASECAMP_VIVID.cyan;
@@ -21,8 +22,6 @@ const AVATAR = 30;
 
 /** So a voter with a sliver of the weight still draws a mark rather than nothing. */
 const BAR_MIN_SHARE = 0.02;
-/** Until the read has got this far there is nothing to draw but motion. */
-const MIN_BAR_PROGRESS = 0.02;
 
 interface HbdValueProps {
   /** The amount in HBD, or null while the chain-wide rate is still unknown. */
@@ -141,52 +140,6 @@ const VoterRow = ({ tally, rank, totalRshares, rate }: VoterRowProps) => {
         </span>
       </span>
     </li>
-  );
-};
-
-interface ReadProgressProps {
-  progress: number | null;
-  secondsLeft: number | null;
-  onStop: () => void;
-}
-
-/**
- * What the deeper read is doing, while it does it.
- *
- * It is never a bare spinner. The read can run for half a minute on an account
- * that has been voted on forty thousand times, and a reader who cannot see it
- * moving has no way to tell working from broken. So: a bar, roughly how long is
- * left, and a way out that keeps what has been read.
- */
-const ReadProgress = ({ progress, secondsLeft, onStop }: ReadProgressProps) => {
-  const { t } = useTranslation('common_blog');
-  const width = progress === null ? MIN_BAR_PROGRESS : Math.max(progress, MIN_BAR_PROGRESS);
-
-  return (
-    <div className="flex items-center gap-3" data-testid="basecamp-top-voters-progress">
-      <span className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/[0.07]">
-        <span
-          className={cn(
-            'block h-full rounded-full transition-[width] duration-500',
-            progress === null && 'animate-pulse'
-          )}
-          style={{ width: `${width * 100}%`, backgroundColor: CYAN, boxShadow: `0 0 8px -1px ${CYAN}` }}
-        />
-      </span>
-      <span className={cn(BASECAMP_MUTED, 'shrink-0 text-[10.5px] tabular-nums')}>
-        {secondsLeft === null
-          ? t('basecamp.card.top_voters.reading')
-          : t('basecamp.card.top_voters.reading_left', { seconds: secondsLeft })}
-      </span>
-      <button
-        type="button"
-        onClick={onStop}
-        className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 text-[10.5px] font-semibold text-[#E8EDF5] transition-colors hover:border-white/40"
-        data-testid="basecamp-top-voters-stop"
-      >
-        {t('basecamp.card.top_voters.stop')}
-      </button>
-    </div>
   );
 };
 
@@ -333,7 +286,17 @@ const TopVotersDialog = ({
         ) : null}
 
         {reading ? (
-          <ReadProgress progress={full.progress} secondsLeft={full.secondsLeft} onStop={full.stop} />
+          <ReadProgressBar
+            progress={full.progress}
+            label={
+              full.secondsLeft === null
+                ? t('basecamp.card.top_voters.reading')
+                : t('basecamp.card.top_voters.reading_left', { seconds: full.secondsLeft })
+            }
+            onStop={full.stop}
+            stopLabel={t('basecamp.card.top_voters.stop')}
+            testId="basecamp-top-voters-progress"
+          />
         ) : null}
 
         <div className="max-h-[52vh] overflow-y-auto pr-1">{body()}</div>

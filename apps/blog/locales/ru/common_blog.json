@@ -794,7 +794,14 @@
         "replying_to": "В ответ @{{author}}",
         "standalone": "Запись, а не ответ",
         "open": "Открыть этот комментарий",
-        "blank_body": "Без текста."
+        "blank_body": "Без текста.",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "заработано",
+        "earned_pending": "ожидается",
+        "one_vote": "1 голос",
+        "votes": "голосов: {{votes}}"
       },
       "top_voters": {
         "title": "Топ {{limit}} голосующих",
@@ -862,6 +869,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "Чтение блокчейна…",
+        "reading_left": "Осталось около {{seconds}} с",
         "error": "Не удалось прочитать ответы этого аккаунта. Попробуйте ещё раз через минуту.",
         "empty": "@{{account}} пока никому не отвечал.",
         "window_lifetime": "Все ответы, написанные этим аккаунтом: {{replies}}.",

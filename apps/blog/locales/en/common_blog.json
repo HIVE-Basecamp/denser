@@ -890,7 +890,14 @@
         "replying_to": "Replying to @{{author}}",
         "standalone": "A post, not a reply",
         "open": "Open this comment",
-        "blank_body": "No text."
+        "blank_body": "No text.",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "earned",
+        "earned_pending": "pending",
+        "one_vote": "1 vote",
+        "votes": "{{votes}} votes"
       },
       "top_voters": {
         "title": "Top {{limit}} voters",
@@ -958,6 +965,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "Reading the chain…",
+        "reading_left": "About {{seconds}}s left",
         "error": "The replies on this account could not be read. Try again in a moment.",
         "empty": "@{{account}} has not replied to anybody else yet.",
         "window_lifetime": "Every reply this account has written: {{replies}}.",

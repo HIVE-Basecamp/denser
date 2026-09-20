@@ -18,6 +18,7 @@ import {
 } from '../lib/reply-targets';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
 import { formatHbdAmount } from './format-value';
+import ReadProgressBar from './read-progress-bar';
 
 const CYAN = BASECAMP_VIVID.cyan;
 const LIME = BASECAMP_VIVID.lime;
@@ -195,7 +196,7 @@ const ReplyTargetsDialog = ({ open, onOpenChange, account }: ReplyTargetsDialogP
   const hivePerVest = useVestsToHivePowerRate();
   // Nothing is read until the panel is open: this is the most expensive read
   // the card can make.
-  const { targets, status } = useReplyTargets(account, open);
+  const { targets, status, reading: progress } = useReplyTargets(account, open);
   // Priced at render, not in the read: a feed rate arriving late re-prices what
   // is already here rather than sending for it again.
   const reading = useMemo(
@@ -207,12 +208,19 @@ const ReplyTargetsDialog = ({ open, onOpenChange, account }: ReplyTargetsDialogP
 
   const body = () => {
     if (status === 'loading') {
+      // A bar rather than a sentence. On an account with thousands of replies
+      // this read runs for half a minute, and a line that never changes is
+      // indistinguishable from one that has stopped.
       return (
-        <div
-          className={cn(BASECAMP_MUTED, 'py-8 text-center text-[12px]')}
-          data-testid="basecamp-reply-targets-loading"
-        >
-          {t('basecamp.card.reply_targets.loading')}
+        <div className="py-8" data-testid="basecamp-reply-targets-loading">
+          <ReadProgressBar
+            progress={progress.progress}
+            label={
+              progress.secondsLeft === null
+                ? t('basecamp.card.reply_targets.loading')
+                : t('basecamp.card.reply_targets.reading_left', { seconds: progress.secondsLeft })
+            }
+          />
         </div>
       );
     }

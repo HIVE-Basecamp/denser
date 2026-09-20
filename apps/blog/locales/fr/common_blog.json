@@ -788,7 +788,14 @@
         "replying_to": "En réponse à @{{author}}",
         "standalone": "Une publication, pas une réponse",
         "open": "Ouvrir ce commentaire",
-        "blank_body": "Pas de texte."
+        "blank_body": "Pas de texte.",
+        "amount": "{{value}} $",
+        "amount_under": "<{{value}} $",
+        "amount_over_negative": ">-{{value}} $",
+        "earned": "gagné",
+        "earned_pending": "en attente",
+        "one_vote": "1 vote",
+        "votes": "{{votes}} votes"
       },
       "top_voters": {
         "title": "Les {{limit}} principaux votants",
@@ -856,6 +863,7 @@
         "amount_under": "<{{value}} $",
         "amount_over_negative": ">-{{value}} $",
         "loading": "Lecture de la chaîne…",
+        "reading_left": "Environ {{seconds}} s restantes",
         "error": "Les réponses de ce compte n’ont pas pu être lues. Réessayez dans un instant.",
         "empty": "@{{account}} n’a encore répondu à personne d’autre.",
         "window_lifetime": "Toutes les réponses écrites par ce compte : {{replies}}.",

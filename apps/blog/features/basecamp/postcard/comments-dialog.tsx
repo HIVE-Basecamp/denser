@@ -7,13 +7,93 @@ import { Dialog, DialogContent, DialogTitle } from '@ui/components/dialog';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { ACCOUNT_COMMENTS_LIMIT, useAccountComments, type AccountComment } from '../hooks/use-account-comments';
+import { rankCommentVotes, type VoteWorth } from '../lib/comment-payouts';
 import { shortAge } from '../lib/short-age';
 import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
+import { formatHbdAmount } from './format-value';
 
 const CYAN = BASECAMP_VIVID.cyan;
+const LIME = BASECAMP_VIVID.lime;
 
 /** One reply, so the panel scrolls rather than the page. */
 const ROW = 'rounded-lg bg-white/[0.04] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]';
+
+/**
+ * One HBD figure. Three separate translations rather than one, because the
+ * "smaller than" mark has to be literal text inside the translation: passed in
+ * as part of the value it would come back escaped, as `&lt;`.
+ */
+const Hbd = ({ amount }: { amount: number | null }) => {
+  const { t } = useTranslation('common_blog');
+  if (amount === null) return <>{'\u2014'}</>;
+  if (amount === 0) return <>{t('basecamp.card.comments.amount', { value: '0' })}</>;
+  const reading = formatHbdAmount(amount);
+  if (reading.kind === 'under') return <>{t('basecamp.card.comments.amount_under', { value: reading.value })}</>;
+  if (reading.kind === 'over_negative')
+    return <>{t('basecamp.card.comments.amount_over_negative', { value: reading.value })}</>;
+  return <>{t('basecamp.card.comments.amount', { value: reading.value })}</>;
+};
+
+/** One voter and what their vote was worth on this reply. */
+const VoterChip = ({ vote }: { vote: VoteWorth }) => (
+  <span
+    className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.05] py-[3px] pl-2 pr-2.5 text-[10.5px]"
+    data-testid="basecamp-comment-voter"
+  >
+    <Link
+      href={`/@${vote.voter}`}
+      className={cn(BASECAMP_LINK, 'max-w-[140px] truncate font-semibold')}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      @{vote.voter}
+    </Link>
+    <span className="shrink-0 font-bold tabular-nums" style={{ color: LIME }}>
+      <Hbd amount={vote.value} />
+    </span>
+  </span>
+);
+
+/**
+ * What a reply earned, and who it earned it from.
+ *
+ * The total is the chain's own figure; the amount beside each name is that
+ * voter's share of the weight behind it, so the names add up to the total
+ * rather than to something near it. Every voter is listed, not a top few: on a
+ * reply the whole list is usually short, and which few accounts keep turning up
+ * across twenty-five of them is exactly what a reader is here to notice.
+ */
+const CommentEarnings = ({ comment }: { comment: AccountComment }) => {
+  const { t } = useTranslation('common_blog');
+  const votes = rankCommentVotes(comment.votes, comment.payout);
+
+  return (
+    <div className="mt-2 border-t border-white/[0.07] pt-2" data-testid="basecamp-comment-earnings">
+      <div className="flex items-baseline gap-2">
+        <span className="text-[12px] font-bold tabular-nums" style={{ color: LIME }}>
+          <Hbd amount={comment.payout} />
+        </span>
+        <span className={cn(BASECAMP_MICRO_LABEL, 'normal-case tracking-normal')}>
+          {comment.paidOut
+            ? t('basecamp.card.comments.earned')
+            : t('basecamp.card.comments.earned_pending')}
+        </span>
+        <span className={cn(BASECAMP_MUTED, 'ml-auto shrink-0 text-[10px] tabular-nums')}>
+          {votes.length === 1
+            ? t('basecamp.card.comments.one_vote')
+            : t('basecamp.card.comments.votes', { votes: votes.length })}
+        </span>
+      </div>
+      {votes.length > 0 ? (
+        <div className="mt-1.5 flex flex-wrap gap-1.5" data-testid="basecamp-comment-voters">
+          {votes.map((vote) => (
+            <VoterChip key={vote.voter} vote={vote} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+};
 
 interface CommentRowProps {
   comment: AccountComment;
@@ -66,6 +146,7 @@ const CommentRow = ({ comment, nowMs }: CommentRowProps) => {
       >
         {body.length > 0 ? body : t('basecamp.card.comments.blank_body')}
       </div>
+      <CommentEarnings comment={comment} />
     </li>
   );
 };

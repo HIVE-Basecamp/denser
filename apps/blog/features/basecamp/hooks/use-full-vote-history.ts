@@ -9,6 +9,7 @@ import {
   summarizeTally,
   type VotesReceived
 } from '../lib/voters';
+import { estimateSecondsLeft } from '../lib/read-progress';
 import { fetchVotePage, type VotePageEvent } from './use-votes-received';
 
 /**
@@ -40,9 +41,6 @@ const CONCURRENCY = 6;
  * oldest one in a window would be silently dropped.
  */
 const BOUNDARY_STEP_MS = 1000;
-
-/** Below this share of the read, an estimate of the time left is not worth printing. */
-const MIN_PROGRESS_FOR_ESTIMATE = 0.04;
 
 /**
  * A stop on the walk itself, so a mistake about where a window ends can never
@@ -95,11 +93,6 @@ function readProgress(
   const life = nowMs - createdMs;
   if (life <= 0) return null;
   return Math.min(Math.max((nowMs - oldestMs) / life, 0), 1);
-}
-
-function estimateSecondsLeft(progress: number | null, elapsedMs: number): number | null {
-  if (progress === null || progress < MIN_PROGRESS_FOR_ESTIMATE || progress >= 1) return null;
-  return Math.round(((elapsedMs / progress) * (1 - progress)) / 1000);
 }
 
 /**

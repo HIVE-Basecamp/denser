@@ -788,7 +788,14 @@
         "replying_to": "@{{author}} への返信",
         "standalone": "返信ではなく投稿",
         "open": "このコメントを開く",
-        "blank_body": "本文なし。"
+        "blank_body": "本文なし。",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "獲得",
+        "earned_pending": "支払い前",
+        "one_vote": "1票",
+        "votes": "{{votes}}票"
       },
       "top_voters": {
         "title": "上位 {{limit}} 人の投票者",
@@ -856,6 +863,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "チェーンを読み込み中…",
+        "reading_left": "残り約{{seconds}}秒",
         "error": "このアカウントの返信を読み取れませんでした。しばらくしてからもう一度お試しください。",
         "empty": "@{{account}} はまだ誰にも返信していません。",
         "window_lifetime": "このアカウントが書いた返信のすべて: {{replies}}件。",

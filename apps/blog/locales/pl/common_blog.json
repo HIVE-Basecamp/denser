@@ -793,7 +793,14 @@
         "replying_to": "W odpowiedzi do @{{author}}",
         "standalone": "Wpis, nie odpowiedź",
         "open": "Otwórz ten komentarz",
-        "blank_body": "Brak tekstu."
+        "blank_body": "Brak tekstu.",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "zarobione",
+        "earned_pending": "oczekuje",
+        "one_vote": "1 głos",
+        "votes": "głosów: {{votes}}"
       },
       "top_voters": {
         "title": "Najaktywniejszych głosujących: {{limit}}",
@@ -861,6 +868,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "Odczyt łańcucha…",
+        "reading_left": "Około {{seconds}} s pozostało",
         "error": "Nie udało się odczytać odpowiedzi tego konta. Spróbuj ponownie za chwilę.",
         "empty": "@{{account}} nie odpowiedział jeszcze nikomu innemu.",
         "window_lifetime": "Wszystkie odpowiedzi napisane przez to konto: {{replies}}.",

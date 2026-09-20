@@ -835,7 +835,14 @@
         "replying_to": "ردًا على @{{author}}",
         "standalone": "منشور، وليس ردًا",
         "open": "افتح هذا التعليق",
-        "blank_body": "لا يوجد نص."
+        "blank_body": "لا يوجد نص.",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "مكتسب",
+        "earned_pending": "قيد الانتظار",
+        "one_vote": "صوت واحد",
+        "votes": "{{votes}} أصوات"
       },
       "top_voters": {
         "title": "أفضل {{limit}} مصوّتين",
@@ -903,6 +910,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "جارٍ قراءة السلسلة…",
+        "reading_left": "يتبقّى نحو {{seconds}} ثانية",
         "error": "تعذّرت قراءة ردود هذا الحساب. حاول مرة أخرى بعد قليل.",
         "empty": "لم يردّ @{{account}} على أحد بعد.",
         "window_lifetime": "كل ردّ كتبه هذا الحساب: {{replies}}.",

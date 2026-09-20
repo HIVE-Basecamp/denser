@@ -7,6 +7,7 @@ import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { DEFAULT_OBSERVER } from '@/blog/lib/utils';
 import { StaleTime } from '@/blog/lib/react-query';
 import type { Entry } from '@hive/common-hiveio-packages/wax';
+import type { CommentVote } from '../lib/comment-payouts';
 
 /**
  * How many of an account's most recent replies are read. Bryan's number: a
@@ -34,6 +35,16 @@ export interface AccountComment {
   category: string | null;
   /** Where the reply sits on this site. */
   url: string;
+  /**
+   * What the reply is worth, in HBD. Settled once it has paid out, an estimate
+   * from the current reward pool until then — the chain's own figure either
+   * way, not one worked out here.
+   */
+  payout: number;
+  /** False while the payout is still an estimate. */
+  paidOut: boolean;
+  /** Every vote on the reply. Empty where nobody has voted. */
+  votes: CommentVote[];
 }
 
 /**
@@ -60,6 +71,20 @@ function commentUrl(entry: Entry): string {
   return `/${category}/@${entry.author}/${entry.permlink}`;
 }
 
+/**
+ * The votes the bridge already hands over with the reply. They arrive with the
+ * reply itself, so who voted and what their vote was worth costs no extra read.
+ */
+function toVotes(entry: Entry): CommentVote[] {
+  if (!Array.isArray(entry.active_votes)) return [];
+  const votes: CommentVote[] = [];
+  for (const vote of entry.active_votes) {
+    if (typeof vote?.voter !== 'string' || vote.voter.length === 0) continue;
+    votes.push({ voter: vote.voter, rshares: Number(vote.rshares) });
+  }
+  return votes;
+}
+
 function toAccountComment(entry: Entry): AccountComment {
   return {
     author: entry.author,
@@ -69,7 +94,10 @@ function toAccountComment(entry: Entry): AccountComment {
     parentAuthor: optionalString(entry.parent_author),
     parentPermlink: optionalString(entry.parent_permlink),
     category: optionalString(entry.category),
-    url: commentUrl(entry)
+    url: commentUrl(entry),
+    payout: Number.isFinite(entry.payout) ? entry.payout : 0,
+    paidOut: Boolean(entry.is_paidout),
+    votes: toVotes(entry)
   };
 }
 

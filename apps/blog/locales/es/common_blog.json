@@ -788,7 +788,14 @@
         "replying_to": "Respondiendo a @{{author}}",
         "standalone": "Una publicación, no una respuesta",
         "open": "Abrir este comentario",
-        "blank_body": "Sin texto."
+        "blank_body": "Sin texto.",
+        "amount": "${{value}}",
+        "amount_under": "<${{value}}",
+        "amount_over_negative": ">-${{value}}",
+        "earned": "ganado",
+        "earned_pending": "pendiente",
+        "one_vote": "1 voto",
+        "votes": "{{votes}} votos"
       },
       "top_voters": {
         "title": "Los {{limit}} principales votantes",
@@ -856,6 +863,7 @@
         "amount_under": "<${{value}}",
         "amount_over_negative": ">-${{value}}",
         "loading": "Leyendo la cadena…",
+        "reading_left": "Quedan unos {{seconds}} s",
         "error": "No se pudieron leer las respuestas de esta cuenta. Inténtalo de nuevo en un momento.",
         "empty": "@{{account}} aún no ha respondido a nadie más.",
         "window_lifetime": "Todas las respuestas que ha escrito esta cuenta: {{replies}}.",
