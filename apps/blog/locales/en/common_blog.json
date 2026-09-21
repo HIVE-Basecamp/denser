@@ -845,7 +845,8 @@
         "posted": "Posted",
         "votes_received": "Votes received",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "Hours usually active"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -853,7 +854,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "The long spokes are the hours, in UTC, this account is usually active in. The red marks inside them are today. Midnight sits at the top and the day runs clockwise.",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -877,7 +878,8 @@
         "votes_received": "Votes other people have cast on this account's posts — not the votes it cast. Click to see who is voting the most value to this account, how many votes each has given and what they were worth.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Click to see who they reply to",
-        "votes_received_click": "Click to see who voted"
+        "votes_received_click": "Click to see who voted",
+        "hours_written_click": "Click to see the hours themselves"
       },
       "comments": {
         "button": "Comments",
@@ -974,6 +976,56 @@
         "self_note": "{{self}} more were replies under their own posts.",
         "unmatched_note": "{{rewards}} payouts landed on posts older than this window and are not counted.",
         "value_note": "Amounts are the author payout, at the current HIVE price."
+      },
+      "hourly": {
+        "title": "Today, hour by hour",
+        "subtitle": "Everything @{{account}} did today. Times are UTC, and the day rolls over at 00:00 UTC — Hive’s own clock.",
+        "active_hours": "{{hours}} of {{of}} hours",
+        "loading": "Reading the chain…",
+        "error": "This account’s history could not be read. Try again in a moment.",
+        "empty": "@{{account}} has not done anything yet.",
+        "kinds": {
+          "post": "posted",
+          "reply": "replied to",
+          "vote": "voted",
+          "follow": "followed",
+          "powerUp": "powered up"
+        },
+        "quiet_today": "@{{account}} has done nothing today.",
+        "lines": {
+          "post": "posted",
+          "reply": "replied to",
+          "follow": "followed",
+          "vote": "voted {{percent}}% on",
+          "downvote": "downvoted {{percent}}% on",
+          "powerUp": "powered up {{amount}}",
+          "powerUpTo": "powered up {{amount}} for",
+          "sent": "sent {{amount}} to",
+          "received": "received {{amount}} from",
+          "delegated": "delegated {{amount}} to",
+          "delegationIn": "received {{amount}} delegated from",
+          "claimed": "claimed {{amount}}",
+          "delegationEnded": "removed the delegation to",
+          "delegationInEnded": "had a delegation removed by",
+          "powerDown": "started a power down of {{amount}}",
+          "powerDownStopped": "stopped their power down",
+          "witnessVote": "voted for witness",
+          "witnessUnvote": "removed a witness vote from",
+          "proxySet": "set their witness proxy to",
+          "proxyCleared": "removed their witness proxy",
+          "proposalVote": "voted for proposal {{proposals}}",
+          "proposalUnvote": "removed a vote from proposal {{proposals}}"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "Open the post",
+        "note_capped": "The earliest hours of today are missing: this account has more records than one read reaches.",
+        "actions": "{{actions}} actions",
+        "note_complete": "Every action on this day."
       }
     },
     "title": "Basecamp",

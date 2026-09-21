@@ -748,7 +748,8 @@
         "posted": "Posted",
         "votes_received": "Otrzymane głosy",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "Godziny zwykle aktywne"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -756,7 +757,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "Długie ramiona to godziny (UTC), w których to konto zwykle jest aktywne. Czerwone znaczniki w środku to dzisiaj. Północ jest na górze, doba biegnie zgodnie z ruchem wskazówek zegara.",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -780,7 +781,8 @@
         "votes_received": "Głosy oddane przez inne osoby na posty tego konta — nie głosy, które ono oddało. Kliknij, aby zobaczyć, kto głosuje na to konto największą wartością, ile głosów oddał każdy i ile były warte.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Kliknij, aby zobaczyć, komu odpowiada",
-        "votes_received_click": "Kliknij, aby zobaczyć, kto głosował"
+        "votes_received_click": "Kliknij, aby zobaczyć, kto głosował",
+        "hours_written_click": "Kliknij, aby zobaczyć same godziny"
       },
       "comments": {
         "button": "Komentarze",
@@ -877,6 +879,56 @@
         "self_note": "Kolejne {{self}} to odpowiedzi pod własnymi postami.",
         "unmatched_note": "{{rewards}} wypłat dotyczy postów starszych niż to okno i nie jest liczonych.",
         "value_note": "Kwoty to wypłata dla autora, po bieżącej cenie HIVE."
+      },
+      "hourly": {
+        "title": "Dziś, godzina po godzinie",
+        "subtitle": "Wszystko, co @{{account}} zrobił dziś. Czas UTC, doba zmienia się o 00:00 UTC — zegar Hive.",
+        "active_hours": "{{hours}} z {{of}} godzin",
+        "loading": "Odczyt łańcucha…",
+        "error": "Nie udało się odczytać historii tego konta. Spróbuj ponownie za chwilę.",
+        "empty": "@{{account}} nie zrobił jeszcze nic.",
+        "kinds": {
+          "post": "opublikował",
+          "reply": "odpowiedział",
+          "vote": "zagłosował",
+          "follow": "zaobserwował",
+          "powerUp": "zrobił power up"
+        },
+        "quiet_today": "@{{account}} nie zrobił dziś nic.",
+        "lines": {
+          "post": "opublikował",
+          "reply": "odpowiedział",
+          "follow": "zaobserwował",
+          "vote": "zagłosował {{percent}}% na",
+          "downvote": "zagłosował na minus {{percent}}% na",
+          "powerUp": "zrobił power up {{amount}}",
+          "powerUpTo": "zrobił power up {{amount}} dla",
+          "sent": "wysłał {{amount}} do",
+          "received": "otrzymał {{amount}} od",
+          "delegated": "delegował {{amount}} do",
+          "delegationIn": "otrzymał {{amount}} delegacji od",
+          "claimed": "odebrał {{amount}}",
+          "delegationEnded": "wycofał delegację do",
+          "delegationInEnded": "stracił delegację od",
+          "powerDown": "rozpoczął power down {{amount}}",
+          "powerDownStopped": "zatrzymał swój power down",
+          "witnessVote": "zagłosował na świadka",
+          "witnessUnvote": "wycofał głos na świadka",
+          "proxySet": "ustawił proxy świadków na",
+          "proxyCleared": "usunął swoje proxy świadków",
+          "proposalVote": "zagłosował za propozycją {{proposals}}",
+          "proposalUnvote": "wycofał głos z propozycji {{proposals}}"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "Otwórz wpis",
+        "note_capped": "Brakuje najwcześniejszych godzin dzisiaj: to konto ma więcej rekordów, niż sięga jeden odczyt.",
+        "actions": "działań: {{actions}}",
+        "note_complete": "Wszystkie działania tego dnia."
       }
     },
     "title": "Basecamp",

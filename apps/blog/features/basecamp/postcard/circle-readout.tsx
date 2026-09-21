@@ -129,7 +129,15 @@ const CircleReadout = ({
     const shapes = slices.map((slice) => ({ ratio: slice.ratio, weight: slice.weight, color: slice.hex }));
     switch (viz) {
       case 'clock':
-        return <HourlyClock hourlyCounts={readout.series ?? []} known={readout.known} size={size} colors={colors} />;
+        return (
+          <HourlyClock
+            hourlyCounts={readout.series ?? []}
+            todayCounts={readout.todaySeries}
+            known={readout.known}
+            size={size}
+            colors={colors}
+          />
+        );
       case 'halfmoon':
         return <HalfMoon segments={shapes} width={size} known={readout.known} />;
       case 'pie':

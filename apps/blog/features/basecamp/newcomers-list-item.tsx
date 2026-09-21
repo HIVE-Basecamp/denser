@@ -8,6 +8,7 @@ import CircleReadout from './postcard/circle-readout';
 import CommentsButton from './postcard/comments-button';
 import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
+import HourlyActionsDialog from './postcard/hourly-actions-dialog';
 import IdentityStrip from './postcard/identity-strip';
 import PostCard from './postcard/post-card';
 import ReplyTargetsDialog from './postcard/reply-targets-dialog';
@@ -58,6 +59,8 @@ const VOTES_RECEIVED_READOUT_ID = 'votes_received';
 const REPLY_TARGETS_READOUT_ID = 'reply_targets';
 /** The one drawing that opens something: the stake pie gets the way into where the stake came from. */
 const STAKE_READOUT_ID = 'stake_mix';
+/** …and the clock gets the way into the hours themselves. */
+const HOURS_READOUT_ID = 'hours_written';
 
 /** Stacked, the post shares the first line with the flower and may grow past the usual cap to meet it. */
 function postZoneStyle(tier: PostcardTier): CSSProperties {
@@ -94,7 +97,7 @@ const NewcomersListItem = ({
   // the same query key, so React Query still makes exactly one history request
   // per card and both read from that one result.
   const { ref, inView } = useInView({ triggerOnce: true, rootMargin: '200px' });
-  const { patterns, status } = useAccountHistory(post.author, inView);
+  const { patterns, day, status } = useAccountHistory(post.author, inView);
   const createdBy = useAccountCreator(post.author, inView);
   const vestsToHivePowerRate = useVestsToHivePowerRate();
   // The votes this account has been given, and who gave them: one read that
@@ -104,6 +107,7 @@ const NewcomersListItem = ({
   const [votersOpen, setVotersOpen] = useState(false);
   const [stakeOpen, setStakeOpen] = useState(false);
   const [peopleOpen, setPeopleOpen] = useState(false);
+  const [hoursOpen, setHoursOpen] = useState(false);
 
   const signalInput: SignalInput = {
     account,
@@ -144,7 +148,8 @@ const NewcomersListItem = ({
     status === 'ready' ? patterns : { ...patterns, known: false },
     createdBy,
     stake,
-    votes
+    votes,
+    status === 'ready' ? day : { ...day, known: false }
   );
   const shown = (display: ReadoutDisplay) => readouts.filter((readout) => readout.display === display);
   const petalAction = (readout: Readout) => {
@@ -208,7 +213,13 @@ const NewcomersListItem = ({
               }
               // The pie says where the stake sits; clicking it says where the
               // stake came from. That read is only ever made on a click.
-              onOpen={readout.id === STAKE_READOUT_ID ? () => setStakeOpen(true) : undefined}
+              onOpen={
+                readout.id === STAKE_READOUT_ID
+                  ? () => setStakeOpen(true)
+                  : readout.id === HOURS_READOUT_ID
+                    ? () => setHoursOpen(true)
+                    : undefined
+              }
             />
           ))}
         </div>
@@ -229,6 +240,16 @@ const NewcomersListItem = ({
           createdMs={parseIsoMs(account.createdIso)}
           loading={votesStatus === 'loading'}
           failed={votesStatus === 'unavailable'}
+        />
+      ) : null}
+      {hoursOpen ? (
+        <HourlyActionsDialog
+          open={hoursOpen}
+          onOpenChange={setHoursOpen}
+          account={post.author}
+          day={day}
+          loading={status === 'loading'}
+          failed={status === 'unavailable'}
         />
       ) : null}
       {peopleOpen ? (

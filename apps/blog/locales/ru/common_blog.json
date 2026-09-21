@@ -749,7 +749,8 @@
         "posted": "Posted",
         "votes_received": "Голоса получены",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "Обычные активные часы"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -757,7 +758,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "Длинные спицы — часы по UTC, в которые этот аккаунт обычно активен. Красные отметки внутри — сегодня. Полночь сверху, сутки идут по часовой стрелке.",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -781,7 +782,8 @@
         "votes_received": "Голоса, отданные другими людьми за посты этого аккаунта, а не голоса, которые он отдал. Нажмите, чтобы увидеть, кто голосует за этот аккаунт на наибольшую ценность, сколько голосов отдал каждый и сколько они стоили.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Нажмите, чтобы увидеть, кому он отвечает",
-        "votes_received_click": "Нажмите, чтобы увидеть, кто голосовал"
+        "votes_received_click": "Нажмите, чтобы увидеть, кто голосовал",
+        "hours_written_click": "Нажмите, чтобы увидеть сами часы"
       },
       "comments": {
         "button": "Комментарии",
@@ -878,6 +880,56 @@
         "self_note": "Ещё {{self}} — ответы под собственными постами.",
         "unmatched_note": "{{rewards}} выплат приходится на посты старше этого окна и не учитываются.",
         "value_note": "Суммы — выплата автору по текущей цене HIVE."
+      },
+      "hourly": {
+        "title": "Сегодня, час за часом",
+        "subtitle": "Всё, что @{{account}} сделал сегодня. Время в UTC, сутки меняются в 00:00 UTC — по часам Hive.",
+        "active_hours": "{{hours}} из {{of}} часов",
+        "loading": "Чтение блокчейна…",
+        "error": "Не удалось прочитать историю этого аккаунта. Попробуйте ещё раз через минуту.",
+        "empty": "@{{account}} пока ничего не делал.",
+        "kinds": {
+          "post": "опубликовал",
+          "reply": "ответил",
+          "vote": "проголосовал",
+          "follow": "подписался на",
+          "powerUp": "сделал power up"
+        },
+        "quiet_today": "@{{account}} сегодня ничего не делал.",
+        "lines": {
+          "post": "опубликовал",
+          "reply": "ответил",
+          "follow": "подписался на",
+          "vote": "проголосовал {{percent}}% за",
+          "downvote": "проголосовал против {{percent}}% за",
+          "powerUp": "сделал power up на {{amount}}",
+          "powerUpTo": "сделал power up на {{amount}} для",
+          "sent": "отправил {{amount}}",
+          "received": "получил {{amount}} от",
+          "delegated": "делегировал {{amount}}",
+          "delegationIn": "получил {{amount}} в делегирование от",
+          "claimed": "забрал {{amount}}",
+          "delegationEnded": "отозвал делегирование",
+          "delegationInEnded": "лишился делегирования от",
+          "powerDown": "начал power down на {{amount}}",
+          "powerDownStopped": "остановил свой power down",
+          "witnessVote": "проголосовал за делегата",
+          "witnessUnvote": "снял голос с делегата",
+          "proxySet": "назначил прокси делегатов",
+          "proxyCleared": "снял прокси делегатов",
+          "proposalVote": "проголосовал за предложение {{proposals}}",
+          "proposalUnvote": "снял голос с предложения {{proposals}}"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "Открыть пост",
+        "note_capped": "Ранние часы сегодняшнего дня отсутствуют: у аккаунта больше записей, чем достаёт одно чтение.",
+        "actions": "действий: {{actions}}",
+        "note_complete": "Все действия за этот день."
       }
     },
     "title": "Basecamp",

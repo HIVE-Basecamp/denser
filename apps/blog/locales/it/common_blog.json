@@ -743,7 +743,8 @@
         "posted": "Posted",
         "votes_received": "Voti ricevuti",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "Ore solitamente attivo"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -751,7 +752,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "I raggi lunghi sono le ore, in UTC, in cui questo account è di solito attivo. I segni rossi all’interno sono quelli di oggi. La mezzanotte è in alto e il giorno gira in senso orario.",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -775,7 +776,8 @@
         "votes_received": "Voti espressi da altre persone sui post di questo account, non i voti che ha dato. Fai clic per vedere chi vota più valore a questo account, quanti voti ha dato ciascuno e quanto valevano.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Clicca per vedere a chi risponde",
-        "votes_received_click": "Clicca per vedere chi ha votato"
+        "votes_received_click": "Clicca per vedere chi ha votato",
+        "hours_written_click": "Clicca per vedere le ore nel dettaglio"
       },
       "comments": {
         "button": "Commenti",
@@ -872,6 +874,56 @@
         "self_note": "Altre {{self}} erano risposte sotto i propri post.",
         "unmatched_note": "{{rewards}} pagamenti riguardano post precedenti a questa finestra e non sono conteggiati.",
         "value_note": "Gli importi sono il pagamento all’autore, al prezzo attuale di HIVE."
+      },
+      "hourly": {
+        "title": "Oggi, ora per ora",
+        "subtitle": "Tutto ciò che @{{account}} ha fatto oggi. Orari in UTC; il giorno cambia alle 00:00 UTC, l’orologio di Hive.",
+        "active_hours": "{{hours}} di {{of}} ore",
+        "loading": "Lettura della catena…",
+        "error": "Non è stato possibile leggere la cronologia di questo account. Riprova tra un momento.",
+        "empty": "@{{account}} non ha ancora fatto nulla.",
+        "kinds": {
+          "post": "ha pubblicato",
+          "reply": "ha risposto a",
+          "vote": "ha votato",
+          "follow": "ha seguito",
+          "powerUp": "ha fatto power up"
+        },
+        "quiet_today": "@{{account}} non ha fatto nulla oggi.",
+        "lines": {
+          "post": "ha pubblicato",
+          "reply": "ha risposto a",
+          "follow": "ha seguito",
+          "vote": "ha votato {{percent}}% su",
+          "downvote": "ha votato contro {{percent}}% su",
+          "powerUp": "ha fatto power up di {{amount}}",
+          "powerUpTo": "ha fatto power up di {{amount}} per",
+          "sent": "ha inviato {{amount}} a",
+          "received": "ha ricevuto {{amount}} da",
+          "delegated": "ha delegato {{amount}} a",
+          "delegationIn": "ha ricevuto {{amount}} delegati da",
+          "claimed": "ha riscosso {{amount}}",
+          "delegationEnded": "ha ritirato la delega a",
+          "delegationInEnded": "ha avuto una delega ritirata da",
+          "powerDown": "ha avviato un power down di {{amount}}",
+          "powerDownStopped": "ha fermato il suo power down",
+          "witnessVote": "ha votato per il witness",
+          "witnessUnvote": "ha tolto il voto di witness a",
+          "proxySet": "ha assegnato il suo proxy witness a",
+          "proxyCleared": "ha rimosso il suo proxy witness",
+          "proposalVote": "ha votato per la proposta {{proposals}}",
+          "proposalUnvote": "ha tolto il voto dalla proposta {{proposals}}"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "Apri il post",
+        "note_capped": "Mancano le prime ore di oggi: questo account ha più record di quanti ne raggiunga una lettura.",
+        "actions": "{{actions}} azioni",
+        "note_complete": "Tutte le azioni di questo giorno."
       }
     },
     "title": "Basecamp",

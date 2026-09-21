@@ -743,7 +743,8 @@
         "posted": "Posted",
         "votes_received": "受けた投票",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "普段の活動時間"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -751,7 +752,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "長い針は、このアカウントが普段活動しているUTCの時間帯です。内側の赤い印は今日の分です。真夜中が上で、時計回りに進みます。",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -775,7 +776,8 @@
         "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も大きな価値を投票しているか、それぞれの投票数とその価値が表示されます。",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "クリックして返信相手を見る",
-        "votes_received_click": "クリックして投票者を見る"
+        "votes_received_click": "クリックして投票者を見る",
+        "hours_written_click": "クリックして時間ごとの内訳を見る"
       },
       "comments": {
         "button": "コメント",
@@ -872,6 +874,56 @@
         "self_note": "さらに{{self}}件は自分の投稿への返信でした。",
         "unmatched_note": "{{rewards}}件の報酬はこの範囲より古い投稿に対するもので、集計に含まれていません。",
         "value_note": "金額は現在のHIVE価格での著者報酬です。"
+      },
+      "hourly": {
+        "title": "今日の時間ごと",
+        "subtitle": "@{{account}} が今日行ったことすべて。時刻はUTCで、日付は00:00 UTCに切り替わります（Hiveの時計）。",
+        "active_hours": "{{of}}時間中{{hours}}時間",
+        "loading": "チェーンを読み込み中…",
+        "error": "このアカウントの履歴を読み取れませんでした。しばらくしてからもう一度お試しください。",
+        "empty": "@{{account}} はまだ何もしていません。",
+        "kinds": {
+          "post": "投稿",
+          "reply": "返信",
+          "vote": "投票",
+          "follow": "フォロー",
+          "powerUp": "パワーアップ"
+        },
+        "quiet_today": "@{{account}} は今日何もしていません。",
+        "lines": {
+          "post": "投稿",
+          "reply": "返信先",
+          "follow": "フォロー",
+          "vote": "{{percent}}%で投票",
+          "downvote": "{{percent}}%でダウン投票",
+          "powerUp": "{{amount}} をパワーアップ",
+          "powerUpTo": "{{amount}} をパワーアップ（宛先",
+          "sent": "{{amount}} を送金先",
+          "received": "{{amount}} を受領元",
+          "delegated": "{{amount}} を委任先",
+          "delegationIn": "{{amount}} の委任を受領元",
+          "claimed": "{{amount}} を受け取り",
+          "delegationEnded": "委任を解除した相手",
+          "delegationInEnded": "委任を解除された相手",
+          "powerDown": "{{amount}} のパワーダウンを開始",
+          "powerDownStopped": "パワーダウンを停止",
+          "witnessVote": "証人に投票",
+          "witnessUnvote": "証人投票を取り消した相手",
+          "proxySet": "証人プロキシを設定した相手",
+          "proxyCleared": "証人プロキシを解除",
+          "proposalVote": "提案 {{proposals}} に投票",
+          "proposalUnvote": "提案 {{proposals}} への投票を取り消し"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "投稿を開く",
+        "note_capped": "今日の早い時間帯が欠けています。このアカウントは1回の読み取りで届く以上の記録があります。",
+        "actions": "{{actions}}件の操作",
+        "note_complete": "この日のすべての操作です。"
       }
     },
     "title": "Basecamp",

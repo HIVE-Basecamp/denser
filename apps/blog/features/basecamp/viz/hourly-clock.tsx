@@ -2,6 +2,7 @@
 
 import { useId } from 'react';
 import { CLOCK_COLORS } from '../lib/rings';
+import { BASECAMP_VIVID } from '../lib/theme';
 
 const HOURS_IN_DAY = 24;
 const BOX = 52;
@@ -14,9 +15,23 @@ const INNER_RADIUS = 10;
 const OUTER_RADIUS = 24.5;
 const SPOKE_WIDTH = 2.4;
 
+/**
+ * How far today's marks can reach, and how wide they are drawn.
+ *
+ * They sit on the same spokes, from the same centre, but stop well short of
+ * them and run narrower — so the dial reads as one shape with something marked
+ * inside it rather than as two dials fighting. Today can never look like the
+ * bigger number, which it is not.
+ */
+const TODAY_OUTER_RADIUS = 17;
+const TODAY_SPOKE_WIDTH = 1.4;
+const TODAY_COLOR = BASECAMP_VIVID.red;
+
 interface HourlyClockProps {
-  /** Twenty-four counts, index 0 = 00:00 UTC. */
+  /** Twenty-four counts, index 0 = 00:00 UTC: the hours they are usually awake in. */
   hourlyCounts: number[];
+  /** Twenty-four counts for today alone, drawn short and in red inside the spokes. */
+  todayCounts?: number[];
   /** False while the history read is still in flight or unavailable. */
   known: boolean;
   size?: number;
@@ -25,9 +40,17 @@ interface HourlyClockProps {
 }
 
 /**
- * A twenty-four hour dial of when an account writes, in UTC. Midnight sits at
- * the top and the day runs clockwise, so each spoke is one hour and its length
- * is that hour's share of the busiest one.
+ * A twenty-four hour dial of when an account acts, in UTC. Midnight sits at
+ * the top and the day runs clockwise, so each spoke is one hour.
+ *
+ * Two readings on one face. The long spokes are the hours this account is
+ * usually awake in, each one's length its share of its own busiest hour. The
+ * short red marks inside them are today, on their own scale, so a quiet day
+ * still shows which hours it happened in.
+ *
+ * Each scale is its own, on purpose: they answer different questions, and one
+ * ruler would leave today invisible on an account with thousands of records
+ * behind it. Lengths are comparable within a colour, never across them.
  *
  * It is drawn because the *shape* carries the meaning at a glance: a person
  * sleeps, which leaves a contiguous quiet arc, while something running on a
@@ -37,6 +60,7 @@ interface HourlyClockProps {
  */
 const HourlyClock = ({
   hourlyCounts,
+  todayCounts,
   known,
   size = BOX,
   colors = [CLOCK_COLORS.active, CLOCK_COLORS.active]
@@ -48,6 +72,12 @@ const HourlyClock = ({
       : new Array<number>(HOURS_IN_DAY).fill(0);
   const busiest = Math.max(...counts, 0);
   const hasAny = known && busiest > 0;
+  const today =
+    Array.isArray(todayCounts) && todayCounts.length === HOURS_IN_DAY
+      ? todayCounts
+      : new Array<number>(HOURS_IN_DAY).fill(0);
+  const busiestToday = Math.max(...today, 0);
+  const hasToday = known && busiestToday > 0;
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${BOX} ${BOX}`} aria-hidden="true">
@@ -92,6 +122,30 @@ const HourlyClock = ({
           />
         );
       })}
+      {hasToday
+        ? today.map((count, hour) => {
+            if (count <= 0) return null;
+            const angle = (hour / HOURS_IN_DAY) * 2 * Math.PI - Math.PI / 2;
+            const share = count / busiestToday;
+            const reach = INNER_RADIUS + (TODAY_OUTER_RADIUS - INNER_RADIUS) * share;
+            return (
+              <line
+                key={`today-${hour}`}
+                x1={CENTER + Math.cos(angle) * INNER_RADIUS}
+                y1={CENTER + Math.sin(angle) * INNER_RADIUS}
+                x2={CENTER + Math.cos(angle) * reach}
+                y2={CENTER + Math.sin(angle) * reach}
+                stroke={TODAY_COLOR}
+                strokeWidth={TODAY_SPOKE_WIDTH}
+                strokeLinecap="round"
+                style={{
+                  transition: 'all 700ms cubic-bezier(0.22, 1, 0.36, 1)',
+                  filter: `drop-shadow(0 0 3px ${TODAY_COLOR}CC)`
+                }}
+              />
+            );
+          })
+        : null}
     </svg>
   );
 };

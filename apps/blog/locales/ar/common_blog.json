@@ -790,7 +790,8 @@
         "posted": "Posted",
         "votes_received": "الأصوات المستلمة",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "ساعات النشاط المعتادة"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -798,7 +799,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "الأشعة الطويلة هي الساعات، بتوقيت UTC، التي يكون فيها هذا الحساب نشطًا عادةً. العلامات الحمراء بداخلها هي اليوم. منتصف الليل في الأعلى واليوم يدور مع عقارب الساعة.",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -822,7 +823,8 @@
         "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يصوّت بأكبر قيمة لهذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "انقر لترى على مَن يردّ",
-        "votes_received_click": "انقر لترى من صوّت"
+        "votes_received_click": "انقر لترى من صوّت",
+        "hours_written_click": "انقر لرؤية الساعات نفسها"
       },
       "comments": {
         "button": "التعليقات",
@@ -919,6 +921,56 @@
         "self_note": "و{{self}} ردًا أخرى كانت تحت منشوراته هو.",
         "unmatched_note": "{{rewards}} من المكافآت تخصّ منشورات أقدم من هذه النافذة ولم تُحتسب.",
         "value_note": "المبالغ هي مكافأة المؤلف بسعر HIVE الحالي."
+      },
+      "hourly": {
+        "title": "اليوم، ساعة بساعة",
+        "subtitle": "كل ما فعله @{{account}} اليوم. التوقيت بـ UTC، ويبدأ اليوم الجديد عند 00:00 UTC — ساعة هايف نفسها.",
+        "active_hours": "{{hours}} من {{of}} ساعة",
+        "loading": "جارٍ قراءة السلسلة…",
+        "error": "تعذّرت قراءة سجلّ هذا الحساب. حاول مرة أخرى بعد قليل.",
+        "empty": "لم يقم @{{account}} بأي شيء بعد.",
+        "kinds": {
+          "post": "نشر",
+          "reply": "ردّ على",
+          "vote": "صوّت لـ",
+          "follow": "تابع",
+          "powerUp": "عزّز طاقته"
+        },
+        "quiet_today": "لم يقم @{{account}} بأي شيء اليوم.",
+        "lines": {
+          "post": "نشر",
+          "reply": "ردّ على",
+          "follow": "تابع",
+          "vote": "صوّت بنسبة {{percent}}% لـ",
+          "downvote": "صوّت سلبًا بنسبة {{percent}}% لـ",
+          "powerUp": "عزّز {{amount}}",
+          "powerUpTo": "عزّز {{amount}} لصالح",
+          "sent": "أرسل {{amount}} إلى",
+          "received": "استلم {{amount}} من",
+          "delegated": "فوّض {{amount}} إلى",
+          "delegationIn": "استلم تفويض {{amount}} من",
+          "claimed": "طالب بـ {{amount}}",
+          "delegationEnded": "ألغى التفويض إلى",
+          "delegationInEnded": "أُلغي تفويض له من",
+          "powerDown": "بدأ خفض طاقة بمقدار {{amount}}",
+          "powerDownStopped": "أوقف خفض الطاقة",
+          "witnessVote": "صوّت للشاهد",
+          "witnessUnvote": "سحب تصويته للشاهد",
+          "proxySet": "عيّن وكيل الشهود إلى",
+          "proxyCleared": "ألغى وكيل الشهود",
+          "proposalVote": "صوّت للمقترح {{proposals}}",
+          "proposalUnvote": "سحب تصويته من المقترح {{proposals}}"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "افتح المنشور",
+        "note_capped": "الساعات الأولى من اليوم غير موجودة: هذا الحساب لديه سجلات أكثر مما تصل إليه قراءة واحدة.",
+        "actions": "{{actions}} إجراء",
+        "note_complete": "كل إجراءات هذا اليوم."
       }
     },
     "title": "Basecamp",

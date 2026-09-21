@@ -45,16 +45,11 @@ export interface CommentPatterns {
   selfReplyPercent: number | null;
   /** How many different people they have replied to. */
   distinctReplyTargets: number;
-  /** Counts per hour of the day in UTC, index 0-23, oldest record onward. */
-  hourlyCounts: number[];
-  /** How many of the twenty-four hours they have ever been seen writing in. */
-  activeHourCount: number;
   /** Share of their votes cast on their own posts. */
   selfVotePercent: number | null;
   voteCount: number;
 }
 
-const HOURS_IN_DAY = 24;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const RECENT_WINDOW_DAYS = 7;
 
@@ -76,8 +71,6 @@ export const EMPTY_COMMENT_PATTERNS: CommentPatterns = {
   botCommandPercent: null,
   selfReplyPercent: null,
   distinctReplyTargets: 0,
-  hourlyCounts: new Array(HOURS_IN_DAY).fill(0),
-  activeHourCount: 0,
   selfVotePercent: null,
   voteCount: 0
 };
@@ -139,7 +132,6 @@ export function summarizePatterns(
   nowMs: number
 ): CommentPatterns {
   try {
-    const hourlyCounts = new Array<number>(HOURS_IN_DAY).fill(0);
     const recentCutoff = nowMs - RECENT_WINDOW_DAYS * MS_PER_DAY;
     const replyTargets = new Set<string>();
     const keyCounts = new Map<string, number>();
@@ -156,8 +148,6 @@ export function summarizePatterns(
       const isReply = comment.parentAuthor !== '';
 
       if (Number.isFinite(comment.timestampMs)) {
-        const hour = new Date(comment.timestampMs).getUTCHours();
-        if (hour >= 0 && hour < HOURS_IN_DAY) hourlyCounts[hour]++;
         if (comment.timestampMs >= recentCutoff) {
           if (isReply) replyCount7d++;
           else postCount7d++;
@@ -212,8 +202,6 @@ export function summarizePatterns(
       botCommandPercent: percentOf(botCommands, replyTotal),
       selfReplyPercent: percentOf(selfReplies, replyTotal),
       distinctReplyTargets: replyTargets.size,
-      hourlyCounts,
-      activeHourCount: hourlyCounts.filter((count) => count > 0).length,
       selfVotePercent: percentOf(selfVotes, votes.length),
       voteCount: votes.length
     };

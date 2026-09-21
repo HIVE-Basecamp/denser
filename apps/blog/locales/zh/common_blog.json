@@ -743,7 +743,8 @@
         "posted": "Posted",
         "votes_received": "收到的投票",
         "author_rewards": "Author rewards",
-        "curation_rewards": "Curation rewards"
+        "curation_rewards": "Curation rewards",
+        "usual_hours": "通常活跃小时"
       },
       "hints": {
         "profile_completeness": "How many of the six profile fields they have filled in.",
@@ -751,7 +752,7 @@
         "total_actions": "Every post and comment the account has ever published.",
         "actions_per_day": "Posts and comments per day, averaged across the whole life of the account.",
         "gap_before_post": "How long the account was quiet immediately before this post.",
-        "hours_written": "Which hours of the day, in UTC, they have written in. Midnight sits at the top and the day runs clockwise. Read from their most recent 1,000 actions.",
+        "hours_written": "长条是该账户通常活跃的小时（UTC）。里面的红色标记是今天。午夜在顶部，一天顺时针推进。",
         "week_activity": "Posts and replies written in the last seven days: posts first, then replies.",
         "reply_targets": "How many different people they have replied to. Read from their most recent 1,000 actions.",
         "repeated_text": "Share of their replies that repeat text they have already used elsewhere. Read from their most recent 1,000 actions.",
@@ -775,7 +776,8 @@
         "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁为这个账户投出最多价值、各自投了多少票以及价值多少。",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "点击查看他们回复了谁",
-        "votes_received_click": "点击查看谁投了票"
+        "votes_received_click": "点击查看谁投了票",
+        "hours_written_click": "点击查看每个小时的明细"
       },
       "comments": {
         "button": "评论",
@@ -872,6 +874,56 @@
         "self_note": "另有 {{self}} 条是在自己帖子下的回复。",
         "unmatched_note": "有 {{rewards}} 笔奖励落在此范围之前的帖子上，未计入。",
         "value_note": "金额为作者收益，按当前 HIVE 价格计算。"
+      },
+      "hourly": {
+        "title": "今天，逐小时",
+        "subtitle": "@{{account}} 今天做的全部事情。时间为 UTC，每天 00:00 UTC 换日 —— Hive 自己的时钟。",
+        "active_hours": "{{of}} 小时中的 {{hours}} 小时",
+        "loading": "正在读取链上数据…",
+        "error": "无法读取该账户的历史记录。请稍后再试。",
+        "empty": "@{{account}} 还没有任何动作。",
+        "kinds": {
+          "post": "发帖",
+          "reply": "回复",
+          "vote": "投票",
+          "follow": "关注",
+          "powerUp": "充能"
+        },
+        "quiet_today": "@{{account}} 今天没有任何动作。",
+        "lines": {
+          "post": "发帖",
+          "reply": "回复",
+          "follow": "关注",
+          "vote": "以 {{percent}}% 投票给",
+          "downvote": "以 {{percent}}% 反对票投给",
+          "powerUp": "充能 {{amount}}",
+          "powerUpTo": "为其充能 {{amount}}",
+          "sent": "发送 {{amount}} 给",
+          "received": "收到 {{amount}} 来自",
+          "delegated": "委托 {{amount}} 给",
+          "delegationIn": "收到 {{amount}} 委托来自",
+          "claimed": "领取 {{amount}}",
+          "delegationEnded": "取消了对其的委托",
+          "delegationInEnded": "被取消委托，来自",
+          "powerDown": "开始 {{amount}} 的下调",
+          "powerDownStopped": "停止了下调",
+          "witnessVote": "投票给见证人",
+          "witnessUnvote": "取消了对见证人的投票",
+          "proxySet": "将见证人代理设为",
+          "proxyCleared": "取消了见证人代理",
+          "proposalVote": "投票支持提案 {{proposals}}",
+          "proposalUnvote": "取消了对提案 {{proposals}} 的投票"
+        },
+        "units": {
+          "hive": "{{value}} HIVE",
+          "hbd": "{{value}} HBD",
+          "hp": "{{value}} HP",
+          "unknown": "—"
+        },
+        "open_post": "打开帖子",
+        "note_capped": "今天最早的几个小时缺失：该账户的记录超出一次读取所能到达的范围。",
+        "actions": "{{actions}} 次操作",
+        "note_complete": "这一天的全部操作。"
       }
     },
     "title": "Basecamp",

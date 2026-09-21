@@ -14,6 +14,7 @@
  * a shape looks, never what the number means.
  */
 
+import type { DayActivity } from '../hooks/use-account-history';
 import type { CommentPatterns } from './patterns';
 import { PROFILE_FIELD_COUNT, type SignalUnit, type SignalValue } from './signals';
 import type { BasecampVividKey } from './theme';
@@ -75,8 +76,10 @@ export interface Readout {
   ratio: number;
   /** Two palette stops for the drawing. */
   colors: [BasecampVividKey, BasecampVividKey];
-  /** 'clock': twenty-four hourly counts. */
+  /** 'clock': twenty-four hourly counts — the hours they are usually awake in. */
   series?: number[];
+  /** 'clock': the same twenty-four hours for today alone, drawn inside the first. */
+  todaySeries?: number[];
   total?: number;
   /** A pair printed side by side. */
   pair?: [number, number];
@@ -219,7 +222,8 @@ export function buildReadouts(
   patterns: CommentPatterns,
   createdBy: string | null,
   stake: StakeInput,
-  votes: VotesReceived
+  votes: VotesReceived,
+  day: DayActivity
 ): Readout[] {
   const ke = signalOf(signals, 'ke_score');
   const age = signalOf(signals, 'account_age_days');
@@ -237,13 +241,25 @@ export function buildReadouts(
       display: 'circle',
       viz: 'clock',
       weight: 'plain',
-      known: patterns.known,
-      value: patterns.known ? patterns.activeHourCount : null,
+      known: day.known,
+      // Today's figure in the middle, because it is the one that changes and
+      // the one a curator is asking about. The spokes behind it hold the
+      // longer answer, and the popover prints both.
+      value: day.known ? day.todayActiveHours : null,
       unit: 'count',
-      ratio: linearRatio(patterns.activeHourCount, HOURS_IN_DAY),
+      ratio: linearRatio(day.todayActiveHours, HOURS_IN_DAY),
       colors: ['cyan', 'violet'],
-      series: patterns.hourlyCounts,
-      total: HOURS_IN_DAY
+      series: day.historyHourly,
+      todaySeries: day.todayHourly,
+      total: HOURS_IN_DAY,
+      notes: [
+        {
+          id: 'usual_hours',
+          value: day.known ? day.historyActiveHours : null,
+          unit: 'count',
+          known: day.known
+        }
+      ]
     },
     // What their replies are made of: four shares of the same kind, one
     // section of a half-moon each, every section lit to its own percentage.
