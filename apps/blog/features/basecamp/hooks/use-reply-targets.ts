@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import { estimateSecondsLeft } from '../lib/read-progress';
 import {
@@ -65,16 +66,9 @@ function parseHiveTimestamp(timestamp: unknown): number {
   return new Date(normalized).getTime();
 }
 
-const cachedOpTypeIds = new Map<string, number>();
-
 async function opTypeId(name: string): Promise<number> {
-  const cached = cachedOpTypeIds.get(name);
-  if (cached !== undefined) return cached;
-  const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const id = opTypes.find((opType) => opType.operation_name === name)?.op_type_id;
+  const id = await operationTypeIdOf(name);
   if (id === undefined) throw new Error(`Missing Hive operation type id for ${name}`);
-  cachedOpTypeIds.set(name, id);
   return id;
 }
 

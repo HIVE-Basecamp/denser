@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdsOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import {
   createStakeFlows,
@@ -86,17 +87,11 @@ function parseHiveTimestamp(timestamp: unknown): number {
   return new Date(normalized).getTime();
 }
 
-let cachedOpTypeIds: number[] | null = null;
-
 async function flowOpTypeIds(): Promise<number[]> {
-  if (cachedOpTypeIds !== null) return cachedOpTypeIds;
-  const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const ids = FLOW_OPERATION_NAMES.map(
-    (name) => opTypes.find((opType) => opType.operation_name === name)?.op_type_id
-  ).filter((id): id is number => id !== undefined);
+  const ids = (await operationTypeIdsOf(FLOW_OPERATION_NAMES)).filter(
+    (id): id is number => id !== undefined
+  );
   if (ids.length === 0) throw new Error('Missing Hive operation type ids for stake flows');
-  cachedOpTypeIds = ids;
   return ids;
 }
 

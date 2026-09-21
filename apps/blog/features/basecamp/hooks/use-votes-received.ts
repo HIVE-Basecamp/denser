@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import {
   createVoteTally,
@@ -56,16 +57,10 @@ export function toBlockTimestamp(ms: number): string {
   return new Date(ms).toISOString().slice(0, 19).replace('T', ' ');
 }
 
-let cachedOpTypeId: number | null = null;
-
 async function effectiveVoteOpTypeId(): Promise<number> {
-  if (cachedOpTypeId !== null) return cachedOpTypeId;
-  const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const id = opTypes.find((opType) => opType.operation_name === EFFECTIVE_VOTE_OPERATION_NAME)?.op_type_id;
+  const id = await operationTypeIdOf(EFFECTIVE_VOTE_OPERATION_NAME);
   if (id === undefined)
     throw new Error('Missing Hive operation type id for effective_comment_vote_operation');
-  cachedOpTypeId = id;
   return id;
 }
 

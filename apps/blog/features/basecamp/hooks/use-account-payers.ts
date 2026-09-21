@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdsOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import {
   createPayerSheet,
@@ -80,17 +81,11 @@ function parseHiveTimestamp(timestamp: unknown): number {
   return new Date(normalized).getTime();
 }
 
-let cachedOpTypeIds: number[] | null = null;
-
 async function paymentOpTypeIds(): Promise<number[]> {
-  if (cachedOpTypeIds !== null) return cachedOpTypeIds;
-  const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const ids = PAYMENT_OPERATION_NAMES.map(
-    (name) => opTypes.find((opType) => opType.operation_name === name)?.op_type_id
-  ).filter((id): id is number => id !== undefined);
+  const ids = (await operationTypeIdsOf(PAYMENT_OPERATION_NAMES)).filter(
+    (id): id is number => id !== undefined
+  );
   if (ids.length === 0) throw new Error('Missing Hive operation type ids for incoming payments');
-  cachedOpTypeIds = ids;
   return ids;
 }
 

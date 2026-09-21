@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import {
   createTransferSheet,
@@ -68,15 +69,9 @@ function parseHiveTimestamp(timestamp: unknown): number {
   return new Date(normalized).getTime();
 }
 
-let cachedOpTypeId: number | null = null;
-
 async function transferOpTypeId(): Promise<number> {
-  if (cachedOpTypeId !== null) return cachedOpTypeId;
-  const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const id = opTypes.find((opType) => opType.operation_name === TRANSFER_OPERATION_NAME)?.op_type_id;
+  const id = await operationTypeIdOf(TRANSFER_OPERATION_NAME);
   if (id === undefined) throw new Error('Missing Hive operation type id for transfers');
-  cachedOpTypeId = id;
   return id;
 }
 

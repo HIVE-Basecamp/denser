@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdsOf } from './operation-types';
 
 /**
  * The operations that name who created an account. Hive has used several over
@@ -41,10 +42,9 @@ const CREATION_PAGE_SIZE = 10;
  */
 export async function fetchAccountCreator(username: string): Promise<string | null> {
   const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const creationOpTypeIds = ACCOUNT_CREATION_OPERATION_NAMES.map(
-    (name) => opTypes.find((opType) => opType.operation_name === name)?.op_type_id
-  ).filter((id): id is number => id !== undefined);
+  const creationOpTypeIds = (await operationTypeIdsOf(ACCOUNT_CREATION_OPERATION_NAMES)).filter(
+    (id): id is number => id !== undefined
+  );
 
   // A node that reports none of these names leaves the creator unknown rather
   // than failing the card.

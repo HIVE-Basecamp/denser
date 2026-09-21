@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
+import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import { BASECAMP_CUSTOM_JSON_ID, decodeBasecampRecord, foldBasecampState, type BasecampRecord } from '../lib/protocol';
 
@@ -20,8 +21,7 @@ export function basecampRecordsQueryKey(username: string) {
  */
 export async function fetchBasecampRecords(username: string): Promise<BasecampRecord[]> {
   const chain = await getChain();
-  const opTypes = await chain.restApi['hafah-api']['operation-types']();
-  const opTypeId = opTypes.find((opType) => opType.operation_name === CUSTOM_JSON_OPERATION_NAME)?.op_type_id;
+  const opTypeId = await operationTypeIdOf(CUSTOM_JSON_OPERATION_NAME);
   if (opTypeId === undefined) return [];
 
   const response = await chain.restApi['hivemind-api'].accountsOperations({
