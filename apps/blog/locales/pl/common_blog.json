@@ -681,6 +681,11 @@
         "label": "First post",
         "aria": "This is their first ever post on Hive."
       },
+      "muted_image": {
+        "title": "Muted account",
+        "reveal": "Click to see image",
+        "warning": "Explicit material possible"
+      },
       "sus": {
         "button": "SUS",
         "hint": "Coś nie gra w tym poście albo koncie? Powiedz to.",

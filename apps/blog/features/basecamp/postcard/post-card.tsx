@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo } from 'react';
-import { ChevronUp, MessageSquare } from 'lucide-react';
-import { Link } from '@hive/ui';
+import { useMemo, useState } from 'react';
+import { ChevronUp, EyeOff, MessageSquare } from 'lucide-react';
+import { Link, accountReputation } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { find_first_img } from '@/blog/features/list-of-posts/post-img';
@@ -14,9 +14,21 @@ import PostBadge from './post-badge';
 import type { Entry } from '@hive/common-hiveio-packages/wax';
 
 /** When there is no picture: a wash in the card's violet with the title's first letter. */
-const NO_IMAGE_BACKGROUND = 'linear-gradient(135deg, rgba(157, 107, 255, 0.35) 0%, rgba(157, 107, 255, 0.12) 100%)';
+const NO_IMAGE_BACKGROUND =
+  'linear-gradient(135deg, rgba(157, 107, 255, 0.35) 0%, rgba(157, 107, 255, 0.12) 100%)';
 /** Above and below the person's row. Two pixels: the post's row under it needs every one for a three-line title and its counts. */
 const PERSON_ROW_PADDING = 2;
+/**
+ * Under this reputation the post's picture is not shown until it is asked
+ * for. A new account starts at 25 exactly, so anything under it has been
+ * voted down there, and on the live feed those pictures were pornography
+ * often enough that a curator should not have them put in front of them
+ * unasked (Bryan, 2026-09-23). The card says what it is doing and one click
+ * shows the picture; nothing is hidden for good, and the account itself is
+ * still drawn in full. A post hivemind has greyed for the same reason is
+ * treated the same way.
+ */
+const MUTED_REPUTATION_BELOW = 25;
 
 interface PostCardProps {
   post: Entry;
@@ -50,6 +62,12 @@ const PostCard = ({ post, tier, accountAgeDays, showFollow, profile }: PostCardP
   const replyCount = typeof post.children === 'number' ? post.children : 0;
   const initial = post.title.trim().charAt(0).toUpperCase();
   const personRowHeight = tier.rings + PERSON_ROW_PADDING * 2;
+  const muted =
+    accountReputation(post.author_reputation) < MUTED_REPUTATION_BELOW || Boolean(post.stats?.gray);
+  // Only ever for this card, and only until the page is left: showing one
+  // picture is not a decision about the account.
+  const [revealed, setRevealed] = useState(false);
+  const pictureHidden = muted && !revealed;
 
   return (
     <div
@@ -79,18 +97,45 @@ const PostCard = ({ post, tier, accountAgeDays, showFollow, profile }: PostCardP
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
-        <Link href={href} className="relative block h-full shrink-0" data-testid="postcard-post-image">
-          <span
-            className="flex h-full items-center justify-center bg-cover bg-center text-[20px] font-bold text-white/50"
-            style={{ width: tier.thumb, backgroundImage: image ? `url(${image})` : NO_IMAGE_BACKGROUND }}
+        {pictureHidden ? (
+          // A button, not a link: the click shows the picture, it does not
+          // leave the page. The words are the whole of the block, so the
+          // sign reads before anything else does.
+          <button
+            type="button"
+            onClick={() => setRevealed(true)}
+            className="relative flex h-full shrink-0 flex-col items-center justify-center gap-[2px] bg-black/60 px-1 text-center shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-colors hover:bg-black/40"
+            style={{ width: tier.thumb }}
+            data-testid="postcard-muted-image"
           >
-            {image ? null : initial}
-          </span>
-          <span
-            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
-            aria-hidden="true"
-          />
-        </Link>
+            <EyeOff className="h-3.5 w-3.5" style={{ color: BASECAMP_VIVID.red }} aria-hidden="true" />
+            <span
+              className="text-[8.5px] font-extrabold uppercase leading-[10px] tracking-[0.06em]"
+              style={{ color: BASECAMP_VIVID.red }}
+            >
+              {t('basecamp.card.muted_image.title')}
+            </span>
+            <span className="text-[8.5px] font-semibold leading-[10px] text-white/85">
+              {t('basecamp.card.muted_image.reveal')}
+            </span>
+            <span className={cn(BASECAMP_MUTED, 'text-[8px] leading-[9px]')}>
+              {t('basecamp.card.muted_image.warning')}
+            </span>
+          </button>
+        ) : (
+          <Link href={href} className="relative block h-full shrink-0" data-testid="postcard-post-image">
+            <span
+              className="flex h-full items-center justify-center bg-cover bg-center text-[20px] font-bold text-white/50"
+              style={{ width: tier.thumb, backgroundImage: image ? `url(${image})` : NO_IMAGE_BACKGROUND }}
+            >
+              {image ? null : initial}
+            </span>
+            <span
+              className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+              aria-hidden="true"
+            />
+          </Link>
+        )}
         <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5 pl-2 pr-1.5">
           <Link
             href={href}
@@ -99,7 +144,7 @@ const PostCard = ({ post, tier, accountAgeDays, showFollow, profile }: PostCardP
           >
             {post.title}
           </Link>
-          <div className="flex h-3 flex-wrap items-center gap-x-2.5 overflow-hidden text-[11px] font-medium leading-none tabular-nums text-white/70">
+          <div className="flex h-3 flex-wrap items-center gap-x-2.5 overflow-hidden text-[11px] font-medium tabular-nums leading-none text-white/70">
             <span className="flex items-center gap-1" title={t('basecamp.card.hints.votes_on_post')}>
               <ChevronUp className="h-3 w-3" style={{ color: BASECAMP_VIVID.orange }} aria-hidden="true" />
               {voteCount}
@@ -112,7 +157,9 @@ const PostCard = ({ post, tier, accountAgeDays, showFollow, profile }: PostCardP
               <MessageSquare className="h-3 w-3" style={{ color: BASECAMP_VIVID.cyan }} aria-hidden="true" />
               {replyCount}
             </Link>
-            <span className={cn(BASECAMP_MUTED, 'ml-auto whitespace-nowrap text-[10px]')}>{post.category}</span>
+            <span className={cn(BASECAMP_MUTED, 'ml-auto whitespace-nowrap text-[10px]')}>
+              {post.category}
+            </span>
           </div>
         </div>
       </div>
