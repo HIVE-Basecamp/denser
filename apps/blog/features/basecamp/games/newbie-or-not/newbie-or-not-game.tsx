@@ -105,14 +105,17 @@ const NewbieOrNotGame = () => {
     return <GameNotice title={t(`${k}.finding_title`)} body={t(`${k}.finding_body`)} />;
   }
 
-  if (queue.length === 0) {
-    return <GameNotice title={t(`${k}.empty_title`)} body={t(`${k}.empty_body`)} />;
+  // Nobody yet while the feed still has pages inside the day: that is a wait,
+  // not the end of the game, and it must never read as one. The queue asks
+  // for the next page itself (the effect above), so this resolves on its own;
+  // it used to say "no first posts" here while the day was still being read.
+  // The same holds for running off the end of a queue that had somebody.
+  if ((queue.length === 0 || !post) && hasMore) {
+    return <GameNotice title={t(`${k}.finding_title`)} body={t(`${k}.finding_body`)} />;
   }
 
-  // Run off the end while the feed still has pages: that is a wait, not the
-  // end of the game, and it must never read as one.
-  if (!post && hasMore) {
-    return <GameNotice title={t(`${k}.finding_title`)} body={t(`${k}.finding_body`)} />;
+  if (queue.length === 0) {
+    return <GameNotice title={t(`${k}.empty_title`)} body={t(`${k}.empty_body`)} />;
   }
 
   if (!post) {

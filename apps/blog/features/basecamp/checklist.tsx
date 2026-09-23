@@ -4,6 +4,7 @@ import { Check } from 'lucide-react';
 import { Checkbox } from '@ui/components/checkbox';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
+import DialogLogin from '@/blog/components/dialog-login';
 import { BASECAMP_PANEL, BASECAMP_MUTED } from './lib/theme';
 import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBasecampState } from './hooks/use-basecamp-state';
@@ -61,10 +62,14 @@ const Checklist = () => {
       <span className="text-xs font-semibold uppercase tracking-wider text-[#98A6BC]">
         {t('basecamp.checklist.done_on_hive')}
       </span>
-      <p className={cn(BASECAMP_MUTED, 'mb-2 mt-0.5 text-xs')}>
-        {t('basecamp.checklist.done_on_hive_note')}
-      </p>
-      {status === 'unavailable' ? (
+      <p className={cn(BASECAMP_MUTED, 'mb-2 mt-0.5 text-xs')}>{t('basecamp.checklist.done_on_hive_note')}</p>
+      {/* Signed out there is no account to read, and a list of eight things
+          not done would be a reading of nobody. */}
+      {!user.isLoggedIn ? (
+        <p className={cn(BASECAMP_MUTED, 'text-sm')} data-testid="checklist-signed-out">
+          {t('basecamp.checklist.signed_in_only')}
+        </p>
+      ) : status === 'unavailable' ? (
         <p className={cn(BASECAMP_MUTED, 'text-sm')} data-testid="checklist-facts-unavailable">
           {t('basecamp.checklist.not_measured')}
         </p>
@@ -89,19 +94,23 @@ const Checklist = () => {
           const task = item.id as BasecampTaskId;
           const done = state.completedTasks.includes(task);
           const pending = taskMutation.isLoading && taskMutation.variables?.task === task;
+          const checkbox = (
+            <Checkbox
+              id={`checklist-${item.id}`}
+              checked={done}
+              disabled={done || pending}
+              // One-way on chain: there is no "uncomplete" action. Signed out
+              // the box opens the sign-in dialog instead (the wrapper below).
+              onCheckedChange={() => {
+                if (user.isLoggedIn && !done) taskMutation.mutate({ task });
+              }}
+              className={cn('border-white/30', done && 'border-[#B79CFF] bg-[#B79CFF] text-[#0B0F17]')}
+              data-testid={`checklist-item-${item.id}`}
+            />
+          );
           return (
             <li key={item.id} className="flex items-center gap-3 text-sm">
-              <Checkbox
-                id={`checklist-${item.id}`}
-                checked={done}
-                disabled={done || pending}
-                // One-way on chain: there is no "uncomplete" action.
-                onCheckedChange={() => {
-                  if (!done) taskMutation.mutate({ task });
-                }}
-                className={cn('border-white/30', done && 'border-[#B79CFF] bg-[#B79CFF] text-[#0B0F17]')}
-                data-testid={`checklist-item-${item.id}`}
-              />
+              {user.isLoggedIn ? checkbox : <DialogLogin>{checkbox}</DialogLogin>}
               <label
                 htmlFor={`checklist-${item.id}`}
                 className={done ? cn(BASECAMP_MUTED, 'cursor-pointer line-through') : 'cursor-pointer'}

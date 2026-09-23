@@ -11,6 +11,7 @@ import {
   type VoteSummary
 } from '../lib/voters';
 import { estimateSecondsLeft } from '../lib/read-progress';
+import { withRetry } from '../lib/retry';
 import { fetchVotePage, type VotePageEvent } from './use-votes-received';
 
 /**
@@ -174,7 +175,9 @@ export function useFullVoteHistory(
             foldedInWindow += fresh.length;
           };
 
-          const first = await fetchVotePage(account, { beforeMs }, direction);
+          // Every page is asked for again when the node drops it. One dropped
+          // connection in six was costing the whole read (lib/retry.ts).
+          const first = await withRetry(() => fetchVotePage(account, { beforeMs }, direction));
           windows++;
           pagesDone++;
           if (beforeMs === undefined) {
@@ -191,7 +194,9 @@ export function useFullVoteHistory(
             for (let offset = 0; offset < CONCURRENCY && page - offset >= 1; offset++)
               batch.push(page - offset);
             const pages = await Promise.all(
-              batch.map((number) => fetchVotePage(account, { page: number, beforeMs }, direction))
+              batch.map((number) =>
+                withRetry(() => fetchVotePage(account, { page: number, beforeMs }, direction))
+              )
             );
             for (const result of pages) take(result.events);
             pagesDone += batch.length;

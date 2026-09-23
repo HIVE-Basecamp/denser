@@ -5,12 +5,30 @@ import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useVoteMutation } from '@/blog/features/votes/hooks/use-vote-mutation';
+import DialogLogin from '@/blog/components/dialog-login';
 import { accentButton } from './lib/theme';
 
 const VoteOnPostButton = ({ author, permlink }: { author: string; permlink: string }) => {
   const { t } = useTranslation('common_blog');
   const { user } = useUserClient();
   const voteMutation = useVoteMutation();
+
+  // A vote is a signed operation. Signed out, the button opens the sign-in
+  // dialog — the same gate the post page puts in front of its own vote button.
+  if (!user.isLoggedIn) {
+    return (
+      <DialogLogin>
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn(accentButton('rose', true), 'whitespace-nowrap')}
+          data-testid="vote-on-post-button"
+        >
+          {t('basecamp.support_flow.vote_on_this_post')}
+        </Button>
+      </DialogLogin>
+    );
+  }
 
   return (
     <Button

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
+import DialogLogin from '@/blog/components/dialog-login';
 import { BASECAMP_PANEL, accentButton } from './lib/theme';
 import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBasecampState } from './hooks/use-basecamp-state';
@@ -40,14 +41,29 @@ const InterestsOnRecord = () => {
     <div className={cn(BASECAMP_PANEL, 'my-4 flex flex-col gap-3')} data-testid="interests-on-record-form">
       <span className="text-sm font-semibold">{t('basecamp.interest_picker.heading')}</span>
       <InterestPicker selected={selected} onToggle={toggleInterest} maxSelected={MAX_BASECAMP_INTERESTS} />
-      <Button
-        className={cn(accentButton('emerald', true), 'w-fit')}
-        onClick={() => interestsMutation.mutate({ interests: selected })}
-        disabled={selected.length === 0 || interestsMutation.isLoading}
-        data-testid="interests-on-record-confirm"
-      >
-        {t('basecamp.interest_picker.confirm')}
-      </Button>
+      {/* Putting interests on record is a signed operation. Signed out, the
+          button opens the sign-in dialog — the same gate the rest of the site
+          puts in front of a vote or a follow — rather than failing to sign. */}
+      {user.isLoggedIn ? (
+        <Button
+          className={cn(accentButton('emerald', true), 'w-fit')}
+          onClick={() => interestsMutation.mutate({ interests: selected })}
+          disabled={selected.length === 0 || interestsMutation.isLoading}
+          data-testid="interests-on-record-confirm"
+        >
+          {t('basecamp.interest_picker.confirm')}
+        </Button>
+      ) : (
+        <DialogLogin>
+          <Button
+            className={cn(accentButton('emerald', true), 'w-fit')}
+            disabled={selected.length === 0}
+            data-testid="interests-on-record-confirm"
+          >
+            {t('basecamp.interest_picker.confirm')}
+          </Button>
+        </DialogLogin>
+      )}
     </div>
   );
 };

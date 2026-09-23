@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
 import { operationTypeIdsOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
+import { withRetry } from '../lib/retry';
 import {
   createPayerSheet,
   EMPTY_PAYERS,
@@ -178,7 +179,9 @@ async function fetchPaymentPage(
  */
 export async function fetchAccountPayers(account: string, rates: MoneyRates) {
   const opTypeIds = await paymentOpTypeIds();
-  const read = (page?: number) => fetchPaymentPage(account, opTypeIds, page);
+  // Asked again when the node drops a page, so one dropped connection does
+  // not cost the whole panel (lib/retry.ts).
+  const read = (page?: number) => withRetry(() => fetchPaymentPage(account, opTypeIds, page));
 
   // The newest page first: it is the one a reader most wants and the only one
   // whose number is not known in advance.

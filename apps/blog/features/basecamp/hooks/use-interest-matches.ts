@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { StaleTime } from '@/blog/lib/react-query';
 import { fetchBasecampRecords } from './use-basecamp-state';
 import { foldBasecampState, type BasecampInterest } from '../lib/protocol';
+import { withRetry } from '../lib/retry';
 import type { Newcomer } from './use-newcomers';
 
 /**
@@ -17,20 +18,29 @@ import type { Newcomer } from './use-newcomers';
  * ask for the matches directly. Keep the candidate list short.
  */
 export function useInterestMatches(candidates: Newcomer[], guideInterests: BasecampInterest[]) {
-  const authors = useMemo(() => Array.from(new Set(candidates.map((candidate) => candidate.post.author))), [
-    candidates
-  ]);
+  const authors = useMemo(
+    () => Array.from(new Set(candidates.map((candidate) => candidate.post.author))),
+    [candidates]
+  );
 
   const { data, isFetching } = useQuery({
     queryKey: ['basecampInterestsOnRecord', authors],
     queryFn: async () => {
-      const entries = await Promise.all(
+      // Twenty reads at once, and a public node drops one now and then. Each
+      // is asked for again when dropped (lib/retry.ts), and one that still
+      // fails costs that one candidate rather than the whole list. Only when
+      // every read failed is there nothing honest to show, and the query
+      // fails so it is asked again rather than answering "no matches".
+      const settled = await Promise.allSettled(
         authors.map(async (author) => {
-          const records = await fetchBasecampRecords(author);
+          const records = await withRetry(() => fetchBasecampRecords(author));
           const state = foldBasecampState(records);
           return [author, state.interests] as const;
         })
       );
+      const entries = settled.flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []));
+      if (entries.length === 0 && authors.length > 0)
+        throw new Error('Could not read any interests on record');
       return new Map(entries);
     },
     enabled: authors.length > 0,

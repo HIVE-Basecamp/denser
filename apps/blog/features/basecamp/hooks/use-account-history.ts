@@ -8,6 +8,7 @@ import { operationTypeIdsOf } from './operation-types';
 import { EMPTY_CHECKLIST_FACTS, type ChecklistFacts } from '../lib/checklist';
 import { EMPTY_COMMENT_PATTERNS, summarizePatterns, type CommentPatterns } from '../lib/patterns';
 import { HOURS_IN_DAY, utcDayStart, type ActionRecord } from '../lib/hourly-actions';
+import { withRetry } from '../lib/retry';
 import {
   BEGINNING_OPERATION_NAMES,
   HISTORY_OPERATION_NAMES,
@@ -189,13 +190,18 @@ export function accountHistoryQueryKey(username: string) {
 export async function fetchAccountHistory(username: string): Promise<AccountHistory> {
   const [chain, operationTypes] = await Promise.all([getChain(), historyOperationTypeIds()]);
 
+  // Every page is asked for again when the node drops it (lib/retry.ts): a
+  // dropped connection was leaving a card reading "not measured" on a node
+  // that answers the same question a moment later.
   const read = (params: Record<string, number | string>) =>
-    chain.restApi['hivemind-api'].accountsOperations({
-      'account-name': username,
-      'operation-types': operationTypes.window,
-      'page-size': HISTORY_PAGE_SIZE,
-      ...params
-    });
+    withRetry(() =>
+      chain.restApi['hivemind-api'].accountsOperations({
+        'account-name': username,
+        'operation-types': operationTypes.window,
+        'page-size': HISTORY_PAGE_SIZE,
+        ...params
+      })
+    );
 
   const nowMs = Date.now();
   const dayStartMs = utcDayStart(nowMs);
@@ -238,13 +244,15 @@ export async function fetchAccountHistory(username: string): Promise<AccountHist
   // counted twice, and page 1 is the oldest end of what is left.
   if (Number.isFinite(createdMs) && createdMs < windowStartMs) {
     try {
-      const beginning = await chain.restApi['hivemind-api'].accountsOperations({
-        'account-name': username,
-        'operation-types': operationTypes.beginning,
-        'page-size': BEGINNING_PAGE_SIZE,
-        'to-block': historyTimeParam(windowStartMs),
-        page: 1
-      });
+      const beginning = await withRetry(() =>
+        chain.restApi['hivemind-api'].accountsOperations({
+          'account-name': username,
+          'operation-types': operationTypes.beginning,
+          'page-size': BEGINNING_PAGE_SIZE,
+          'to-block': historyTimeParam(windowStartMs),
+          page: 1
+        })
+      );
       foldOperations(tally, beginning.operations_result ?? [], false);
     } catch {
       // Same bargain as the extra window pages: a dropped beginning costs the

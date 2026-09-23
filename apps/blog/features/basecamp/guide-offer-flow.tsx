@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@hive/ui';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
+import DialogLogin from '@/blog/components/dialog-login';
 import { BASECAMP_PANEL, accentButton } from './lib/theme';
 import { useUserClient } from '@smart-signer/lib/auth/use-user-client';
 import { useBasecampState } from './hooks/use-basecamp-state';
@@ -41,14 +42,28 @@ const GuideOfferFlow = () => {
     <div className={cn(BASECAMP_PANEL, 'my-4 flex flex-col gap-3')} data-testid="guide-offer-form">
       <span className="text-sm font-semibold">{t('basecamp.guide_offer_flow.heading')}</span>
       <InterestPicker selected={selected} onToggle={toggleInterest} maxSelected={MAX_BASECAMP_INTERESTS} />
-      <Button
-        className={cn(accentButton('violet', true), 'w-fit')}
-        onClick={() => guideOfferMutation.mutate({ interests: selected, capacity: DEFAULT_GUIDE_CAPACITY })}
-        disabled={selected.length === 0 || guideOfferMutation.isLoading}
-        data-testid="guide-offer-confirm"
-      >
-        {t('basecamp.guide_offer_flow.confirm')}
-      </Button>
+      {/* Offering to guide is a signed operation. Signed out, the button opens
+          the sign-in dialog rather than failing to sign. */}
+      {user.isLoggedIn ? (
+        <Button
+          className={cn(accentButton('violet', true), 'w-fit')}
+          onClick={() => guideOfferMutation.mutate({ interests: selected, capacity: DEFAULT_GUIDE_CAPACITY })}
+          disabled={selected.length === 0 || guideOfferMutation.isLoading}
+          data-testid="guide-offer-confirm"
+        >
+          {t('basecamp.guide_offer_flow.confirm')}
+        </Button>
+      ) : (
+        <DialogLogin>
+          <Button
+            className={cn(accentButton('violet', true), 'w-fit')}
+            disabled={selected.length === 0}
+            data-testid="guide-offer-confirm"
+          >
+            {t('basecamp.guide_offer_flow.confirm')}
+          </Button>
+        </DialogLogin>
+      )}
     </div>
   );
 };

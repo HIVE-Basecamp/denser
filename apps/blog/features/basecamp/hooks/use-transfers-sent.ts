@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
 import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
+import { withRetry } from '../lib/retry';
 import {
   createTransferSheet,
   EMPTY_TRANSFERS,
@@ -132,7 +133,8 @@ async function fetchTransferPage(account: string, opTypeId: number, page?: numbe
 
 export async function fetchTransfersSent(account: string) {
   const opTypeId = await transferOpTypeId();
-  const read = (page?: number) => fetchTransferPage(account, opTypeId, page);
+  // Asked again when the node drops a page (lib/retry.ts).
+  const read = (page?: number) => withRetry(() => fetchTransferPage(account, opTypeId, page));
 
   // The endpoint pages from the OLDEST record, so asking with no page returns
   // the newest — a remainder, and the only page whose number is not known in

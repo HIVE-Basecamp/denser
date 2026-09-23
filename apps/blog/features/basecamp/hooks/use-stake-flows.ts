@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getChain } from '@transaction/lib/chain';
 import { operationTypeIdsOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
+import { withRetry } from '../lib/retry';
 import {
   createStakeFlows,
   EMPTY_STAKE_FLOWS,
@@ -205,7 +206,8 @@ async function fetchFlowPage(account: string, opTypeIds: number[], page?: number
 
 export async function fetchStakeFlows(account: string) {
   const opTypeIds = await flowOpTypeIds();
-  const read = (page?: number) => fetchFlowPage(account, opTypeIds, page);
+  // Asked again when the node drops a page (lib/retry.ts).
+  const read = (page?: number) => withRetry(() => fetchFlowPage(account, opTypeIds, page));
 
   // The endpoint pages from the OLDEST record, so asking with no page returns
   // the newest — a remainder page, and the only one whose number is not known

@@ -92,10 +92,11 @@ const NewcomersList = () => {
           className={cn(accentButton('violet', false), 'h-9 text-sm')}
           data-testid="newcomers-list-load-more"
         >
+          {/* The feed walks back in time, so the button loads older posts, not newer ones. */}
           {isFetchingNextPage
             ? t('global.loading')
             : hasNextPage
-              ? t('user_profile.load_newer')
+              ? t('cards.comment_card.load_more')
               : t('user_profile.nothing_more_to_load')}
         </button>
       </div>

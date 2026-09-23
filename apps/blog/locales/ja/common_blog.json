@@ -946,6 +946,7 @@
       "said_so": "Said so",
       "said_so_note": "Nothing on Hive can show these, so they are your word. Still worth doing — backing up your keys most of all.",
       "not_measured": "Could not read your history just now, so these are not measured.",
+      "signed_in_only": "Sign in to see what you have done on Hive.",
       "items": {
         "profile_setup": "Set up your profile",
         "intro_post": "Write an introduction post",

@@ -6,6 +6,7 @@ import { getChain } from '@transaction/lib/chain';
 import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import { estimateSecondsLeft } from '../lib/read-progress';
+import { withRetry } from '../lib/retry';
 import {
   createReplyTargetSheet,
   EMPTY_REPLY_TARGETS,
@@ -217,15 +218,21 @@ export async function fetchReplyTargets(account: string, report?: ReadReport) {
     ? { done: 0, planned: 2, startedAt: Date.now(), report }
     : undefined;
 
+  // Every page is asked for again when the node drops it, so one dropped
+  // connection does not cost a read that took half a minute (lib/retry.ts).
   const [replies, rewards] = await Promise.all([
     fetchPages(
       (page) =>
-        fetchPage(account, commentTypeId, 'include', (operation) => toReply(operation, account), page),
+        withRetry(() =>
+          fetchPage(account, commentTypeId, 'include', (operation) => toReply(operation, account), page)
+        ),
       tally
     ),
     fetchPages(
       (page) =>
-        fetchPage(account, rewardTypeId, undefined, (operation) => toReward(operation, account), page),
+        withRetry(() =>
+          fetchPage(account, rewardTypeId, undefined, (operation) => toReward(operation, account), page)
+        ),
       tally
     )
   ]);
