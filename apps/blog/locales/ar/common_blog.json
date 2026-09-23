@@ -1026,6 +1026,8 @@
     "interest_picker": {
       "heading": "What are you interested in? Pick up to 5.",
       "confirm": "Confirm interests",
+      "change": "Change",
+      "cancel": "Cancel",
       "on_record": "Your interests are on record: {{interests}}",
       "interests": {
         "photography": "Photography",
