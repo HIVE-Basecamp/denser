@@ -6,11 +6,13 @@ import { operationTypeIdOf } from './operation-types';
 import { StaleTime } from '@/blog/lib/react-query';
 import {
   createVoteTally,
-  EMPTY_VOTES_RECEIVED,
+  EMPTY_VOTE_SUMMARY,
   foldVoteEvents,
   isCountCapped,
   summarizeTally,
-  type VoteEvent
+  type VoteDirection,
+  type VoteEvent,
+  type VoteSummary
 } from '../lib/voters';
 
 /**
@@ -72,23 +74,30 @@ export interface VotePageRequest {
 }
 
 /**
- * One page of the votes this account was **given**.
+ * One page of this account's votes, in one direction.
  *
- * `participation-mode: 'exclude'` is what makes that possible: it drops the
- * operations this account itself began, and the account that begins a vote is
- * the voter. Only HAfAH's copy of this endpoint takes that parameter — the
+ * `participation-mode` is what separates the two directions: the account that
+ * begins a vote is the voter, so 'exclude' drops the votes this account began
+ * and leaves the ones it was **given**, and 'include' keeps only the ones it
+ * **gave**. Only HAfAH's copy of this endpoint takes that parameter — the
  * hivemind copy returns both directions mixed together, with no way to tell
- * them apart.
+ * them apart. Each event names the other party: the voter on a vote received,
+ * the author on a vote given.
  */
-export async function fetchVotePage(account: string, request: VotePageRequest = {}): Promise<VotePage> {
+export async function fetchVotePage(
+  account: string,
+  request: VotePageRequest = {},
+  direction: VoteDirection = 'received'
+): Promise<VotePage> {
   const chain = await getChain();
   const opTypeId = await effectiveVoteOpTypeId();
+  const otherParty = direction === 'received' ? 'voter' : 'author';
 
   const response = await chain.restApi['hafah-api'].accountsOperations({
     'account-name': account,
     'operation-types': String(opTypeId),
     'transacting-account-name': account,
-    'participation-mode': 'exclude',
+    'participation-mode': direction === 'received' ? 'exclude' : 'include',
     'page-size': VOTE_PAGE_SIZE,
     ...(request.page === undefined ? {} : { page: request.page }),
     ...(request.beforeMs === undefined ? {} : { 'to-block': toBlockTimestamp(request.beforeMs) })
@@ -98,10 +107,10 @@ export async function fetchVotePage(account: string, request: VotePageRequest = 
   for (const operation of response.operations_result ?? []) {
     const value = operation.op?.value as Record<string, unknown> | undefined;
     if (!value) continue;
-    const voter = typeof value.voter === 'string' ? value.voter : '';
-    if (voter === '') continue;
+    const other = typeof value[otherParty] === 'string' ? (value[otherParty] as string) : '';
+    if (other === '') continue;
     events.push({
-      voter,
+      account: other,
       rshares: Number(value.rshares),
       timestampMs: parseHiveTimestamp(operation.timestamp),
       id: String(operation.operation_id ?? `${operation.block}-${operation.op_pos}`)
@@ -121,31 +130,31 @@ export function votesReceivedQueryKey(account: string) {
   return ['basecampVotesReceived', account] as const;
 }
 
+export function votesGivenQueryKey(account: string) {
+  return ['basecampVotesGiven', account] as const;
+}
+
 /**
- * The newest page of the votes this account was given: the petal's number, and
- * enough of a ranking to fill the panel the moment it opens.
+ * The newest page of this account's votes in one direction: enough for a
+ * number, and enough of a ranking to fill a panel the moment it opens.
  *
- * One request per card. Where the account has been given fewer votes than the
- * chain's counting ceiling, this single read is their whole life and the number
- * is exact; above it the chain stops counting and the figure is a floor until
- * somebody asks for the full read.
+ * One request. Where there are fewer votes than the chain's counting ceiling,
+ * this single read is the whole life and the number is exact; above it the
+ * chain stops counting and the figure is a floor until somebody asks for the
+ * full read.
  */
-export async function fetchVotesReceived(account: string) {
-  const page = await fetchVotePage(account);
+export async function fetchVoteSummary(account: string, direction: VoteDirection): Promise<VoteSummary> {
+  const page = await fetchVotePage(account, {}, direction);
   const tally = foldVoteEvents(createVoteTally(), page.events);
   const complete = !isCountCapped(page.total) && tally.counted >= page.total;
   return summarizeTally(tally, page.total, complete);
 }
 
-/**
- * `enabled` defers the read until the card is near the viewport, so a long feed
- * does not fire one per row up front.
- */
-export function useVotesReceived(account: string, enabled = true) {
+function useVoteSummary(account: string, direction: VoteDirection, enabled: boolean) {
   const isEnabled = enabled && Boolean(account);
   const { data, isError } = useQuery({
-    queryKey: votesReceivedQueryKey(account),
-    queryFn: () => fetchVotesReceived(account),
+    queryKey: direction === 'received' ? votesReceivedQueryKey(account) : votesGivenQueryKey(account),
+    queryFn: () => fetchVoteSummary(account, direction),
     enabled: isEnabled,
     staleTime: StaleTime.MEDIUM,
     // One retry, as on the history read: this is a thousand operations from a
@@ -159,5 +168,22 @@ export function useVotesReceived(account: string, enabled = true) {
   else if (isEnabled) status = 'loading';
   else status = 'idle';
 
-  return { votes: status === 'ready' && data ? data : EMPTY_VOTES_RECEIVED, status };
+  return { votes: status === 'ready' && data ? data : EMPTY_VOTE_SUMMARY, status };
+}
+
+/**
+ * The votes this account was given, and who gave them: the petal's number and
+ * the first list in the panel. `enabled` defers the read until the card is
+ * near the viewport, so a long feed does not fire one per row up front.
+ */
+export function useVotesReceived(account: string, enabled = true) {
+  return useVoteSummary(account, 'received', enabled);
+}
+
+/**
+ * The votes this account cast, and who on: the second list in the panel. Not
+ * read by the card — only once the panel is open.
+ */
+export function useVotesGiven(account: string, enabled = true) {
+  return useVoteSummary(account, 'given', enabled);
 }

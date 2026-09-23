@@ -32,8 +32,8 @@ export const BASECAMP_SHELL =
  * long arbitrary gradient value.
  */
 export const BASECAMP_SHELL_STYLE: CSSProperties = {
-  backgroundColor: '#0B0F17',
-  backgroundImage: 'radial-gradient(120% 120% at 0% 0%, #182236 0%, #0B0F17 55%)'
+  backgroundColor: '#000000',
+  backgroundImage: 'radial-gradient(120% 120% at 0% 0%, #0B0B12 0%, #000000 55%)'
 };
 
 /** Card surface used by feed rows and panels. */
@@ -44,7 +44,7 @@ export const BASECAMP_CARD =
 export const BASECAMP_PANEL = 'rounded-xl border border-white/10 bg-black/25 p-4 text-[#E8EDF5]';
 
 /** Muted body copy on the dark shell. */
-export const BASECAMP_MUTED = 'text-[#98A6BC]';
+export const BASECAMP_MUTED = 'text-[#A0A0B0]';
 
 /**
  * Accent colours for buttons and toggles.
@@ -99,7 +99,7 @@ export function accentButton(accent: BasecampAccent, selected: boolean): string 
 }
 
 /** Interactive text link. */
-export const BASECAMP_LINK = 'text-[#E8EDF5] transition-colors hover:text-[#B79CFF]';
+export const BASECAMP_LINK = 'text-[#E8EDF5] transition-colors hover:text-[#C9B4FF]';
 
 /** Tab strip container. */
 export const BASECAMP_TABS_LIST =
@@ -126,43 +126,48 @@ export const BASECAMP_TAB_TRIGGER_ACTIVE =
   'bg-[#B79CFF] text-[#0B0F17] shadow-[0_0_20px_-4px_rgba(183,156,255,0.7)] hover:text-[#0B0F17]';
 
 /**
- * The postcard's palette. Saturated on purpose: the card is a small dashboard
- * on a dark ground and every drawing on it should read as its own colour from
- * across the room. Each key is a name a readout can ask for; nothing outside
- * the postcard needs these.
+ * The postcard's palette: full-strength neon on true black. Every drawing on
+ * the card should read as its own colour from across the room, and on black a
+ * clean edge of colour does that without a glow — only the clock is allowed
+ * to bloom. Each key is a name a readout can ask for; nothing outside the
+ * postcard needs these.
  */
 export type BasecampVividKey = 'violet' | 'orange' | 'cyan' | 'lime' | 'pink' | 'yellow' | 'blue' | 'red';
 
 export const BASECAMP_VIVID: Record<BasecampVividKey, string> = {
-  violet: '#B79CFF',
-  orange: '#FF8A3D',
-  cyan: '#5EE9D5',
-  lime: '#B6F36B',
-  pink: '#FF6FB1',
-  yellow: '#FFD24D',
-  blue: '#5B9DFF',
-  red: '#FF4D6D'
+  violet: '#9D6BFF',
+  orange: '#FF8A00',
+  cyan: '#00F0FF',
+  lime: '#C6FF3A',
+  pink: '#FF3DA6',
+  yellow: '#FFE600',
+  blue: '#4D8DFF',
+  red: '#FF3D5A'
 };
 
 /**
- * The postcard surface. An iridescent wash rather than a flat tint, so the
- * card itself has some life before anything is drawn on it. Inline because
- * two `bg-*` utilities would collide in tailwind-merge (see BASECAMP_SHELL).
+ * The postcard surface: one opaque step up from the black ground, with a
+ * faint cyan and violet wash so the card has some life before anything is
+ * drawn on it. Inline because two `bg-*` utilities would collide in
+ * tailwind-merge (see BASECAMP_SHELL).
  */
 export const BASECAMP_POSTCARD_STYLE: CSSProperties = {
-  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  backgroundColor: '#0D0D12',
   backgroundImage:
-    'radial-gradient(90% 140% at 0% 0%, rgba(183, 156, 255, 0.16) 0%, rgba(183, 156, 255, 0) 55%),' +
-    ' radial-gradient(70% 120% at 100% 100%, rgba(255, 138, 61, 0.10) 0%, rgba(255, 138, 61, 0) 55%)'
+    'radial-gradient(90% 140% at 0% 0%, rgba(0, 240, 255, 0.07) 0%, rgba(0, 240, 255, 0) 55%),' +
+    ' radial-gradient(70% 120% at 100% 100%, rgba(157, 107, 255, 0.07) 0%, rgba(157, 107, 255, 0) 55%)'
 };
 
+/** The one hairline the black ground needs: the card's edge, and the post's. */
+export const BASECAMP_HAIRLINE = '#1A1A22';
+
 /**
- * The post's own small card inside the postcard: a wash one step up from the
- * card and a hairline inside it, never a drawn border — the row, the post and
- * a border would be three rectangles.
+ * The post's own card inside the postcard — the one framed thing on it, now
+ * that the person's rings and name sit on the post itself: one more opaque
+ * step up from the card, with the hairline inside it, never a drawn border.
  */
 export const BASECAMP_POST_CARD =
-  'rounded-[10px] bg-[#B79CFF]/[0.09] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-colors duration-200 hover:bg-[#B79CFF]/[0.14]';
+  'rounded-[10px] bg-[#15151D] shadow-[inset_0_0_0_1px_#1A1A22] transition-colors duration-200 hover:bg-[#1A1A24]';
 
 /**
  * The name under every readout: ten pixels, capitals, spaced out. Ten is the
@@ -170,11 +175,11 @@ export const BASECAMP_POST_CARD =
  * so the label costs the card nothing it does not use.
  */
 export const BASECAMP_MICRO_LABEL =
-  'text-[10px] font-semibold uppercase leading-none tracking-[0.06em] text-[#8A93A6]';
+  'text-[10px] font-semibold uppercase leading-none tracking-[0.06em] text-[#9494A6]';
 
 /** Dark popover for the readout explanations. */
 export const BASECAMP_HINT =
-  'max-w-[240px] rounded-lg border border-[#B79CFF]/30 bg-[#12172A] px-3 py-2 text-[11px] leading-snug text-[#E8EDF5] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.9)]';
+  'max-w-[240px] rounded-lg border border-[#9D6BFF]/30 bg-[#15151D] px-3 py-2 text-[11px] leading-snug text-[#FFFFFF] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.9)]';
 
 /** Skeleton placeholder tuned for the dark shell. */
 export const BASECAMP_SKELETON = 'bg-white/10';

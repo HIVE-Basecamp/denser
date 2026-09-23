@@ -9,7 +9,6 @@ import CommentsButton from './postcard/comments-button';
 import FirstPostRing from './postcard/first-post-ring';
 import FlowerReadout from './postcard/flower-readout';
 import HourlyActionsDialog from './postcard/hourly-actions-dialog';
-import IdentityStrip from './postcard/identity-strip';
 import PostCard from './postcard/post-card';
 import ReplyTargetsDialog from './postcard/reply-targets-dialog';
 import StakeSourcesDialog from './postcard/stake-sources-dialog';
@@ -42,14 +41,14 @@ import type { Newcomer } from './hooks/use-newcomers';
  * post and the flower, then the five drawings spread edge to edge.
  */
 export const POSTCARD_CLASS =
-  'relative my-2 flex flex-wrap items-center justify-between gap-y-2 rounded-2xl border border-white/10 px-3 py-[10px] text-[#E8EDF5] shadow-[0_18px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm transition-colors duration-200 hover:border-[#B79CFF]/40 sm:flex-nowrap';
+  'relative my-2 flex flex-wrap items-center justify-between gap-y-2 rounded-2xl border border-[#1A1A22] px-3 py-[10px] text-white transition-colors duration-200 hover:border-[#9D6BFF]/50 sm:flex-nowrap';
 
 /**
  * A first ever post wears the neon ring, which stands 14px outside the card
  * on every side. The card keeps its size; the row makes room around it, and
  * the card's own border takes the sign's colour so the two read as one.
  */
-const FIRST_POST_CLASS = 'my-7 border-[#FF6FB1]/50 hover:border-[#FF6FB1]/80';
+const FIRST_POST_CLASS = 'my-7 border-[#FF3DA6]/50 hover:border-[#FF3DA6]/80';
 
 /** The one readout that carries a control: the replies drawing gets the way into the replies. */
 const REPLY_MIX_READOUT_ID = 'reply_mix';
@@ -77,9 +76,9 @@ interface NewcomersListItemProps extends Newcomer {
 
 /**
  * One postcard: a person, the post they wrote, and every reading the card
- * takes of them, in a single band. Three zones — who and what they posted,
- * five drawings, one flower — grouped by proximity and colour rather than by
- * borders, because borders cost height and a feed of these has to scroll.
+ * takes of them, in a single band. Three zones — the post with the person on
+ * it, five drawings, one flower — grouped by proximity and colour rather than
+ * by borders, because borders cost height and a feed of these has to scroll.
  *
  * The card does not know what any readout means: lib/readouts.ts decides what
  * is drawn and what is printed.
@@ -175,19 +174,13 @@ const NewcomersListItem = ({
           </>
         ) : null}
         <div className="min-w-0 flex-auto" style={postZoneStyle(tier)}>
-          <IdentityStrip
-            username={post.author}
-            permlink={post.permlink}
-            ringsSize={tier.rings}
-            reputation={post.author_reputation}
+          <PostCard
+            post={post}
+            tier={tier}
             accountAgeDays={accountAgeDays}
-            createdIso={post.created}
             showFollow={showFollow}
             profile={shown('pips')[0]}
           />
-          <div className="mt-1.5">
-            <PostCard post={post} />
-          </div>
         </div>
 
         <div

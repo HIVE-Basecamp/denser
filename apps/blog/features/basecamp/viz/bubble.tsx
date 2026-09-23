@@ -54,10 +54,7 @@ const Bubble = ({ ratio, colors, known, size }: BubbleProps) => {
         r={radius}
         fill={`url(#${gradientId})`}
         fillOpacity={known ? 1 : 0.25}
-        style={{
-          transition: 'r 700ms cubic-bezier(0.22, 1, 0.36, 1)',
-          filter: known ? `drop-shadow(0 0 7px ${colors[1]}99)` : undefined
-        }}
+        style={{ transition: 'r 700ms cubic-bezier(0.22, 1, 0.36, 1)' }}
       />
       <circle
         cx={CENTER}

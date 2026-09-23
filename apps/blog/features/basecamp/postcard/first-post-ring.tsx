@@ -18,7 +18,7 @@ const CRAWL_ACROSS = '18s';
 const CRAWL_DOWN = '7s';
 
 const NEON = BASECAMP_VIVID.pink;
-const NEON_GLOW = `0 0 3px ${NEON}, 0 0 9px rgba(255, 111, 177, 0.85), 0 0 18px rgba(255, 111, 177, 0.5)`;
+const NEON_GLOW = `0 0 3px ${NEON}, 0 0 9px ${NEON}D9, 0 0 18px ${NEON}80`;
 const PREFIX = 'basecamp-first-post';
 
 /**

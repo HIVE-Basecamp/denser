@@ -6,7 +6,7 @@ import { forwardRef, useId, type SVGProps } from 'react';
 export const FLOWER_BOX = 120;
 export const FLOWER_CENTER = FLOWER_BOX / 2;
 /** The card's ground: the halo behind a number and the dark disc the middle sits in. */
-export const FLOWER_GROUND = '#0B0F17';
+export const FLOWER_GROUND = '#0D0D12';
 /** Radius of that disc. Petals start under it, so the two never show a seam. */
 export const FLOWER_CORE_RADIUS = 17;
 /** Radius of the faint haze behind the whole flower. */
@@ -19,6 +19,8 @@ const LIT_MAX_RADIUS = 58;
 /** Once the lit part reaches past here it sits under the number, and the number turns dark to stay readable. */
 const NUMBER_COVERED_RADIUS = NUMBER_RADIUS + 6;
 const HALO_WIDTH = 2.5;
+/** How much of its colour an unlit petal shows. Low: on black, six dim mid-tones would read as one grey disc. */
+const PETAL_TRACK_OPACITY = 0.16;
 /** The edge drawn round a petal that opens something, so a reader can see it is a door. */
 const INTERACTIVE_RIM = 'rgba(255, 255, 255, 0.6)';
 const INTERACTIVE_RIM_WIDTH = 1;
@@ -119,7 +121,7 @@ const Petal = forwardRef<SVGGElement, PetalProps>(
           d={PETAL_PATH}
           transform={squeeze}
           fill={color}
-          opacity={known ? 0.3 : 0.15}
+          opacity={known ? PETAL_TRACK_OPACITY : PETAL_TRACK_OPACITY / 2}
           pointerEvents="all"
         />
         {known ? (

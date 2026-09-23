@@ -741,7 +741,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "收到的投票",
+        "votes_received": "投票",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "通常活跃小时"
@@ -773,10 +773,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "关于该账户使用方式的六项读数，每片花瓣一项。将鼠标悬停在花瓣上可查看它统计的内容；中心是创建该账户的账户。",
         "posted": "When this post was published.",
-        "votes_received": "其他人对该账户帖子投出的票，而不是它投出的票。点击查看谁为这个账户投出最多价值、各自投了多少票以及价值多少。",
+        "votes_received": "其他人为该账户的帖子和评论投的票。点击查看谁给他们投票最多，以及他们最常给谁投票。",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "点击查看他们回复了谁",
-        "votes_received_click": "点击查看谁投了票",
+        "votes_received_click": "点击查看谁给他们投票，以及他们给谁投票",
         "hours_written_click": "点击查看每个小时的明细"
       },
       "comments": {
@@ -801,9 +801,18 @@
         "top_voters": "这些回复的前 {{limit}} 位投票者"
       },
       "top_voters": {
-        "title": "前 {{limit}} 名投票者",
-        "subtitle": "谁给 @{{account}} 投过票，按投票价值排序。",
+        "title": "投票",
+        "subtitle": "谁给 @{{account}} 投票，以及 @{{account}} 给谁投票。",
         "received_label": "收到的投票",
+        "received_heading": "给 @{{account}} 投票最多的 {{limit}} 人",
+        "received_sort": "按投票价值排序。",
+        "given_heading": "@{{account}} 最常给谁投票",
+        "given_sort": "按投票次数排序。",
+        "given_label": "投出的票",
+        "given_empty": "@{{account}} 还没有给任何人投过票。",
+        "given_error": "无法读取该账户投出的票。请稍后再试。",
+        "given_window_lifetime": "该账户投出的全部票数：{{votes}}。",
+        "given_window_capped": "读取自该账户最近投出的 {{limit}} 票。",
         "people_label": "投票者",
         "total_label": "价值",
         "votes_label": "票",

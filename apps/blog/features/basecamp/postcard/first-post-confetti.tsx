@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { BASECAMP_VIVID } from '../lib/theme';
 
 /**
  * The confetti bursts for a first-post ring. Bryan (2026-09-12): "way more
@@ -49,7 +50,7 @@ const CONFETTI_MAX_DISTANCE_PX = 108;
 const CONFETTI_MAX_PIECE_DELAY_MS = 110;
 
 /** Same vivid set the rest of the postcard draws from. */
-const CONFETTI_COLORS = ['#B79CFF', '#FF8A3D', '#5EE9D5', '#B6F36B', '#FF6FB1', '#FFD24D', '#5B9DFF', '#FF4D6D'];
+const CONFETTI_COLORS = Object.values(BASECAMP_VIVID);
 
 export interface ConfettiBurstEvent {
   /** Where the burst originates, in percent of the ring's own box. */

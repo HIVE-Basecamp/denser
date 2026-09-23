@@ -18,8 +18,8 @@
 export const INTENSITY_ENABLED = true;
 
 /** Ramp stops. The base colour is passed in by the caller. */
-const INTENSITY_MID_COLOR = '#FFC24D';
-const INTENSITY_HIGH_COLOR = '#FF5470';
+const INTENSITY_MID_COLOR = '#FFD500';
+const INTENSITY_HIGH_COLOR = '#FF3D5A';
 /** Where the base colour has fully become the mid colour. */
 const MID_STOP = 0.5;
 

@@ -68,7 +68,7 @@ const HalfMoon = ({ segments, width, known, stroke = 13, gap = 5 }: HalfMoonProp
             <path
               d={arcPath(radius, section.from, section.to)}
               fill="none"
-              stroke={`${section.color}4D`}
+              stroke={`${section.color}33`}
               strokeWidth={stroke}
               strokeLinecap="round"
             />
@@ -80,10 +80,7 @@ const HalfMoon = ({ segments, width, known, stroke = 13, gap = 5 }: HalfMoonProp
               stroke={section.color}
               strokeWidth={stroke}
               strokeLinecap="round"
-              style={{
-                transition: 'd 700ms cubic-bezier(0.22, 1, 0.36, 1), stroke 400ms linear',
-                filter: `drop-shadow(0 0 4px ${section.color}99)`
-              }}
+              style={{ transition: 'd 700ms cubic-bezier(0.22, 1, 0.36, 1), stroke 400ms linear' }}
             />
           ) : null}
         </g>

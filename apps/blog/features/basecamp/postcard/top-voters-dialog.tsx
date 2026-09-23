@@ -1,168 +1,82 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { Link } from '@hive/ui';
-import { getUserAvatarUrl } from '@ui/lib/avatar-utils';
 import { Dialog, DialogContent, DialogTitle } from '@ui/components/dialog';
 import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
-import { useFullVoteHistory } from '../hooks/use-full-vote-history';
+import { useFullVoteHistory, type FullReadStatus } from '../hooks/use-full-vote-history';
 import { useVoteValueRate } from '../hooks/use-vote-value';
-import { VOTE_PAGE_SIZE } from '../hooks/use-votes-received';
+import { useVotesGiven, VOTE_PAGE_SIZE } from '../hooks/use-votes-received';
 import { hbdFromRshares } from '../lib/vote-value';
-import { TOP_VOTERS_COUNT, voterShare, type VoterTally, type VotesReceived } from '../lib/voters';
-import { BASECAMP_LINK, BASECAMP_MICRO_LABEL, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
-import { formatHbdAmount } from './format-value';
-import ReadProgressBar from './read-progress-bar';
+import {
+  countShare,
+  rankByCount,
+  TOP_VOTERS_COUNT,
+  voterShare,
+  type VoteDirection,
+  type VoteSummary
+} from '../lib/voters';
+import { BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
+import { HbdValue, Stat } from './voter-row';
+import VoteListSection from './vote-list-section';
 
 const BLUE = BASECAMP_VIVID.blue;
 const CYAN = BASECAMP_VIVID.cyan;
 const LIME = BASECAMP_VIVID.lime;
-const AVATAR = 30;
-
-/** So a voter with a sliver of the weight still draws a mark rather than nothing. */
-const BAR_MIN_SHARE = 0.02;
-
-interface HbdValueProps {
-  /** The amount in HBD, or null while the chain-wide rate is still unknown. */
-  amount: number | null;
-}
-
-/**
- * One money figure. Three separate translations rather than one, because the
- * "smaller than" mark has to be literal text inside the translation: passed in
- * as part of the value it would come back escaped, as `&lt;`.
- */
-const HbdValue = ({ amount }: HbdValueProps) => {
-  const { t } = useTranslation('common_blog');
-  if (amount === null) return <>{'—'}</>;
-  const reading = formatHbdAmount(amount);
-  if (reading.kind === 'under')
-    return <>{t('basecamp.card.top_voters.amount_under', { value: reading.value })}</>;
-  if (reading.kind === 'over_negative') {
-    return <>{t('basecamp.card.top_voters.amount_over_negative', { value: reading.value })}</>;
-  }
-  return <>{t('basecamp.card.top_voters.amount', { value: reading.value })}</>;
-};
-
-interface StatProps {
-  value: ReactNode;
-  label: string;
-  color: string;
-}
-
-/** One figure above the list, in its own colour. No frame: the colour does the grouping. */
-const Stat = ({ value, label, color }: StatProps) => (
-  <span>
-    <span className="block text-[21px] font-bold tabular-nums leading-none" style={{ color }}>
-      {value}
-    </span>
-    <span className={cn(BASECAMP_MICRO_LABEL, 'mt-1.5 block')}>{label}</span>
-  </span>
-);
-
-interface VoterRowProps {
-  tally: VoterTally;
-  rank: number;
-  totalRshares: number;
-  /** HBD per rshare, or null while the chain-wide rate is still unknown. */
-  rate: number | null;
-}
-
-/**
- * One voter: who they are, what their votes on this account were worth, how
- * many of them there were, and how much of everything the account has been
- * given they are responsible for.
- *
- * The bar is the part worth looking at. Ten voters each carrying a tenth is a
- * different picture from one voter carrying nine tenths, and the bar says that
- * without anybody having to compare numbers. It says only that; who is at the
- * top of this list and why is the reader's to weigh.
- */
-const VoterRow = ({ tally, rank, totalRshares, rate }: VoterRowProps) => {
-  const { t } = useTranslation('common_blog');
-  const share = voterShare(tally, totalRshares);
-
-  return (
-    <li className="flex items-center gap-3 py-2" data-testid="basecamp-top-voter-row">
-      <span className="w-5 shrink-0 text-right text-[12px] font-bold tabular-nums" style={{ color: BLUE }}>
-        {rank}
-      </span>
-      <Link
-        href={`/@${tally.voter}`}
-        className="flex min-w-0 flex-1 items-center gap-2.5"
-        data-testid="basecamp-top-voter-name"
-        // A new tab, for the same reason the comments panel opens one: this
-        // sits over a feed or a game, and going to a voter in place loses it —
-        // along with the whole-life read the panel just made.
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span
-          className="block shrink-0 rounded-full bg-cover bg-no-repeat ring-1 ring-white/15"
-          style={{
-            width: AVATAR,
-            height: AVATAR,
-            backgroundImage: `url(${getUserAvatarUrl(tally.voter, 'small')})`
-          }}
-          aria-hidden="true"
-        />
-        <span className="min-w-0 flex-1">
-          <span className={cn(BASECAMP_LINK, 'block truncate text-[12.5px] font-semibold')}>
-            @{tally.voter}
-          </span>
-          <span className="mt-1.5 block h-[5px] w-full overflow-hidden rounded-full bg-white/[0.07]">
-            <span
-              className="block h-full rounded-full"
-              style={{
-                width: `${Math.max(share, BAR_MIN_SHARE) * 100}%`,
-                backgroundColor: BLUE,
-                boxShadow: `0 0 8px -1px ${BLUE}`
-              }}
-            />
-          </span>
-        </span>
-      </Link>
-      <span className="w-[76px] shrink-0 text-right">
-        <span className="block text-[14px] font-bold tabular-nums" style={{ color: LIME }}>
-          <HbdValue amount={hbdFromRshares(tally.rshares, rate)} />
-        </span>
-        <span className={cn(BASECAMP_MUTED, 'block text-[9.5px] uppercase leading-none tracking-[0.06em]')}>
-          {t('basecamp.card.top_voters.worth_label')}
-        </span>
-      </span>
-      <span className="shrink-0 text-right">
-        <span className="block text-[14px] font-bold tabular-nums" style={{ color: CYAN }}>
-          {tally.votes}
-        </span>
-        <span className={cn(BASECAMP_MUTED, 'block text-[9.5px] uppercase leading-none tracking-[0.06em]')}>
-          {t('basecamp.card.top_voters.votes_label')}
-        </span>
-      </span>
-    </li>
-  );
-};
+const VIOLET = BASECAMP_VIVID.violet;
 
 interface TopVotersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   account: string;
-  /** The newest page, already read by the card: what the panel opens with. */
-  votes: VotesReceived;
-  /** When the account was made — what lets the deeper read say how far through it is. */
+  /** The newest page of votes received, already read by the card: what the panel opens with. */
+  votes: VoteSummary;
+  /** When the account was made — what lets a deeper read say how far through it is. */
   createdMs: number | null;
   /** True while the card's own read is still running. */
   loading: boolean;
   failed: boolean;
 }
 
+/** A count that is a floor, said so: "10,000+" rather than a total the chain never gave. */
+function countText(t: (key: string, options?: Record<string, unknown>) => string, summary: VoteSummary) {
+  return summary.lifetime === null
+    ? t('basecamp.card.values.at_least_short', { value: summary.atLeast.toLocaleString() })
+    : summary.lifetime.toLocaleString();
+}
+
+/** What a list's rows are drawn from, in one sentence, under them. */
+function provenanceText(
+  t: (key: string, options?: Record<string, unknown>) => string,
+  direction: VoteDirection,
+  shown: VoteSummary,
+  status: FullReadStatus
+): string {
+  const votes = shown.counted.toLocaleString();
+  const given = direction === 'given';
+  if (shown.complete)
+    return t(given ? 'basecamp.card.top_voters.given_window_lifetime' : 'basecamp.card.top_voters.window_lifetime', {
+      votes
+    });
+  if (status === 'failed') return t('basecamp.card.top_voters.window_failed', { votes });
+  if (status === 'stopped') return t('basecamp.card.top_voters.window_stopped', { votes });
+  if (status === 'reading') return t('basecamp.card.top_voters.window_reading', { votes });
+  return t(given ? 'basecamp.card.top_voters.given_window_capped' : 'basecamp.card.top_voters.window_capped', {
+    limit: VOTE_PAGE_SIZE.toLocaleString()
+  });
+}
+
 /**
- * Who has been voting on this account, ranked by weight.
+ * The votes around this account, both ways.
  *
- * It opens on what the card already had — the newest thousand votes, ranked —
- * so there is never an empty panel. Behind that it reads the rest of the
- * account's life, a window at a time, and the ranking re-sorts as the older
- * votes arrive. Nothing of that happens until somebody opens the panel.
+ * First, who has been voting on it, ranked by what their votes were worth,
+ * with how many votes each gave beside that. Then who it votes for, ranked by
+ * how often, with what those votes were worth beside that.
+ *
+ * The first list opens on what the card already had — the newest thousand
+ * votes, ranked — so there is never an empty panel. Behind that it reads the
+ * rest of the account's life, a window at a time, and the ranking re-sorts as
+ * the older votes arrive. The second list is read only once the panel is
+ * open, the same way. Nothing of that happens until somebody opens it.
  *
  * It states who, how many and how much, and nothing else. One account behind
  * most of a new account's money is a shape worth seeing; it is also what a
@@ -180,132 +94,110 @@ const TopVotersDialog = ({
 }: TopVotersDialogProps) => {
   const { t } = useTranslation('common_blog');
   const rate = useVoteValueRate(open);
+
   // Nothing to go deeper for when the card's one read already reached the
   // account's first vote.
-  const full = useFullVoteHistory(account, createdMs, !votes.complete);
-  const shown = full.votes.known ? full.votes : votes;
-  const top = shown.voters.slice(0, TOP_VOTERS_COUNT);
-  const reading = full.status === 'reading';
+  const receivedFull = useFullVoteHistory(account, createdMs, !votes.complete);
+  const received = receivedFull.votes.known ? receivedFull.votes : votes;
+  const receivedTop = received.voters.slice(0, TOP_VOTERS_COUNT);
 
-  const body = () => {
-    if (loading) {
-      return (
-        <div
-          className={cn(BASECAMP_MUTED, 'py-8 text-center text-[12px]')}
-          data-testid="basecamp-top-voters-loading"
-        >
-          {t('basecamp.card.top_voters.loading')}
-        </div>
-      );
-    }
-    if (failed) {
-      return (
-        <div className="py-8 text-center text-[12px] text-[#FF90A5]" data-testid="basecamp-top-voters-error">
-          {t('basecamp.card.top_voters.error')}
-        </div>
-      );
-    }
-    if (top.length === 0) {
-      return (
-        <div
-          className={cn(BASECAMP_MUTED, 'py-8 text-center text-[12px]')}
-          data-testid="basecamp-top-voters-empty"
-        >
-          {t('basecamp.card.top_voters.empty', { account })}
-        </div>
-      );
-    }
-    return (
-      <ul className="flex flex-col divide-y divide-white/[0.07]" data-testid="basecamp-top-voters-list">
-        {top.map((tally, index) => (
-          <VoterRow
-            key={tally.voter}
-            tally={tally}
-            rank={index + 1}
-            totalRshares={shown.totalRshares}
-            rate={rate}
-          />
-        ))}
-      </ul>
-    );
-  };
+  const given = useVotesGiven(account, open);
+  const givenFull = useFullVoteHistory(
+    account,
+    createdMs,
+    open && given.status === 'ready' && !given.votes.complete,
+    'given'
+  );
+  const givenShown = givenFull.votes.known ? givenFull.votes : given.votes;
+  const givenTop = rankByCount(givenShown.voters).slice(0, TOP_VOTERS_COUNT);
 
-  /** What the numbers above the list are drawn from, in one sentence, under them. */
-  const provenance = () => {
-    if (shown.complete)
-      return t('basecamp.card.top_voters.window_lifetime', { votes: shown.counted.toLocaleString() });
-    if (full.status === 'failed')
-      return t('basecamp.card.top_voters.window_failed', { votes: shown.counted.toLocaleString() });
-    if (full.status === 'stopped')
-      return t('basecamp.card.top_voters.window_stopped', { votes: shown.counted.toLocaleString() });
-    if (reading)
-      return t('basecamp.card.top_voters.window_reading', { votes: shown.counted.toLocaleString() });
-    return t('basecamp.card.top_voters.window_capped', { limit: VOTE_PAGE_SIZE.toLocaleString() });
-  };
+  const readingOf = (full: typeof receivedFull) =>
+    full.status === 'reading'
+      ? { progress: full.progress, secondsLeft: full.secondsLeft, stop: full.stop }
+      : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[540px] gap-3 border-white/10 bg-[#0B0F17] p-5 text-[#E8EDF5] sm:max-w-[540px]"
+        className="w-[calc(100%-24px)] max-w-[940px] gap-3 border-white/10 bg-[#0D0D12] p-5 text-[#E8EDF5] sm:max-w-[940px]"
         data-testid="basecamp-top-voters-dialog"
       >
         <div>
           <DialogTitle className="text-[15px] font-bold" style={{ color: BLUE }}>
-            {t('basecamp.card.top_voters.title', { limit: TOP_VOTERS_COUNT })}
+            {t('basecamp.card.top_voters.title')}
           </DialogTitle>
           <div className={cn(BASECAMP_MUTED, 'mt-0.5 text-[11px]')}>
             {t('basecamp.card.top_voters.subtitle', { account })}
           </div>
         </div>
 
-        {/* How much money, from how many different people, over how many votes.
-            One person and a thousand people are the same count of votes and not
-            the same account, so the second figure stands beside the first. */}
-        {shown.known ? (
+        {/* How much money, from how many different people, over how many votes,
+            and how many votes went the other way. One person and a thousand
+            people are the same count of votes and not the same account, so the
+            second figure stands beside the first. */}
+        {received.known ? (
           <div className="flex items-end gap-6">
             <Stat
-              value={<HbdValue amount={hbdFromRshares(shown.totalRshares, rate)} />}
+              value={<HbdValue amount={hbdFromRshares(received.totalRshares, rate)} />}
               label={t('basecamp.card.top_voters.total_label')}
               color={LIME}
             />
+            <Stat value={received.voters.length} label={t('basecamp.card.top_voters.people_label')} color={CYAN} />
             <Stat
-              value={shown.voters.length}
-              label={t('basecamp.card.top_voters.people_label')}
-              color={CYAN}
-            />
-            <Stat
-              value={
-                shown.lifetime === null
-                  ? t('basecamp.card.values.at_least_short', { value: shown.atLeast.toLocaleString() })
-                  : shown.lifetime.toLocaleString()
-              }
+              value={countText(t, received)}
               label={t('basecamp.card.top_voters.received_label')}
               color={BLUE}
             />
+            {givenShown.known ? (
+              <Stat
+                value={countText(t, givenShown)}
+                label={t('basecamp.card.top_voters.given_label')}
+                color={VIOLET}
+              />
+            ) : null}
           </div>
         ) : null}
 
-        {reading ? (
-          <ReadProgressBar
-            progress={full.progress}
-            label={
-              full.secondsLeft === null
-                ? t('basecamp.card.top_voters.reading')
-                : t('basecamp.card.top_voters.reading_left', { seconds: full.secondsLeft })
-            }
-            onStop={full.stop}
-            stopLabel={t('basecamp.card.top_voters.stop')}
-            testId="basecamp-top-voters-progress"
+        {/* The two lists side by side: who votes on them on the left, who they
+            vote for on the right, so the two directions can be read against
+            each other without scrolling between them. */}
+        <div className="grid max-h-[64vh] grid-cols-1 gap-x-6 gap-y-5 overflow-y-auto pr-1 sm:grid-cols-2">
+          <VoteListSection
+            title={t('basecamp.card.top_voters.received_heading', { limit: TOP_VOTERS_COUNT, account })}
+            sortNote={t('basecamp.card.top_voters.received_sort')}
+            color={BLUE}
+            lead="worth"
+            rows={receivedTop}
+            shareOf={(row) => voterShare(row, received.totalRshares)}
+            rate={rate}
+            loading={loading}
+            failed={failed}
+            emptyText={t('basecamp.card.top_voters.empty', { account })}
+            errorText={t('basecamp.card.top_voters.error')}
+            reading={readingOf(receivedFull)}
+            provenance={provenanceText(t, 'received', received, receivedFull.status)}
+            testId="basecamp-top-voters"
           />
-        ) : null}
+          <VoteListSection
+            title={t('basecamp.card.top_voters.given_heading', { account })}
+            sortNote={t('basecamp.card.top_voters.given_sort')}
+            color={VIOLET}
+            lead="votes"
+            rows={givenTop}
+            shareOf={(row) => countShare(row, givenShown.counted)}
+            rate={rate}
+            loading={given.status === 'loading' || given.status === 'idle'}
+            failed={given.status === 'unavailable'}
+            emptyText={t('basecamp.card.top_voters.given_empty', { account })}
+            errorText={t('basecamp.card.top_voters.given_error')}
+            reading={readingOf(givenFull)}
+            provenance={provenanceText(t, 'given', givenShown, givenFull.status)}
+            testId="basecamp-votes-given"
+          />
+        </div>
 
-        <div className="max-h-[52vh] overflow-y-auto pr-1">{body()}</div>
-
-        <p
-          className={cn(BASECAMP_MUTED, 'text-[10.5px] leading-snug')}
-          data-testid="basecamp-top-voters-window"
-        >
-          {provenance()} {t('basecamp.card.top_voters.value_note')}
+        <p className={cn(BASECAMP_MUTED, 'text-[10.5px] leading-snug')}>
+          {t('basecamp.card.top_voters.value_note')}
         </p>
       </DialogContent>
     </Dialog>

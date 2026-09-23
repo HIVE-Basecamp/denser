@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { Tooltip, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger } from '@ui/components/tooltip';
 import { cn } from '@ui/lib/utils';
-import { BASECAMP_HINT, BASECAMP_MUTED } from '../lib/theme';
+import { BASECAMP_HINT, BASECAMP_MUTED, BASECAMP_VIVID } from '../lib/theme';
 
 export interface HintRow {
   /** Empty for a line that is not a slice of the drawing: no dot is drawn. */
@@ -43,7 +43,7 @@ const Line = ({ row }: { row: HintRow }) => (
       <span className="h-2 w-2 shrink-0" aria-hidden="true" />
     )}
     <span className={cn(BASECAMP_MUTED, 'flex-1')}>{row.label}</span>
-    <span className="font-semibold tabular-nums text-[#E8EDF5]">{row.value}</span>
+    <span className="font-semibold tabular-nums text-white">{row.value}</span>
   </li>
 );
 
@@ -53,9 +53,9 @@ const Hint = ({ title, body, value, rows, extras, action, children }: HintProps)
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipPortal>
         <TooltipContent side="top" sideOffset={6} className={BASECAMP_HINT}>
-          <div className="mb-0.5 flex items-baseline justify-between gap-3 text-[11px] font-semibold text-[#E8EDF5]">
+          <div className="mb-0.5 flex items-baseline justify-between gap-3 text-[11px] font-semibold text-white">
             <span>{title}</span>
-            {value ? <span className="tabular-nums text-[#B79CFF]">{value}</span> : null}
+            {value ? <span className="tabular-nums" style={{ color: BASECAMP_VIVID.violet }}>{value}</span> : null}
           </div>
           <div className={cn(BASECAMP_MUTED, 'text-[10.5px]')}>{body}</div>
           {rows && rows.length > 0 ? (
@@ -72,7 +72,11 @@ const Hint = ({ title, body, value, rows, extras, action, children }: HintProps)
               ))}
             </ul>
           ) : null}
-          {action ? <div className="mt-1.5 text-[10.5px] font-semibold text-[#B79CFF]">{action}</div> : null}
+          {action ? (
+            <div className="mt-1.5 text-[10.5px] font-semibold" style={{ color: BASECAMP_VIVID.violet }}>
+              {action}
+            </div>
+          ) : null}
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>

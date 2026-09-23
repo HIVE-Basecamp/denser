@@ -3,17 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   createVoteTally,
-  EMPTY_VOTES_RECEIVED,
+  EMPTY_VOTE_SUMMARY,
   foldVoteEvents,
   isCountCapped,
   summarizeTally,
-  type VotesReceived
+  type VoteDirection,
+  type VoteSummary
 } from '../lib/voters';
 import { estimateSecondsLeft } from '../lib/read-progress';
 import { fetchVotePage, type VotePageEvent } from './use-votes-received';
 
 /**
- * Every vote an account has ever been given, read on demand.
+ * Every vote an account has ever been given — or, read the other way, ever
+ * cast — on demand.
  *
  * The shape of the read is forced by two limits on the node. A page is at most
  * a thousand operations, and the count stops at ten thousand — past that the
@@ -54,7 +56,7 @@ export type FullReadStatus = 'idle' | 'reading' | 'complete' | 'stopped' | 'fail
 
 export interface FullVoteHistory {
   /** The tally so far — it is a real reading at every moment, not only at the end. */
-  votes: VotesReceived;
+  votes: VoteSummary;
   status: FullReadStatus;
   /** 0-1, or null when there is nothing honest to say yet. */
   progress: number | null;
@@ -63,13 +65,13 @@ export interface FullVoteHistory {
 }
 
 interface Snapshot {
-  votes: VotesReceived;
+  votes: VoteSummary;
   status: FullReadStatus;
   progress: number | null;
   secondsLeft: number | null;
 }
 
-const IDLE: Snapshot = { votes: EMPTY_VOTES_RECEIVED, status: 'idle', progress: null, secondsLeft: null };
+const IDLE: Snapshot = { votes: EMPTY_VOTE_SUMMARY, status: 'idle', progress: null, secondsLeft: null };
 
 /**
  * How far through the read we are.
@@ -99,8 +101,15 @@ function readProgress(
  * Reads the whole history once `enabled` turns true, and stops for good when
  * `stop()` is called. `createdMs` is when the account was made; it is what lets
  * the read say how far through it is when the chain will not give a total.
+ * `direction` says which way the votes are read: given to this account, or
+ * cast by it.
  */
-export function useFullVoteHistory(account: string, createdMs: number | null, enabled: boolean) {
+export function useFullVoteHistory(
+  account: string,
+  createdMs: number | null,
+  enabled: boolean,
+  direction: VoteDirection = 'received'
+) {
   const [snapshot, setSnapshot] = useState<Snapshot>(IDLE);
   const stopped = useRef(false);
 
@@ -165,7 +174,7 @@ export function useFullVoteHistory(account: string, createdMs: number | null, en
             foldedInWindow += fresh.length;
           };
 
-          const first = await fetchVotePage(account, { beforeMs });
+          const first = await fetchVotePage(account, { beforeMs }, direction);
           windows++;
           pagesDone++;
           if (beforeMs === undefined) {
@@ -182,7 +191,7 @@ export function useFullVoteHistory(account: string, createdMs: number | null, en
             for (let offset = 0; offset < CONCURRENCY && page - offset >= 1; offset++)
               batch.push(page - offset);
             const pages = await Promise.all(
-              batch.map((number) => fetchVotePage(account, { page: number, beforeMs }))
+              batch.map((number) => fetchVotePage(account, { page: number, beforeMs }, direction))
             );
             for (const result of pages) take(result.events);
             pagesDone += batch.length;
@@ -219,7 +228,7 @@ export function useFullVoteHistory(account: string, createdMs: number | null, en
       abandoned = true;
       stopped.current = true;
     };
-  }, [account, createdMs, enabled]);
+  }, [account, createdMs, enabled, direction]);
 
   return { ...snapshot, stop };
 }

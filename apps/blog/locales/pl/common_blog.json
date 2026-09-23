@@ -746,7 +746,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "Otrzymane głosy",
+        "votes_received": "Głosy",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "Godziny zwykle aktywne"
@@ -778,10 +778,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "Sześć odczytów tego, jak używano tego konta, każdy na osobnym płatku. Najedź na płatek, aby zobaczyć, co liczy; w środku jest konto, które utworzyło to konto.",
         "posted": "When this post was published.",
-        "votes_received": "Głosy oddane przez inne osoby na posty tego konta — nie głosy, które ono oddało. Kliknij, aby zobaczyć, kto głosuje na to konto największą wartością, ile głosów oddał każdy i ile były warte.",
+        "votes_received": "Głosy, które inne osoby oddały na posty i komentarze tego konta. Kliknij, aby zobaczyć, kto głosuje na nie najwięcej i na kogo ono głosuje najczęściej.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Kliknij, aby zobaczyć, komu odpowiada",
-        "votes_received_click": "Kliknij, aby zobaczyć, kto głosował",
+        "votes_received_click": "Kliknij, aby zobaczyć, kto na nie głosuje i na kogo ono głosuje",
         "hours_written_click": "Kliknij, aby zobaczyć same godziny"
       },
       "comments": {
@@ -806,9 +806,18 @@
         "top_voters": "Top {{limit}} głosujących na te odpowiedzi"
       },
       "top_voters": {
-        "title": "Najaktywniejszych głosujących: {{limit}}",
-        "subtitle": "Kto głosował na @{{account}}, według wartości oddanych głosów.",
+        "title": "Głosy",
+        "subtitle": "Kto głosuje na @{{account}} i na kogo głosuje @{{account}}.",
         "received_label": "Otrzymane głosy",
+        "received_heading": "{{limit}} najczęściej głosujących na @{{account}}",
+        "received_sort": "Według wartości ich głosów.",
+        "given_heading": "Na kogo @{{account}} głosuje najczęściej",
+        "given_sort": "Według liczby oddanych głosów.",
+        "given_label": "Oddane głosy",
+        "given_empty": "@{{account}} nie głosował(a) jeszcze na nikogo.",
+        "given_error": "Nie udało się odczytać głosów oddanych przez to konto. Spróbuj ponownie za chwilę.",
+        "given_window_lifetime": "Wszystkie głosy, jakie to konto kiedykolwiek oddało: {{votes}}.",
+        "given_window_capped": "Odczytane z {{limit}} najnowszych głosów oddanych przez to konto.",
         "people_label": "Głosujący",
         "total_label": "Wartość",
         "votes_label": "głosy",

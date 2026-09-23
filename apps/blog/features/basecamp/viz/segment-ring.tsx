@@ -97,10 +97,7 @@ const SegmentRing = ({ segments, size, known, stroke = 9, gap = 7, tintTracks = 
               stroke={slice.color}
               strokeWidth={stroke}
               strokeLinecap="round"
-              style={{
-                transition: 'd 700ms cubic-bezier(0.22, 1, 0.36, 1), stroke 400ms linear',
-                filter: `drop-shadow(0 0 4px ${slice.color}99)`
-              }}
+              style={{ transition: 'd 700ms cubic-bezier(0.22, 1, 0.36, 1), stroke 400ms linear' }}
             />
           ) : null}
         </g>

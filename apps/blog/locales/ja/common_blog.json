@@ -741,7 +741,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "受けた投票",
+        "votes_received": "投票",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "普段の活動時間"
@@ -773,10 +773,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "このアカウントの使われ方に関する6つの読み取り。花びら1枚につき1つです。花びらにカーソルを合わせると何を数えているかがわかります。中央はこのアカウントを作成したアカウントです。",
         "posted": "When this post was published.",
-        "votes_received": "このアカウントの投稿に他の人が投じた投票です（このアカウントが投じた票ではありません）。クリックすると、誰がこのアカウントに最も大きな価値を投票しているか、それぞれの投票数とその価値が表示されます。",
+        "votes_received": "他の人がこのアカウントの投稿とコメントに投じた投票です。クリックすると、誰が最も多く投票しているか、そしてこのアカウントが誰に最も多く投票しているかが見られます。",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "クリックして返信相手を見る",
-        "votes_received_click": "クリックして投票者を見る",
+        "votes_received_click": "クリックして、誰が投票しているか、誰に投票しているかを見る",
         "hours_written_click": "クリックして時間ごとの内訳を見る"
       },
       "comments": {
@@ -801,9 +801,18 @@
         "top_voters": "これらの返信への投票者 上位{{limit}}人"
       },
       "top_voters": {
-        "title": "上位 {{limit}} 人の投票者",
-        "subtitle": "@{{account}} に投票したのは誰か。投票の価値順です。",
+        "title": "投票",
+        "subtitle": "@{{account}} に投票している人と、@{{account}} が投票している人。",
         "received_label": "受けた投票",
+        "received_heading": "@{{account}} に投票している上位 {{limit}} 人",
+        "received_sort": "投票の価値順。",
+        "given_heading": "@{{account}} が最も多く投票している人",
+        "given_sort": "投票した回数順。",
+        "given_label": "投じた票",
+        "given_empty": "@{{account}} はまだ誰にも投票していません。",
+        "given_error": "このアカウントが投じた票を読み取れませんでした。しばらくしてからもう一度お試しください。",
+        "given_window_lifetime": "このアカウントがこれまでに投じたすべての票: {{votes}}。",
+        "given_window_capped": "このアカウントが投じた最新 {{limit}} 票から読み取りました。",
         "people_label": "投票者",
         "total_label": "価値",
         "votes_label": "票",

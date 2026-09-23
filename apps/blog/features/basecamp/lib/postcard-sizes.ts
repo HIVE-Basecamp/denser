@@ -32,6 +32,12 @@ export interface PostcardTier {
   postMinWidth: number;
   /** ...and what it gives way down to before the row would fold. */
   postFloor: number;
+  /** The post card's height. The post is the whole post zone, so this is the card's inner height. */
+  postHeight: number;
+  /** Width of the picture down the post card's left edge, under the person's row. */
+  thumb: number;
+  /** Diameter of the avatar beside the rings. */
+  avatar: number;
   /** Folded: the post and the flower on the first line, the five drawings spread across the second. */
   stacked: boolean;
 }
@@ -43,13 +49,15 @@ export const DEFAULT_DRAWING_SIZE = 48;
 export const CARD_CHROME_WIDTH = 26;
 
 /**
- * The post zone's floor: the picture plus a title column that can still hold
- * a word. The name line above it prints whole whatever the width; a very long
- * name on a very narrow feed runs a few pixels into the gap beside it, which
- * beats reserving that room on every card for the one name in a hundred.
+ * The post zone's floor: the picture plus a column beside it that can still
+ * hold a name. The name prints whole whatever the width — it shrinks a point
+ * or two before it would ever be cut — so the floor is set where a sixteen
+ * letter name at the smallest type still fits beside the picture. The narrow
+ * tier's floor, gaps and picture are trimmed together so that its row still
+ * fits a feed of 594, the width a 900 window gives: one line there, not two.
  */
 const POST_FLOOR = 176;
-const POST_FLOOR_NARROW = 168;
+const POST_FLOOR_NARROW = 188;
 
 /**
  * Four row sizes, not a slider: hero, mid, small keep the same ratio in each,
@@ -70,6 +78,9 @@ export const POSTCARD_TIERS: Record<PostcardTierName, PostcardTier> = {
     rings: 44,
     postMinWidth: 272,
     postFloor: POST_FLOOR,
+    postHeight: 114,
+    thumb: 92,
+    avatar: 26,
     stacked: false
   },
   compact: {
@@ -84,6 +95,9 @@ export const POSTCARD_TIERS: Record<PostcardTierName, PostcardTier> = {
     rings: 40,
     postMinWidth: 244,
     postFloor: POST_FLOOR,
+    postHeight: 110,
+    thumb: 90,
+    avatar: 24,
     stacked: false
   },
   tight: {
@@ -98,20 +112,26 @@ export const POSTCARD_TIERS: Record<PostcardTierName, PostcardTier> = {
     rings: 36,
     postMinWidth: 220,
     postFloor: POST_FLOOR,
+    postHeight: 106,
+    thumb: 86,
+    avatar: 24,
     stacked: false
   },
   narrow: {
     name: 'narrow',
     drawings: { hours_written: 64, reply_mix: 64, stake_mix: 44, ke_score: 44, account_age_days: 36 },
     hero: 64,
-    drawingGap: 8,
+    drawingGap: 5,
     column: 44,
     caption: 9,
-    zoneGap: 10,
+    zoneGap: 6,
     flower: 88,
     rings: 36,
     postMinWidth: 200,
     postFloor: POST_FLOOR_NARROW,
+    postHeight: 106,
+    thumb: 82,
+    avatar: 24,
     stacked: false
   },
   stacked: {
@@ -126,6 +146,9 @@ export const POSTCARD_TIERS: Record<PostcardTierName, PostcardTier> = {
     rings: 36,
     postMinWidth: 220,
     postFloor: POST_FLOOR_NARROW,
+    postHeight: 106,
+    thumb: 86,
+    avatar: 24,
     stacked: true
   }
 };

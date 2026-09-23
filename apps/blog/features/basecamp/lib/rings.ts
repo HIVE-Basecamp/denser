@@ -32,15 +32,15 @@ export const BASECAMP_TASK_COUNT = CHECKLIST_TOTAL;
  * light/dark theme, so these must not follow the global theme variables.
  */
 export const RING_COLORS = {
-  ageFresh: '#34D399',
-  ageSettling: '#22D3EE',
-  ageEstablished: '#D8E2F0',
-  activity: '#FB923C',
-  checklist: '#B79CFF'
+  ageFresh: '#C6FF3A',
+  ageSettling: '#00F0FF',
+  ageEstablished: '#E6E6F0',
+  activity: '#FF8A00',
+  checklist: '#9D6BFF'
 } as const;
 
-/** Empty-track colour, so a 0% ring is still visibly a ring. */
-export const RING_TRACK_COLOR = 'rgba(255, 255, 255, 0.10)';
+/** Empty-track colour, so a 0% ring is still visibly a ring. A notch brighter than it was, to survive the black. */
+export const RING_TRACK_COLOR = 'rgba(255, 255, 255, 0.12)';
 
 /**
  * The twenty-four hour dial. Deliberately a different hue from every ring
@@ -48,13 +48,13 @@ export const RING_TRACK_COLOR = 'rgba(255, 255, 255, 0.10)';
  * anything and should not read as a fourth ring.
  */
 export const CLOCK_COLORS = {
-  active: '#5EE9D5',
-  track: 'rgba(255, 255, 255, 0.14)'
+  active: '#00F0FF',
+  track: 'rgba(255, 255, 255, 0.18)'
 } as const;
 
 /**
- * Colour for the account-age ring. Newer accounts read as bright green,
- * mid-life accounts aqua, and the oldest band a bright, light grey.
+ * Colour for the account-age ring. Newer accounts read as lime, mid-life
+ * accounts cyan, and the oldest band a bright, light grey.
  */
 export function ageRingColor(accountAgeDays: number): string {
   if (accountAgeDays <= AGE_BAND_FRESH_MAX_DAYS) return RING_COLORS.ageFresh;

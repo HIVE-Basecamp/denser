@@ -18,7 +18,7 @@ import type { DayActivity } from '../hooks/use-account-history';
 import type { CommentPatterns } from './patterns';
 import { PROFILE_FIELD_COUNT, type SignalUnit, type SignalValue } from './signals';
 import type { BasecampVividKey } from './theme';
-import type { VotesReceived } from './voters';
+import type { VoteSummary } from './voters';
 
 /**
  * 'circle': one of the five drawings. 'petal': one petal of the flower, a
@@ -222,7 +222,7 @@ export function buildReadouts(
   patterns: CommentPatterns,
   createdBy: string | null,
   stake: StakeInput,
-  votes: VotesReceived,
+  votes: VoteSummary,
   day: DayActivity
 ): Readout[] {
   const ke = signalOf(signals, 'ke_score');
@@ -384,12 +384,12 @@ export function buildReadouts(
     petal('gap_before_post', signals, 'orange', (value) =>
       linearRatio(value, PETAL_SCALE_MAX.gap_before_post)
     ),
-    // Votes other people have cast on this account's posts — not the votes it
-    // cast, which are a different thing the chain keeps in the same place. The
-    // one petal that opens onto something else: the heaviest voters, ranked,
-    // with what their votes were worth. A count on a log scale like
-    // total_actions, so the first hundred votes move the shape and the next
-    // nine thousand nudge it.
+    // Votes other people have cast on this account's posts — the number is
+    // the votes received; the panel behind it reads both directions: the
+    // heaviest voters, ranked by what their votes were worth, and then who this
+    // account votes for most. A count on a log scale like total_actions, so
+    // the first hundred votes move the shape and the next nine thousand nudge
+    // it.
     //
     // `lifetime` is what the chain was willing to count; where it stopped, the
     // number printed is what has actually been read and the petal says so with

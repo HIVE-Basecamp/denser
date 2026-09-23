@@ -115,9 +115,9 @@ const HourlyClock = ({
             strokeLinecap="round"
             style={{
               transition: 'all 700ms cubic-bezier(0.22, 1, 0.36, 1)',
-              // A faint bloom on the filled spokes only, so the busy part of
-              // the day reads before any of the numbers beside it do.
-              filter: share > 0 ? `drop-shadow(0 0 3px ${colors[0]}99)` : undefined
+              // The one glow on the card: a bloom on the filled spokes only, so
+              // the busy part of the day reads before anything else does.
+              filter: share > 0 ? `drop-shadow(0 0 3px ${colors[0]}D9)` : undefined
             }}
           />
         );
@@ -140,7 +140,7 @@ const HourlyClock = ({
                 strokeLinecap="round"
                 style={{
                   transition: 'all 700ms cubic-bezier(0.22, 1, 0.36, 1)',
-                  filter: `drop-shadow(0 0 3px ${TODAY_COLOR}CC)`
+                  filter: `drop-shadow(0 0 3px ${TODAY_COLOR}E6)`
                 }}
               />
             );

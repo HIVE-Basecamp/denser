@@ -788,7 +788,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "الأصوات المستلمة",
+        "votes_received": "الأصوات",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "ساعات النشاط المعتادة"
@@ -820,10 +820,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "ستّ قراءات لكيفية استخدام هذا الحساب، واحدة لكل بتلة. مرّر المؤشر فوق بتلة لمعرفة ما تحصيه؛ وفي المنتصف الحساب الذي أنشأ هذا الحساب.",
         "posted": "When this post was published.",
-        "votes_received": "الأصوات التي أدلى بها آخرون على منشورات هذا الحساب، لا الأصوات التي أدلى بها هو. انقر لمعرفة من يصوّت بأكبر قيمة لهذا الحساب، وكم صوتًا أعطى كل منهم، وقيمتها.",
+        "votes_received": "الأصوات التي أعطاها الآخرون لمنشورات وتعليقات هذا الحساب. انقر لترى من يصوّت له أكثر، ولمن يصوّت هو أكثر.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "انقر لترى على مَن يردّ",
-        "votes_received_click": "انقر لترى من صوّت",
+        "votes_received_click": "انقر لترى من يصوّت له ولمن يصوّت هو",
         "hours_written_click": "انقر لرؤية الساعات نفسها"
       },
       "comments": {
@@ -848,9 +848,18 @@
         "top_voters": "أكثر {{limit}} مصوّتين على هذه الردود"
       },
       "top_voters": {
-        "title": "أفضل {{limit}} مصوّتين",
-        "subtitle": "من صوّت لـ @{{account}}، مرتّبين حسب قيمة أصواتهم.",
+        "title": "الأصوات",
+        "subtitle": "من يصوّت لـ @{{account}}، ولمن يصوّت @{{account}}.",
         "received_label": "الأصوات المستلمة",
+        "received_heading": "أعلى {{limit}} مصوّتين لـ @{{account}}",
+        "received_sort": "مرتّبون حسب قيمة أصواتهم.",
+        "given_heading": "لمن يصوّت @{{account}} أكثر",
+        "given_sort": "مرتّبون حسب عدد الأصوات الممنوحة.",
+        "given_label": "أصوات ممنوحة",
+        "given_empty": "لم يصوّت @{{account}} لأي شخص بعد.",
+        "given_error": "تعذّر قراءة الأصوات التي منحها هذا الحساب. حاول مرة أخرى بعد قليل.",
+        "given_window_lifetime": "كل الأصوات التي منحها هذا الحساب: {{votes}}.",
+        "given_window_capped": "مقروء من أحدث {{limit}} صوتًا منحها هذا الحساب.",
         "people_label": "المصوّتون",
         "total_label": "القيمة",
         "votes_label": "أصوات",

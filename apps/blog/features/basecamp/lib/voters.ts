@@ -1,8 +1,9 @@
 /**
- * Who has been voting on this account, and how heavily.
+ * Who has been voting on this account, and how heavily — and, read the other
+ * way round, who this account votes for.
  *
  * Pure: no network, no React, no user-facing English. It takes vote events and
- * folds them into one row per voter.
+ * folds them into one row per account on the other end of the vote.
  *
  * Built to be fed a page at a time and to forget the pages. Reading one
  * account's whole life can be forty thousand votes; holding them would be
@@ -17,17 +18,26 @@
  * conclusions).
  */
 
+/**
+ * Which way the votes are being read. 'received': votes other people cast on
+ * this account's posts and comments. 'given': votes this account cast on
+ * other people's.
+ */
+export type VoteDirection = 'received' | 'given';
+
 /** One vote, as it lands on a post. */
 export interface VoteEvent {
-  voter: string;
+  /** The other party: the voter for a vote received, the author for a vote given. */
+  account: string;
   /** The weight the vote actually carried. Negative for a downvote. */
   rshares: number;
   timestampMs: number;
 }
 
 export interface VoterTally {
-  voter: string;
-  /** How many votes this voter has cast on the account's posts. */
+  /** The other party: the voter for votes received, the author for votes given. */
+  account: string;
+  /** How many votes passed between them. */
   votes: number;
   /** Their rshares added up. Downvotes subtract, so this can come out negative. */
   rshares: number;
@@ -61,12 +71,12 @@ export function foldVoteEvents(tally: VoteTally, events: VoteEvent[]): VoteTally
     const rshares = Number.isFinite(event.rshares) ? event.rshares : 0;
     tally.counted++;
     tally.totalRshares += rshares;
-    const existing = tally.byVoter.get(event.voter);
+    const existing = tally.byVoter.get(event.account);
     if (existing) {
       existing.votes++;
       existing.rshares += rshares;
     } else {
-      tally.byVoter.set(event.voter, { voter: event.voter, votes: 1, rshares });
+      tally.byVoter.set(event.account, { account: event.account, votes: 1, rshares });
     }
   }
   return tally;
@@ -84,7 +94,26 @@ export function rankVoters(tally: VoteTally): VoterTally[] {
   return Array.from(tally.byVoter.values()).sort((a, b) => b.rshares - a.rshares || b.votes - a.votes);
 }
 
-export interface VotesReceived {
+/**
+ * The same rows, most votes first.
+ *
+ * For the votes an account gives, the question is the other way round: not
+ * who is worth the most to them but who they keep going back to. Ten votes on
+ * one person is the habit; what those votes were worth stays on the row.
+ */
+export function rankByCount(rows: VoterTally[]): VoterTally[] {
+  return [...rows].sort((a, b) => b.votes - a.votes || b.rshares - a.rshares);
+}
+
+/** The share of all the votes one row accounts for, by count, 0-1. */
+export function countShare(tally: VoterTally, counted: number): number {
+  if (!Number.isFinite(counted) || counted <= 0) return 0;
+  const share = tally.votes / counted;
+  return share > 1 ? 1 : share;
+}
+
+/** One direction of an account's votes, folded: who, how many, how much. */
+export interface VoteSummary {
   /** False when no read has finished. Never to be shown as a zero. */
   known: boolean;
   /** How many votes have been read. */
@@ -120,7 +149,7 @@ export interface VotesReceived {
  */
 export const VOTE_COUNT_CEILING = 10000;
 
-export const EMPTY_VOTES_RECEIVED: VotesReceived = {
+export const EMPTY_VOTE_SUMMARY: VoteSummary = {
   known: false,
   counted: 0,
   lifetime: null,
@@ -131,8 +160,8 @@ export const EMPTY_VOTES_RECEIVED: VotesReceived = {
   oldestMs: null
 };
 
-/** How many voters the panel ranks. Bryan's number. */
-export const TOP_VOTERS_COUNT = 10;
+/** How many rows each list in the panel ranks. Bryan's number. */
+export const TOP_VOTERS_COUNT = 20;
 
 /** True when a reported total is really the chain's ceiling rather than a count. */
 export function isCountCapped(total: number | null | undefined): boolean {
@@ -151,7 +180,7 @@ export function summarizeTally(
   tally: VoteTally,
   reportedTotal: number | null,
   complete: boolean
-): VotesReceived {
+): VoteSummary {
   const capped = isCountCapped(reportedTotal);
   const trustedTotal = capped ? null : reportedTotal;
   const lifetime = complete ? tally.counted : trustedTotal;

@@ -741,7 +741,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "Votes reçus",
+        "votes_received": "Votes",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "Heures habituelles"
@@ -773,10 +773,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "Six lectures de la façon dont ce compte a été utilisé, un pétale chacune. Survolez un pétale pour voir ce qu’il compte ; au centre se trouve le compte qui a créé celui-ci.",
         "posted": "When this post was published.",
-        "votes_received": "Votes émis par d'autres personnes sur les publications de ce compte, et non les votes qu'il a émis. Cliquez pour voir qui vote le plus de valeur à ce compte, combien de votes chacun a donnés et ce qu'ils valaient.",
+        "votes_received": "Votes que d'autres personnes ont donnés aux publications et commentaires de ce compte. Cliquez pour voir qui vote le plus pour eux, et pour qui ils votent le plus.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Cliquez pour voir à qui ils répondent",
-        "votes_received_click": "Cliquez pour voir qui a voté",
+        "votes_received_click": "Cliquez pour voir qui vote pour eux et pour qui ils votent",
         "hours_written_click": "Cliquez pour voir le détail des heures"
       },
       "comments": {
@@ -801,9 +801,18 @@
         "top_voters": "Les {{limit}} principaux votants sur ces réponses"
       },
       "top_voters": {
-        "title": "Les {{limit}} principaux votants",
-        "subtitle": "Qui a voté pour @{{account}}, classé selon la valeur de leurs votes.",
+        "title": "Votes",
+        "subtitle": "Qui vote pour @{{account}}, et pour qui @{{account}} vote.",
         "received_label": "Votes reçus",
+        "received_heading": "Les {{limit}} premiers votants pour @{{account}}",
+        "received_sort": "Classés selon la valeur de leurs votes.",
+        "given_heading": "Pour qui @{{account}} vote le plus",
+        "given_sort": "Classés selon le nombre de votes donnés.",
+        "given_label": "Votes donnés",
+        "given_empty": "@{{account}} n'a encore voté pour personne.",
+        "given_error": "Les votes donnés par ce compte n'ont pas pu être lus. Réessayez dans un instant.",
+        "given_window_lifetime": "Tous les votes que ce compte a jamais donnés : {{votes}}.",
+        "given_window_capped": "Lu à partir des {{limit}} votes les plus récents donnés par ce compte.",
         "people_label": "Votants",
         "total_label": "Valeur",
         "votes_label": "votes",

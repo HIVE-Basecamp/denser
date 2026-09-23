@@ -5,37 +5,26 @@ import { cn } from '@ui/lib/utils';
 import { useTranslation } from '@/blog/i18n/client';
 import { useElementWidth } from './hooks/use-element-width';
 import { useNewcomers } from './hooks/use-newcomers';
-import NewcomersListItem from './newcomers-list-item';
+import NewcomersListItem, { POSTCARD_CLASS } from './newcomers-list-item';
 import { FirstPostRingStyles } from './postcard/first-post-ring';
 import { POST_MAX_WIDTH, POSTCARD_TIERS, postcardTierFor } from './lib/postcard-sizes';
-import { BASECAMP_CARD, BASECAMP_MUTED, BASECAMP_SKELETON, accentButton } from './lib/theme';
-import { POST_CARD_HEIGHT } from './postcard/post-card';
+import { BASECAMP_MUTED, BASECAMP_POSTCARD_STYLE, BASECAMP_SKELETON, accentButton } from './lib/theme';
 import { HALF_MOON_ASPECT } from './viz/half-moon';
 
 const HALF_MOON_ID = 'reply_mix';
 
-// Mirrors the shape of a real postcard — identity and post on the left, five
-// drawings in the middle, the flower on the right — so the feed does not jump
-// when the data lands.
+// Mirrors the shape of a real postcard — the post on the left, five drawings
+// in the middle, the flower on the right — so the feed does not jump when the
+// data lands.
 function NewcomerCardSkeleton() {
   const tier = POSTCARD_TIERS.regular;
   return (
-    <div
-      className={cn(
-        BASECAMP_CARD,
-        'my-2 flex flex-wrap items-center justify-between gap-y-2 rounded-2xl px-3 py-[10px] sm:flex-nowrap'
-      )}
-      style={{ columnGap: tier.zoneGap }}
-    >
+    <div className={POSTCARD_CLASS} style={{ ...BASECAMP_POSTCARD_STYLE, columnGap: tier.zoneGap }}>
       <div
         className="min-w-0 flex-auto"
         style={{ flexBasis: tier.postMinWidth, minWidth: tier.postFloor, maxWidth: POST_MAX_WIDTH }}
       >
-        <div className="flex items-center gap-2">
-          <Skeleton className={cn(BASECAMP_SKELETON, 'h-11 w-11 shrink-0 rounded-full')} />
-          <Skeleton className={cn(BASECAMP_SKELETON, 'h-3 w-24')} />
-        </div>
-        <Skeleton className={cn(BASECAMP_SKELETON, 'mt-1.5 w-full rounded-[10px]')} style={{ height: POST_CARD_HEIGHT }} />
+        <Skeleton className={cn(BASECAMP_SKELETON, 'w-full rounded-[10px]')} style={{ height: tier.postHeight }} />
       </div>
       <div className="flex shrink-0 items-center" style={{ columnGap: tier.drawingGap }}>
         {Object.entries(tier.drawings).map(([id, size]) => (

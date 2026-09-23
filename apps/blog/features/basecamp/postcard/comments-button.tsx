@@ -38,7 +38,7 @@ const BUTTON_RIM = BASECAMP_VIVID.pink;
  */
 const FILLED_STYLE = {
   backgroundColor: BASECAMP_VIVID.cyan,
-  color: '#06201C',
+  color: '#002A2E',
   // A rim in a colour the fill does not use, so the dome's edge is unmistakable
   // against the arc it sits inside.
   border: `${RIM_WIDTH}px solid ${BUTTON_RIM}`,

@@ -400,7 +400,7 @@ const HourlyActionsDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[560px] gap-2.5 border-white/10 bg-[#0B0F17] p-5 text-[#E8EDF5] sm:max-w-[560px]"
+        className="max-w-[560px] gap-2.5 border-white/10 bg-[#0D0D12] p-5 text-[#E8EDF5] sm:max-w-[560px]"
         data-testid="basecamp-hourly-dialog"
       >
         <div>

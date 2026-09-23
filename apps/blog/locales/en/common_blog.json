@@ -843,7 +843,7 @@
         "stake_in": "Delegated from",
         "flower": "Activity flower",
         "posted": "Posted",
-        "votes_received": "Votes received",
+        "votes_received": "Votes",
         "author_rewards": "Author rewards",
         "curation_rewards": "Curation rewards",
         "usual_hours": "Hours usually active"
@@ -875,10 +875,10 @@
         "reply_mix": "What their replies are made of: how much repeats text they have used before, how much is only a bot trigger, how much sits under their own posts, and how many of their votes went to themselves. Read from their last seven days and their earliest actions.",
         "flower": "Six readings of how this account has been used, one petal each. Hover a petal for what it counts; the middle is the account that created this one.",
         "posted": "When this post was published.",
-        "votes_received": "Votes other people have cast on this account's posts — not the votes it cast. Click to see who is voting the most value to this account, how many votes each has given and what they were worth.",
+        "votes_received": "Votes other people have cast on this account's posts and comments. Click to see who votes on them the most, and who they vote for the most.",
         "stake_mix_click": "Click to see where this Hive Power came from",
         "reply_targets_click": "Click to see who they reply to",
-        "votes_received_click": "Click to see who voted",
+        "votes_received_click": "Click to see who votes on them, and who they vote for",
         "hours_written_click": "Click to see the hours themselves"
       },
       "comments": {
@@ -903,9 +903,18 @@
         "top_voters": "Top {{limit}} voters across these replies"
       },
       "top_voters": {
-        "title": "Top {{limit}} voters",
-        "subtitle": "Who has voted on @{{account}}, ranked by what their votes were worth.",
+        "title": "Votes",
+        "subtitle": "Who votes on @{{account}}, and who @{{account}} votes for.",
         "received_label": "Votes received",
+        "received_heading": "Top {{limit}} voting on @{{account}}",
+        "received_sort": "Ranked by what their votes were worth.",
+        "given_heading": "Who @{{account}} votes for most",
+        "given_sort": "Ranked by how many votes they gave.",
+        "given_label": "Votes given",
+        "given_empty": "@{{account}} has not voted on anyone yet.",
+        "given_error": "The votes this account cast could not be read. Try again in a moment.",
+        "given_window_lifetime": "Every vote this account has ever cast: {{votes}}.",
+        "given_window_capped": "Read from the newest {{limit}} votes this account cast.",
         "people_label": "Voters",
         "total_label": "Worth",
         "votes_label": "votes",

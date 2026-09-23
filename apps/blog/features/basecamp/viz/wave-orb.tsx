@@ -73,7 +73,6 @@ const WaveOrb = ({ ratio, colors, known, size = 48 }: WaveOrbProps) => {
         stroke={colors[0]}
         strokeWidth={1.75}
         strokeOpacity={known ? 0.9 : 0.25}
-        style={{ filter: level > 0 ? `drop-shadow(0 0 6px ${colors[0]}88)` : undefined }}
       />
     </svg>
   );
